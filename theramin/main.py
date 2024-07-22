@@ -64,6 +64,8 @@ def main():
         lmList = detector.findPosition(img)
         if len(lmList) != 0:
             print(lmList[4])
+            if lmList[4][1] < 1000:
+                print("---> Above 1000")
 
         cv2.imshow("Image", img)
         if cv2.waitKey(1) & 0xFF == ord('q'):
