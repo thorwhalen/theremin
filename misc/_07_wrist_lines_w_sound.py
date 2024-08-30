@@ -2,11 +2,32 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import pyaudio
+from collections import deque
 import time
-from theramin.util import data_files
+from theramin.util import data_files, format_dict_values
 
 # Path to the gesture recognizer model
 gesture_recognizer_path = str(data_files / 'gesture_recognizer.task')
+
+
+class AllZerosDict(dict):
+    """A dict that only returns 0.0 for all keys."""
+
+    def __init__(self, *args, **kwargs):
+        assert args == () and kwargs == {}
+
+    def __getitem__(self, key):
+        return 0.0
+
+
+all_zeros_dict = AllZerosDict()
+
+
+def simple_fv_to_wave(fv, time_indices):
+    vol = fv['volume']
+    freq = fv['frequency']
+    return vol * np.sin(2 * np.pi * freq * time_indices).astype(np.float32)
+
 
 class HandGestureRecognizer:
     """
@@ -22,15 +43,23 @@ class HandGestureRecognizer:
     def __init__(
         self,
         mode=False,
+        *,
         max_hands=2,
         detection_con=0.5,
         track_con=0.5,
         gesture_recognizer_path=gesture_recognizer_path,
+        fv_to_wave=simple_fv_to_wave,
+        fv_fallback=all_zeros_dict,
+        min_freq=220,
+        max_freq=440 * 4,
+        sr=44100,
     ):
         self.mode = mode
         self.max_hands = max_hands
         self.detection_con = detection_con
         self.track_con = track_con
+        self.fv_to_wave = fv_to_wave
+        self.fv_fallback = fv_fallback
 
         # Initialize MediaPipe Hands
         self.mp_hands = mp.solutions.hands
@@ -57,11 +86,16 @@ class HandGestureRecognizer:
         )
 
         # Sound parameters
-        self.fs = 44100  # Sample rate
-        self.pitch_range = [440, 880]  # Default pitch range in Hz
+        self.fs = sr  # Sample rate
+        self.sr = sr
+
+        self.min_freq = min_freq
+        self.max_freq = max_freq
+        self.pitch_range = [self.min_freq, self.max_freq]
         self.volume = 0.5  # Default volume
-        self.current_freq = 440
-        self.current_vol = 0
+
+        self.initial_freq = 440
+        self.initial_vol = 0
 
         # PyAudio initialization
         self.p = pyaudio.PyAudio()
@@ -70,19 +104,11 @@ class HandGestureRecognizer:
             channels=1,
             rate=self.fs,
             output=True,
-            stream_callback=self.audio_callback
+            stream_callback=self.audio_callback,
         )
         self.audio_bytes = b""
 
-    def audio_callback(self, in_data, frame_count, time_info, status):
-        """
-        PyAudio callback to continuously generate sound.
-        """
-        t = (np.arange(frame_count) + self.fs * time_info['current_time']) / self.fs
-        wave = self.current_vol * np.sin(2 * np.pi * self.current_freq * t).astype(np.float32)
-        wave_bytes = wave.tobytes()
-        self.audio_bytes += wave_bytes
-        return (wave_bytes, pyaudio.paContinue)
+        self.audio_fvs_buffer = deque(maxlen=5)
 
     def find_hands(self, img, draw=True):
         """
@@ -132,23 +158,42 @@ class HandGestureRecognizer:
 
     def control_sound(self, results, img_shape):
         """
-        Controls sound generation based on hand movements.
-
-        Args:
-            results: The hand detection results.
-            img_shape: The shape of the image.
+        Method to control sound parameters by pushing them to the buffer.
         """
         if results.multi_hand_landmarks:
             for hand_landmarks in results.multi_hand_landmarks:
                 wrist = hand_landmarks.landmark[self.mp_hands.HandLandmark.WRIST]
-                h, w, _ = img_shape
-                cx, cy = wrist.x * w, wrist.y * h
-
-                # Calculate frequency and volume based on wrist position
-                self.current_freq = np.interp(cx, [0, w], self.pitch_range)
-                self.current_vol = np.interp(cy, [h, 0], [0.0, 1.0])
+                audio_fvs = dict(
+                    frequency=self.min_freq + wrist.x * (self.max_freq - self.min_freq),
+                    volume = np.clip(1 - wrist.y, 0, 1),
+                )
         else:
-            self.current_vol = 0  # Set volume to 0 if no hands are detected
+            audio_fvs = self.fv_fallback
+        self.audio_fvs_buffer.append(audio_fvs)
+
+    def audio_callback(self, in_data, frame_count, time_info, status, *, verbose=1):
+        """
+        PyAudio callback to continuously generate sound.
+        """
+        current_time = time_info['current_time']
+        ts = (np.arange(frame_count) + self.fs * current_time) / self.fs
+
+        # Read the latest frequency and volume from the buffer, if available
+        if len(self.audio_fvs_buffer) > 0:
+            fv = self.audio_fvs_buffer[-1]
+        else:
+            fv = self.fv_fallback
+
+        if verbose:
+            if fv:
+                print(f"{format_dict_values(fv, 8)}")
+
+        wave = self.fv_to_wave(fv, ts)
+
+        wave_bytes = wave.tobytes()
+        self.audio_bytes += wave_bytes
+        return (wave_bytes, pyaudio.paContinue)
+
 
 def main():
     cap = cv2.VideoCapture(0)
@@ -171,6 +216,7 @@ def main():
                 break
     finally:
         from pathlib import Path
+
         Path("theramin_audio.pcm").write_bytes(recognizer.audio_bytes)
 
         cap.release()
@@ -178,6 +224,7 @@ def main():
         recognizer.stream.stop_stream()
         recognizer.stream.close()
         recognizer.p.terminate()
+
 
 if __name__ == "__main__":
     main()

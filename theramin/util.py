@@ -20,7 +20,8 @@ def return_none(*args, **kwargs):
 # Constants
 
 
-class HandLandmark:
+class HandLandmarkIndex:
+    # TODO: Take directly from mp.solutions.hands.HandLandmark
     WRIST = 0
     THUMB_CMC = 1
     THUMB_MCP = 2
@@ -46,6 +47,35 @@ class HandLandmark:
 
 # --------------------------------------------------------------------------------------
 # String utils
+
+
+def format_dict_values(input_dict, max_digits=8):
+    """
+    Formats all numerical values in a dictionary to strings with a specified number of significant digits.
+
+    Args:
+        input_dict (dict): The dictionary whose numerical values will be formatted.
+        max_digits (int): The maximum number of significant digits to use in the formatting.
+
+    Returns:
+        dict: A new dictionary with the same keys as input_dict, but with numerical values replaced by formatted strings.
+
+    Example:
+        >>> original_dict = {'a': 123456789, 'b': 1234.56789, 'c': 12.345789, 'd': 0.0012345789}
+        >>> format_dict_values(original_dict, 5)
+        {'a': '1.2346e+08', 'b': '1234.6', 'c': '12.346', 'd': '0.0012346'}
+
+    Note:
+        Non-numeric values are left unchanged.
+    """
+
+    def format_value(value):
+        if isinstance(value, (int, float)):
+            return f"{value:.{max_digits}g}"
+        return value
+
+    formatted_dict = {k: format_value(v) for k, v in input_dict.items()}
+    return formatted_dict
 
 
 def format_milliseconds_time(timestamp):
@@ -89,12 +119,12 @@ def format_label_xyz(label, x, y, z, *, label_width=15, coord_width=8):
 # Misc
 
 
-
 import inspect
+
 
 def annotate_with(annotation_type):
     """
-    Decorator to annotate a function with a specified type and store the annotation 
+    Decorator to annotate a function with a specified type and store the annotation
     in the correct scope's `__annotations__` dictionary.
 
     Args:
@@ -113,18 +143,19 @@ def annotate_with(annotation_type):
         'int'
 
     """
+
     def decorator(func):
         try:
             # Get the frame of the caller
             frame = inspect.currentframe().f_back
             # Access the correct scope's `__annotations__`
             annotations = frame.f_globals.setdefault('__annotations__', {})
-            
+
             # Store the annotation
             annotations[func.__name__] = annotation_type
         except Exception as e:
             # Ignore this -- don't have annotations be in the way!
             print(f"Ignoring Error (but not annotating): {e}")
         return func
-    
+
     return decorator

@@ -2,6 +2,14 @@
 Follows both hands landmarks (21 points) and draws lines to enphasize the wrist location.
 Also prints some hand landmarks coordinates.
 
+
+In this script, I set things up so that one can add several callbacks that will do 
+something based on the stream of hand feature vectors created by the streams of 
+images from the live video. In this particular instance, I used three callbacks:
+* draw_hand_landmarks: The standard 21 points of the hand
+* draw_lines_to_wrist: Some "guide" lines to the wrists, which will constitute a reference point to the hand
+* log_hand_coordinates: The coordinates of the wrist and the tip of the index
+
 For information on hand landmarks, see:
 * https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker
 * https://github.com/google-ai-edge/mediapipe/blob/master/docs/solutions/hands.md
@@ -134,7 +142,7 @@ class HandGestureRecognizer:
 
 from theramin.util import (
     data_files,
-    HandLandmark,
+    HandLandmarkIndex,
     format_float,
     current_time_string_with_milliseconds,
     format_label_xyz,
@@ -180,7 +188,7 @@ def draw_lines_to_wrist(self, results, img, hand_landmarks, idx):
         img: The input image.
         wrist_coords: The wrist coordinates (landmark[0]).
     """
-    wrist_coords = hand_landmarks.landmark[HandLandmark.WRIST]
+    wrist_coords = hand_landmarks.landmark[HandLandmarkIndex.WRIST]
     _draw_lines_to_coords(img, wrist_coords)
 
 
@@ -193,8 +201,8 @@ def log_hand_coordinates(
     r = partial(format_float, ndigits=ndigits)
 
     # Now use this partial function in your code
-    wrist = hand_landmarks.landmark[HandLandmark.WRIST]
-    index_tip = hand_landmarks.landmark[HandLandmark.INDEX_FINGER_TIP]
+    wrist = hand_landmarks.landmark[HandLandmarkIndex.WRIST]
+    index_tip = hand_landmarks.landmark[HandLandmarkIndex.INDEX_FINGER_TIP]
 
     # Use the formatting function in your message
     msg = f"{handedness} " + label_xyz(f"Wrist:", r(wrist.x), r(wrist.y), r(wrist.z))
