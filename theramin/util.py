@@ -8,6 +8,9 @@ pkg_name = 'theramin'
 data_files = files(pkg_name) / 'data'
 
 
+# --------------------------------------------------------------------------------------
+# Placeholders
+
 def return_none(*args, **kwargs):
     """
     An empty function that returns None no matter the arguments.
@@ -15,6 +18,23 @@ def return_none(*args, **kwargs):
     """
     return None
 
+class AllZerosDict(dict):
+    """A dict that only returns 0.0 for all keys.
+    
+    >>> all_zeros_dict = AllZerosDict()
+    >>> all_zeros_dict['anything']
+    0.0
+
+    """
+
+    def __init__(self, *args, **kwargs):
+        assert args == () and kwargs == {}
+
+    def __getitem__(self, key):
+        return 0.0
+
+
+all_zeros_dict = AllZerosDict()
 
 # --------------------------------------------------------------------------------------
 # Constants
@@ -43,6 +63,7 @@ class HandLandmarkIndex:
     PINKY_PIP = 18
     PINKY_DIP = 19
     PINKY_TIP = 20
+
 
 
 # --------------------------------------------------------------------------------------

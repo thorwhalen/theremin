@@ -4,23 +4,11 @@ import numpy as np
 import pyaudio
 from collections import deque
 import time
-from theramin.util import data_files, format_dict_values
+from theramin.util import data_files, format_dict_values, all_zeros_dict
 
 # Path to the gesture recognizer model
 gesture_recognizer_path = str(data_files / 'gesture_recognizer.task')
 
-
-class AllZerosDict(dict):
-    """A dict that only returns 0.0 for all keys."""
-
-    def __init__(self, *args, **kwargs):
-        assert args == () and kwargs == {}
-
-    def __getitem__(self, key):
-        return 0.0
-
-
-all_zeros_dict = AllZerosDict()
 
 
 def simple_fv_to_wave(fv, time_indices):
