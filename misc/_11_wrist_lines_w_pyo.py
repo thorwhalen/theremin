@@ -68,22 +68,22 @@ def phase_distortion_synth(freq=440, volume=0, distortion=0.5, **kwargs):
 
 
 # Default synths
-DFLT_SYNTH0 = phase_distortion_synth
-DFLT_SYNTH1 = phase_distortion_synth
+DFLT_L_SYNTH = supersaw_synth
+DFLT_R_SYNTH = fm_synth
 
 
 # Two-voice synth function
 def synth_func(
-    freq0=440,
-    volume0=0.5,
-    freq1=440,
-    volume1=0.0,
+    l_freq=440,
+    l_volume=0.0,
+    r_freq=440,
+    r_volume=0.0,
     *,
-    synth0=DFLT_SYNTH0,
-    synth1=DFLT_SYNTH1,
+    l_synth=DFLT_L_SYNTH,
+    r_synth=DFLT_R_SYNTH,
 ):
-    sound1 = synth0(freq=freq0, volume=volume0)
-    sound2 = synth1(freq=freq1, volume=volume1)
+    sound1 = l_synth(freq=l_freq, volume=l_volume)
+    sound2 = r_synth(freq=r_freq, volume=r_volume)
     return sound1 + sound2
 
 
@@ -92,29 +92,28 @@ def compute_knobs_from_results(
 ) -> Dict[str, float]:
     knobs = {}
 
+    # Set default silence
+    knobs['l_freq'] = 440
+    knobs['l_volume'] = 0.0
+    knobs['r_freq'] = 440
+    knobs['r_volume'] = 0.0
+
     if not results.multi_hand_landmarks:
-        # No hands detected, mute both voices
-        knobs['freq0'] = 440
-        knobs['volume0'] = 0.0
-        knobs['freq1'] = 440
-        knobs['volume1'] = 0.0
         return knobs
 
-    hands = results.multi_hand_landmarks
+    for idx, hand_landmarks in enumerate(results.multi_hand_landmarks):
+        handedness = results.multi_handedness[idx].classification[0].label
+        wrist = hand_landmarks.landmark[mp.solutions.hands.HandLandmark.WRIST]
 
-    # First hand
-    wrist0 = hands[0].landmark[mp.solutions.hands.HandLandmark.WRIST]
-    knobs['freq0'] = float(min_freq + wrist0.x * (max_freq - min_freq))
-    knobs['volume0'] = float(np.clip(1 - wrist0.y, 0, 1))
+        freq = float(min_freq + wrist.x * (max_freq - min_freq))
+        vol = float(np.clip(1 - wrist.y, 0, 1))
 
-    # Second hand (if available)
-    if len(hands) > 1:
-        wrist1 = hands[1].landmark[mp.solutions.hands.HandLandmark.WRIST]
-        knobs['freq1'] = float(min_freq + wrist1.x * (max_freq - min_freq))
-        knobs['volume1'] = float(np.clip(1 - wrist1.y, 0, 1))
-    else:
-        knobs['freq1'] = 440  # Default frequency for second voice
-        knobs['volume1'] = 0.0  # Silent second voice
+        if handedness == "Left":
+            knobs['l_freq'] = freq
+            knobs['l_volume'] = vol
+        elif handedness == "Right":
+            knobs['r_freq'] = freq
+            knobs['r_volume'] = vol
 
     return knobs
 
@@ -251,8 +250,9 @@ def main():
     recognizer = HandGestureRecognizer()
 
     # _synth_func = (Sig(synth_func) - 'synth0' - 'synth1')(synth_func)
-
-    def _synth_func(freq0=440, volume0=0.5, freq1=440, volume1=0.0):
+    # Note: Using _synth_func to obfuscate the l_synth and r_synth parameters,
+    #       which confuse pyo (because no mapping to a knob).
+    def _synth_func(l_freq=440, l_volume=0.0, r_freq=440, r_volume=0.0):
         return synth_func(**locals())
 
     # Initialize the pyo synth
