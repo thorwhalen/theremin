@@ -12,52 +12,51 @@ from hum.pyo_util import Synth
 gesture_recognizer_path = str(data_files / 'gesture_recognizer.task')
 
 
-def simple_sine(freq=440, volume=0.5):
+def simple_sine(freq0=440, volume0=0.5, freq1=440, volume1=0.0):
     """
-    A simple synth function that returns a sine wave controlled by freq and volume.
+    A simple synth function that returns two sine waves controlled by freq/volume pairs.
 
     Args:
-        freq (float): Frequency of the sine wave in Hz.
-        volume (float): Volume of the sine wave, from 0.0 to 1.0.
+        freq0, volume0, freq1, volume1: Frequencies and volumes for two separate sines.
 
     Returns:
-        pyo.Sine: The sine wave audio object.
+        pyo object: Sum of two sine waves.
     """
-    sine = Sine(freq=freq, mul=volume)
-    return sine
+    sine0 = Sine(freq=freq0, mul=volume0)
+    sine1 = Sine(freq=freq1, mul=volume1)
+    return sine0 + sine1
 
 
 def compute_knobs_from_results(
     results, img_shape=None, min_freq=220, max_freq=440 * 4
-) -> Optional[Dict[str, float]]:
-    """
-    Compute frequency and volume parameters from hand tracking results.
+) -> Dict[str, float]:
+    knobs = {}
 
-    Args:
-        results: MediaPipe hand tracking results
-        img_shape: Shape of the image (height, width, channels)
-        min_freq: Minimum frequency in Hz
-        max_freq: Maximum frequency in Hz
-
-    Returns:
-        Dictionary with 'freq' and 'volume' parameters or None if no hands detected
-    """
     if not results.multi_hand_landmarks:
-        return None
+        # No hands detected, mute both voices
+        knobs['freq0'] = 440
+        knobs['volume0'] = 0.0
+        knobs['freq1'] = 440
+        knobs['volume1'] = 0.0
+        return knobs
 
-    # Use the first hand detected for theremin control
-    hand_landmarks = results.multi_hand_landmarks[0]
-    wrist = hand_landmarks.landmark[mp.solutions.hands.HandLandmark.WRIST]
+    hands = results.multi_hand_landmarks
 
-    # Map x position to frequency (logarithmic scale would be even better)
-    # Convert to native Python float
-    freq = float(min_freq + wrist.x * (max_freq - min_freq))
+    # First hand
+    wrist0 = hands[0].landmark[mp.solutions.hands.HandLandmark.WRIST]
+    knobs['freq0'] = float(min_freq + wrist0.x * (max_freq - min_freq))
+    knobs['volume0'] = float(np.clip(1 - wrist0.y, 0, 1))
 
-    # Map y position to volume (inverted so higher hand = louder)
-    # Convert to native Python float
-    volume = float(np.clip(1 - wrist.y, 0, 1))
+    # Second hand (if available)
+    if len(hands) > 1:
+        wrist1 = hands[1].landmark[mp.solutions.hands.HandLandmark.WRIST]
+        knobs['freq1'] = float(min_freq + wrist1.x * (max_freq - min_freq))
+        knobs['volume1'] = float(np.clip(1 - wrist1.y, 0, 1))
+    else:
+        knobs['freq1'] = 440  # Default frequency for second voice
+        knobs['volume1'] = 0.0  # Silent second voice
 
-    return {'freq': freq, 'volume': volume}
+    return knobs
 
 
 class HandGestureRecognizer:
