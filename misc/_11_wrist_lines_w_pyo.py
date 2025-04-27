@@ -4,7 +4,6 @@ import numpy as np
 from pathlib import Path
 from typing import Optional, Dict, Union, Any
 
-from pyo import Sine
 from theramin.util import data_files, format_dict_values
 from hum.pyo_util import Synth
 
@@ -12,19 +11,80 @@ from hum.pyo_util import Synth
 gesture_recognizer_path = str(data_files / 'gesture_recognizer.task')
 
 
-def simple_sine(freq0=440, volume0=0.5, freq1=440, volume1=0.0):
-    """
-    A simple synth function that returns two sine waves controlled by freq/volume pairs.
+from pyo import *
 
-    Args:
-        freq0, volume0, freq1, volume1: Frequencies and volumes for two separate sines.
 
-    Returns:
-        pyo object: Sum of two sine waves.
-    """
-    sine0 = Sine(freq=freq0, mul=volume0)
-    sine1 = Sine(freq=freq1, mul=volume1)
-    return sine0 + sine1
+# Define a basic sine synth
+def sine_synth(freq=440, volume=0, **kwargs):
+    return Sine(freq=freq, mul=volume)
+
+
+def fm_synth(
+    freq=440, volume=0, carrier_ratio=1.0, mod_index=2.0, mod_freq_ratio=2.0, **kwargs
+):
+    mod = Sine(freq=freq * mod_freq_ratio, mul=freq * mod_index)
+    car = Sine(freq=freq * carrier_ratio + mod, mul=volume)
+    return car
+
+
+def supersaw_synth(freq=440, volume=0, detune=0.01, n_voices=7, **kwargs):
+    voices = [
+        LFO(
+            freq=freq * (1 + detune * (i - n_voices // 2)),
+            type=5,
+            mul=volume / n_voices,
+        )
+        for i in range(n_voices)
+    ]
+    return sum(voices)
+
+
+def square_synth(freq=440, volume=0, **kwargs):
+    return LFO(freq=freq, type=2, mul=volume)
+
+
+def noise_synth(freq=440, volume=0, noise_level=0.2, **kwargs):
+    sine = Sine(freq=freq, mul=volume * (1 - noise_level))
+    noise = Noise(mul=volume * noise_level)
+    return sine + noise
+
+
+def ringmod_synth(freq=440, volume=0, mod_freq_ratio=1.5, **kwargs):
+    mod = Sine(freq=freq * mod_freq_ratio)
+    carrier = Sine(freq=freq)
+    return (carrier * mod) * volume
+
+
+def chorused_sine_synth(freq=440, volume=0, depth=5, speed=0.3, **kwargs):
+    lfo = Sine(freq=speed, mul=depth)
+    mod_freq = freq + lfo
+    return Sine(freq=mod_freq, mul=volume)
+
+
+def phase_distortion_synth(freq=440, volume=0, distortion=0.5, **kwargs):
+    phasor = Phasor(freq=freq)
+    distorted = phasor + (Sine(freq=freq * 2, mul=distortion) * phasor)
+    return distorted * volume
+
+
+# Default synths
+DFLT_SYNTH0 = phase_distortion_synth
+DFLT_SYNTH1 = phase_distortion_synth
+
+
+# Two-voice synth function
+def synth_func(
+    freq0=440,
+    volume0=0.5,
+    freq1=440,
+    volume1=0.0,
+    *,
+    synth0=DFLT_SYNTH0,
+    synth1=DFLT_SYNTH1,
+):
+    sound1 = synth0(freq=freq0, volume=volume0)
+    sound2 = synth1(freq=freq1, volume=volume1)
+    return sound1 + sound2
 
 
 def compute_knobs_from_results(
@@ -185,11 +245,18 @@ class HandGestureRecognizer:
 
 def main():
     """Main function to run the hand gesture recognition with pyo theremin."""
+    from i2 import Sig, partialx
+
     cap = cv2.VideoCapture(0)
     recognizer = HandGestureRecognizer()
 
+    # _synth_func = (Sig(synth_func) - 'synth0' - 'synth1')(synth_func)
+
+    def _synth_func(freq0=440, volume0=0.5, freq1=440, volume1=0.0):
+        return synth_func(**locals())
+
     # Initialize the pyo synth
-    synth = Synth(simple_sine, nchnls=2)
+    synth = Synth(_synth_func, nchnls=2)
 
     with synth:
         try:
