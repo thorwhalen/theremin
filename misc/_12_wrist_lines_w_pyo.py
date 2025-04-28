@@ -4,6 +4,8 @@ import numpy as np
 from pathlib import Path
 from typing import Optional, Dict, Union, Any, Callable
 
+from i2 import partialx, Sig as Signature
+
 from theramin.util import data_files, format_dict_values
 from hum.pyo_util import Synth
 
@@ -11,17 +13,99 @@ from hum.pyo_util import Synth
 gesture_recognizer_path = str(data_files / 'gesture_recognizer.task')
 
 
+# -------------------------------------------------------------------------------
+# Utils
+# -------------------------------------------------------------------------------
+
+
+def obfuscate_args(func, keep_args):
+
+    func_sig = Signature(func)
+    if not all([arg in keep_args for arg in func_sig.names[: len(keep_args)]]):
+        raise ValueError("keep_args must be in the beginning of Sig(foo).names")
+    defaults_of_other_args = {
+        k: v for k, v in func_sig.defaults.items() if k not in keep_args
+    }
+    return partialx(func, **defaults_of_other_args, _rm_partialize=True)
+
+
+from typing import Callable, Dict, Any, TypeVar
+
+# Define a type variable for the return type to maintain type hinting
+T = TypeVar('T')
+
+
+def resolve_object(
+    obj: Union[str, T],
+    *,
+    object_map: Dict[str, T],
+    expected_type: type = None,  # Optional: Enforce a type
+    error_message: str = None,
+) -> T:
+    """
+    Resolves an object by either returning it directly if it's of the correct type,
+    or looking it up in a mapping if it's a string.
+
+    Args:
+        obj: The object to resolve. Can be a string (to be looked up in object_map)
+             or the object itself (if it's already of type T).
+        object_map: A dictionary mapping strings to objects of type T.
+        expected_type: (Optional) The expected type of the resolved object.
+                       If provided, raises a TypeError if the resolved object
+                       is not of this type.
+        error_message: (Optional) A custom error message to use if a ValueError
+                       or TypeError is raised. If None, a default message is used.
+
+    Returns:
+        The resolved object of type T.
+
+    Raises:
+        TypeError: If obj is not a string or of the expected type, or if the
+                   resolved object from the map is not of the expected type
+                   (when expected_type is provided).
+        ValueError: If obj is a string but is not found in object_map.
+    """
+
+    if isinstance(obj, str):
+        if obj in object_map:
+            resolved_obj = object_map[obj]
+        else:
+            msg = error_message or f"Unknown object identifier: {obj}"
+            raise ValueError(msg)
+    elif expected_type is None or isinstance(obj, expected_type):
+        resolved_obj = obj
+    else:
+        msg = error_message or f"Expected type {expected_type}, got {type(obj)}"
+        raise TypeError(msg)
+
+    if expected_type and not isinstance(resolved_obj, expected_type):
+        msg = (
+            error_message
+            or f"Resolved object should be of type {expected_type}, got {type(resolved_obj)}"
+        )
+        raise TypeError(msg)
+
+    return resolved_obj
+
+
+# -------------------------------------------------------------------------------
+# Synthesizer functions
+# -------------------------------------------------------------------------------
+
+from hum import knob_params, knob_exclude
 from pyo import *
 
 
+@knob_exclude('waveform')
 def theremin_synth(
     freq=440,
     volume=0.5,
-    waveform='sine',
     attack=0.01,
     release=0.1,
     vibrato_rate=5,
     vibrato_depth=5,
+    *,
+    waveform='sine',
 ):
     """
     Emulates a classic theremin sound.
@@ -113,13 +197,14 @@ def phase_distortion_synth(freq=440, volume=0, distortion=0.5, **kwargs):
     return distorted * volume
 
 
-# Default synths
 DFLT_L_SYNTH = sine_synth
 DFLT_R_SYNTH = theremin_synth
+DFLT_MIN_FREQ = 220
+DFLT_MAX_FREQ = DFLT_MIN_FREQ * 8
 
 
 # Two-voice synth function
-def synth_func(
+def _two_voice_synth_func(
     l_freq=440,
     l_volume=0.0,
     r_freq=440,
@@ -133,40 +218,104 @@ def synth_func(
     return sound1 + sound2
 
 
-DFLT_MIN_FREQ = 220
-DFLT_MAX_FREQ = DFLT_MIN_FREQ * 8
+# Note: Using two_voice_synth_func to obfuscate the l_synth and r_synth parameters,
+#       which confuse pyo (because no mapping to a knob).
+# TODO: Would be nicer to have something that just removes all but the necessary arguments
+#   Something like i2 wrappers or partialx...
+# Below not working (yet)
+# from i2 import Sig, partialx
+# _synth_func = (Sig(synth_func) - 'synth0' - 'synth1')(synth_func)
+def two_voice_synth_func(l_freq=440, l_volume=0.0, r_freq=440, r_volume=0.0):
+    return _two_voice_synth_func(**locals())
+
+two_voice_synth_func = obfuscate_args(_two_voice_synth_func, keep_args=['l_freq', 'l_volume', 'r_freq', 'r_volume'])
+
+# -------------------------------------------------------------------------------
+# Knob functions
+# -------------------------------------------------------------------------------
 
 
-def compute_knobs_from_hand_detection(
-    hand_detection,
-    img_shape=None,
+def _calculate_freq_and_vol_from_wrist(wrist, min_freq, max_freq):
+    """
+    Calculate frequency and volume based on wrist position.
+
+    Args:
+        wrist: Position of the wrist (tuple or array with x, y coordinates)
+        min_freq: Minimum frequency value
+        max_freq: Maximum frequency value
+
+    Returns:
+        tuple: (frequency, volume)
+    """
+    freq = float(min_freq + wrist[0] * (max_freq - min_freq))
+    vol = float(np.clip(1 - wrist[1], 0, 1))
+    return freq, vol
+
+
+def two_hand_freq_and_volume_knobs(
+    hand_features,
+    *,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
 ) -> Dict[str, float]:
     knobs = {}
 
     # Set default silence
-    knobs['l_freq'] = 440
+    mid_freq = (min_freq + max_freq) / 2
+    knobs['l_freq'] = mid_freq
     knobs['l_volume'] = 0.0
-    knobs['r_freq'] = 440
+    knobs['r_freq'] = mid_freq
     knobs['r_volume'] = 0.0
 
-    if not hand_detection.multi_hand_landmarks:
+    if not hand_features:
         return knobs
+    else:
+        print(f"{hand_features=}, {type(hand_features)=}")
+        if 'l_wrist_position' in hand_features:
+            knobs['l_freq'], knobs['l_volume'] = _calculate_freq_and_vol_from_wrist(
+                hand_features['l_wrist_position'], min_freq, max_freq
+            )
+        if 'r_wrist_position' in hand_features:
+            knobs['r_freq'], knobs['r_volume'] = _calculate_freq_and_vol_from_wrist(
+                hand_features['r_wrist_position'], min_freq, max_freq
+            )
 
-    for idx, hand_landmarks in enumerate(hand_detection.multi_hand_landmarks):
-        handedness = hand_detection.multi_handedness[idx].classification[0].label
-        wrist = hand_landmarks.landmark[mp.solutions.hands.HandLandmark.WRIST]
+    return knobs
 
-        freq = float(min_freq + wrist.x * (max_freq - min_freq))
-        vol = float(np.clip(1 - wrist.y, 0, 1))
 
-        if handedness == "Left":
-            knobs['l_freq'] = freq
-            knobs['l_volume'] = vol
-        elif handedness == "Right":
-            knobs['r_freq'] = freq
-            knobs['r_volume'] = vol
+def theremin_knobs(
+    hand_features,
+    *,
+    min_freq: float = DFLT_MIN_FREQ,
+    max_freq: float = DFLT_MAX_FREQ,
+) -> Dict[str, float]:
+    """
+    Maps right hand to frequency (pitch) and left hand to volume (amplitude),
+    mimicking a classic theremin control scheme.
+
+    Args:
+        hand_features (dict): Extracted hand feature dictionary.
+        min_freq (float): Minimum frequency for pitch control.
+        max_freq (float): Maximum frequency for pitch control.
+
+    Returns:
+        Dict[str, float]: Dictionary with 'r_freq', 'r_volume', 'l_freq', 'l_volume' keys.
+    """
+    X, Y = 0, 1
+    knobs = {}
+
+    if not hand_features:
+        return knobs
+    elif 'r_wrist_position' in hand_features and 'l_wrist_position' in hand_features:
+        knobs['freq'] = float(
+            min_freq + hand_features['r_wrist_position'][X] * (max_freq - min_freq)
+        )
+        knobs['volume'] = float(np.clip(1 - hand_features['l_wrist_position'][Y], 0, 1))
+    else:
+        mid_freq = (min_freq + max_freq) / 2
+        silent = 0.0
+        knobs['freq'] = mid_freq
+        knobs['volume'] = silent
 
     return knobs
 
@@ -317,7 +466,9 @@ HAND_FEATURES_KEYS = sorted(ALL_HAND_FEATURES)
 DFLT_HAND_FEATURES_INCLUDE = ALL_HAND_FEATURES - {"landmarks"}
 
 
-def hand_features(hand_landmarks, include=DFLT_HAND_FEATURES_INCLUDE, exclude=()):
+def many_single_hand_features(
+    hand_landmarks, include=DFLT_HAND_FEATURES_INCLUDE, exclude=()
+):
     """
     Extracts multiple hand features from a MediaPipe hand_landmarks object.
     """
@@ -482,6 +633,42 @@ def hand_features(hand_landmarks, include=DFLT_HAND_FEATURES_INCLUDE, exclude=()
     return out
 
 
+def many_hand_features(hand_detection, include=DFLT_HAND_FEATURES_INCLUDE, exclude=()):
+    """
+    Calls many_single_hand_features for each hand in the detection.
+    Returns a dictionary corresponding to the many_single_hand_features output,
+    but with `l_` and `r_` prefixes for left and right hands.
+    """
+
+    if not hand_detection.multi_hand_landmarks:
+        return {}
+
+    hands = {}
+
+    # for hand_landmarks in hand_detection.multi_hand_landmarks:
+    #     _hand_features = hand_features(hand_landmarks)
+    #     if log_hand_features:
+    #         log_hand_features(_hand_features)
+
+    for idx, hand_landmarks in enumerate(hand_detection.multi_hand_landmarks):
+        handedness = hand_detection.multi_handedness[idx].classification[0].label
+        hand_features = many_single_hand_features(
+            hand_landmarks, include=include, exclude=exclude
+        )
+        if handedness == "Left":
+            hands["l_"] = hand_features
+        elif handedness == "Right":
+            hands["r_"] = hand_features
+
+    # Merge the dictionaries and add prefixes
+    merged_hands = {}
+    for prefix, features in hands.items():
+        for key, value in features.items():
+            merged_hands[f"{prefix}{key}"] = value
+
+    return merged_hands
+
+
 # -------------------------------------------------------------------------------
 # Screen Drawing
 # -------------------------------------------------------------------------------
@@ -630,10 +817,28 @@ def draw_on_screen(
 
 
 # -------------------------------------------------------------------------------
-# Main function
+# Main function helpers
 # -------------------------------------------------------------------------------
 
-audio_features = compute_knobs_from_hand_detection
+from functools import partial
+
+audio_feature_funcs = {
+    "two_hand_freq_and_volume_knobs": two_hand_freq_and_volume_knobs,
+    "theremin_knobs": theremin_knobs,
+}
+resolve_audio_features = partial(resolve_object, object_map=audio_feature_funcs)
+
+synth_funcs = {
+    "two_voice_synth_func": two_voice_synth_func,
+    "theremin_synth": theremin_synth,
+}
+resolve_synth_func = partial(resolve_object, object_map=synth_funcs)
+
+
+hand_feature_funcs = {
+    "many_hand_features": many_hand_features,
+}
+resolve_hand_features = partial(resolve_object, object_map=hand_feature_funcs)
 
 
 def print_plus_newline(x):
@@ -642,9 +847,25 @@ def print_plus_newline(x):
     print()
 
 
+# -------------------------------------------------------------------------------
+# Main function
+# -------------------------------------------------------------------------------
+
+DFLT_HAND_FEATURES_NAME = "many_hand_features"
+
+DFLT_AUDIO_FEATURES_NAME = "two_hand_freq_and_volume_knobs"
+DFLT_SYNTH_FUNC_NAME = "two_voice_synth_func"
+
+# TODO: Not working yet
+# DFLT_AUDIO_FEATURES_NAME = "theremin_knobs"
+# DFLT_SYNTH_FUNC_NAME = "theremin_synth"
+
+
 def main(
     *,
-    audio_features=audio_features,
+    hand_features: Union[str, Callable] = DFLT_HAND_FEATURES_NAME,
+    audio_features: Union[str, Callable] = DFLT_AUDIO_FEATURES_NAME,
+    synth_func: Union[str, Callable] = DFLT_SYNTH_FUNC_NAME,
     draw_on_screen=draw_on_screen,
     log_hand_features=print_plus_newline,
     log_audio_features=print_plus_newline,
@@ -652,18 +873,16 @@ def main(
 ):
     """Main function to run the hand gesture recognition with pyo theremin."""
 
+    hand_features = resolve_hand_features(hand_features)
+    audio_features = resolve_audio_features(audio_features)
+    synth_func = resolve_synth_func(synth_func)
+
     cap = cv2.VideoCapture(0)
     recognizer = HandGestureRecognizer()
 
-    # from i2 import Sig, partialx
-    # _synth_func = (Sig(synth_func) - 'synth0' - 'synth1')(synth_func)
-    # Note: Using _synth_func to obfuscate the l_synth and r_synth parameters,
-    #       which confuse pyo (because no mapping to a knob).
-    def _synth_func(l_freq=440, l_volume=0.0, r_freq=440, r_volume=0.0):
-        return synth_func(**locals())
-
     # Initialize the pyo synth
-    synth = Synth(_synth_func, nchnls=2)
+    synth = Synth(synth_func, nchnls=2)
+    print(f"\nUsing synth function: {synth_func}: {list(synth.knobs)}\n")
 
     with synth:
         try:
@@ -675,30 +894,23 @@ def main(
                 img = cv2.flip(img, 1)
                 img, hand_detection = recognizer.find_hands(img)
 
+                # Compute the hand features
+                _hand_features = hand_features(hand_detection)
+                if log_hand_features:
+                    log_hand_features(_hand_features)
+
                 # Compute sound features from hand landmarks
-                _audio_features = audio_features(
-                    hand_detection,
-                    img_shape=img.shape,
-                    min_freq=DFLT_MIN_FREQ,
-                    max_freq=DFLT_MAX_FREQ,
-                )
+                _audio_features = audio_features(_hand_features)
+                if log_audio_features:
+                    log_audio_features(_audio_features)
                 if _audio_features is not None:
                     synth.knobs.update(_audio_features)
-                if log_audio_features:
-                    print_plus_newline(_audio_features)
 
                 # Draw stuff on the screen
                 if draw_on_screen:
                     img = draw_on_screen(
                         recognizer, img, hand_detection, _audio_features
                     )
-
-                # log the hand features
-                if hand_detection.multi_hand_landmarks:
-                    for hand_landmarks in hand_detection.multi_hand_landmarks:
-                        _hand_features = hand_features(hand_landmarks)
-                        if log_hand_features:
-                            log_hand_features(_hand_features)
 
                 cv2.imshow('Hand Gesture Recognition with Theremin', img)
 
