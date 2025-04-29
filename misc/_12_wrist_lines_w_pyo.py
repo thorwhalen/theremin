@@ -96,7 +96,8 @@ from hum import knob_params, knob_exclude
 from pyo import *
 
 
-@knob_exclude('waveform')
+# @knob_exclude('waveform')
+@knob_params('freq', 'volume')
 def theremin_synth(
     freq=440,
     volume=0.5,
@@ -228,7 +229,10 @@ def _two_voice_synth_func(
 def two_voice_synth_func(l_freq=440, l_volume=0.0, r_freq=440, r_volume=0.0):
     return _two_voice_synth_func(**locals())
 
-two_voice_synth_func = obfuscate_args(_two_voice_synth_func, keep_args=['l_freq', 'l_volume', 'r_freq', 'r_volume'])
+
+two_voice_synth_func = obfuscate_args(
+    _two_voice_synth_func, keep_args=['l_freq', 'l_volume', 'r_freq', 'r_volume']
+)
 
 # -------------------------------------------------------------------------------
 # Knob functions
@@ -857,8 +861,8 @@ DFLT_AUDIO_FEATURES_NAME = "two_hand_freq_and_volume_knobs"
 DFLT_SYNTH_FUNC_NAME = "two_voice_synth_func"
 
 # TODO: Not working yet
-# DFLT_AUDIO_FEATURES_NAME = "theremin_knobs"
-# DFLT_SYNTH_FUNC_NAME = "theremin_synth"
+DFLT_AUDIO_FEATURES_NAME = "theremin_knobs"
+DFLT_SYNTH_FUNC_NAME = "theremin_synth"
 
 
 def main(
