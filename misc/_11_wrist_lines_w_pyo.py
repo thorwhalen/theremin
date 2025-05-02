@@ -294,7 +294,7 @@ def main():
 
             # Render the recording to a WAV file
             output_path = "theremin_recording.wav"
-            synth.render_recording(output_filepath=output_path)
+            synth.render_events(output_filepath=output_path)
             print(f"Saved audio recording to {output_path}")
 
             # Clean up resources

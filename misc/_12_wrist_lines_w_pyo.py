@@ -92,12 +92,13 @@ def resolve_object(
 # Synthesizer functions
 # -------------------------------------------------------------------------------
 
-from hum import knob_params, knob_exclude
+from hum import Synth
+from hum.pyo_util import add_default_dials
 from pyo import *
 
 
 # @knob_exclude('waveform')
-@knob_params('freq', 'volume')
+@add_default_dials('freq volume')
 def theremin_synth(
     freq=440,
     volume=0.5,
@@ -146,19 +147,19 @@ def theremin_synth(
 
 
 # Define a basic sine synth
-def sine_synth(freq=440, volume=0, **kwargs):
+
+
+def sine_synth(freq=440, volume=0):
     return Sine(freq=freq, mul=volume)
 
 
-def fm_synth(
-    freq=440, volume=0, carrier_ratio=1.0, mod_index=2.0, mod_freq_ratio=2.0, **kwargs
-):
+def fm_synth(freq=440, volume=0, carrier_ratio=1.0, mod_index=2.0, mod_freq_ratio=2.0):
     mod = Sine(freq=freq * mod_freq_ratio, mul=freq * mod_index)
     car = Sine(freq=freq * carrier_ratio + mod, mul=volume)
     return car
 
 
-def supersaw_synth(freq=440, volume=0, detune=0.01, n_voices=7, **kwargs):
+def supersaw_synth(freq=440, volume=0, detune=0.01, n_voices=7):
     voices = [
         LFO(
             freq=freq * (1 + detune * (i - n_voices // 2)),
@@ -170,29 +171,29 @@ def supersaw_synth(freq=440, volume=0, detune=0.01, n_voices=7, **kwargs):
     return sum(voices)
 
 
-def square_synth(freq=440, volume=0, **kwargs):
+def square_synth(freq=440, volume=0):
     return LFO(freq=freq, type=2, mul=volume)
 
 
-def noise_synth(freq=440, volume=0, noise_level=0.2, **kwargs):
+def noise_synth(freq=440, volume=0, noise_level=0.2):
     sine = Sine(freq=freq, mul=volume * (1 - noise_level))
     noise = Noise(mul=volume * noise_level)
     return sine + noise
 
 
-def ringmod_synth(freq=440, volume=0, mod_freq_ratio=1.5, **kwargs):
+def ringmod_synth(freq=440, volume=0, mod_freq_ratio=1.5):
     mod = Sine(freq=freq * mod_freq_ratio)
     carrier = Sine(freq=freq)
     return (carrier * mod) * volume
 
 
-def chorused_sine_synth(freq=440, volume=0, depth=5, speed=0.3, **kwargs):
+def chorused_sine_synth(freq=440, volume=0, depth=5, speed=0.3):
     lfo = Sine(freq=speed, mul=depth)
     mod_freq = freq + lfo
     return Sine(freq=mod_freq, mul=volume)
 
 
-def phase_distortion_synth(freq=440, volume=0, distortion=0.5, **kwargs):
+def phase_distortion_synth(freq=440, volume=0, distortion=0.5):
     phasor = Phasor(freq=freq)
     distorted = phasor + (Sine(freq=freq * 2, mul=distortion) * phasor)
     return distorted * volume
@@ -938,7 +939,7 @@ def main(
                         save_recording, bool
                     ), "save_recording should be a string or a boolean"
                     output_path = "theremin_recording.wav"
-                synth.render_recording(output_filepath=output_path)
+                synth.render_events(output_filepath=output_path)
                 print(f"Saved audio recording to {output_path}")
 
             # Clean up resources
