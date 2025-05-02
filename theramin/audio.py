@@ -271,6 +271,207 @@ def theremin_knobs(
     return knobs
 
 
+MOD_FREQ = 0.4
+MOD_MUL = 0.1
+
+
+def intro_high_sines(base_freq=4000, mod_freq=MOD_FREQ, mod_mul=MOD_MUL):
+    wav = HarmTable([0.1, 0, 0.2, 0, 0.1, 0, 0, 0, 0.04, 0, 0, 0, 0.02])
+    fade = Fader(fadein=3, fadeout=20, mul=mod_mul)
+    fade.play()
+    mod = Osc(table=wav, freq=mod_freq)
+    car = Sine(freq=[base_freq, base_freq + 40, base_freq - 10], mul=mod)
+    pan = SPan(car, pan=[0, 0.5, 1], mul=fade)
+    return pan
+
+
+HI_BASE_FREQ_RANGE = (2000, 6000)
+MID_BASE_FREQ_RANGE = (1000, 4000)
+LO_BASE_FREQ_RANGE = (200, 1000)
+MOD_FREQ_RANGE = (0.1, 1.0)
+MOD_MUL_RANGE = (0.000, 0.5)
+
+HI_SINES_FREQ_RANGE = MID_BASE_FREQ_RANGE
+
+
+def high_sines_theremin_knobs(
+    hand_features,
+    *,
+    base_freq_range: tuple = HI_SINES_FREQ_RANGE,
+    mod_freq_range: tuple = MOD_FREQ_RANGE,
+    mod_mul_range: tuple = MOD_MUL_RANGE,
+) -> Dict[str, float]:
+    """
+    Maps hand positions to the three parameters of intro_high_sines synth:
+    - Right hand X: Controls base_freq
+    - Right hand Y: Controls mod_freq
+    - Left hand Y: Controls mod_mul (amplitude)
+
+    Args:
+        hand_features (dict): Extracted hand feature dictionary
+        base_freq_range (tuple): Min and max frequency for the base sine wave (Hz)
+        mod_freq_range (tuple): Min and max frequency for modulation (Hz)
+        mod_mul_range (tuple): Min and max amplitude for modulation
+
+    Returns:
+        Dict[str, float]: Dictionary with 'base_freq', 'mod_freq', 'mod_mul' keys
+    """
+    knobs = {}
+
+    # Default values (middle of ranges)
+    knobs['base_freq'] = (base_freq_range[0] + base_freq_range[1]) / 2
+    knobs['mod_freq'] = (mod_freq_range[0] + mod_freq_range[1]) / 2
+    knobs['mod_mul'] = (mod_mul_range[0] + mod_mul_range[1]) / 2
+
+    # If no hands detected, return default values
+    if not hand_features:
+        return knobs
+
+    # Right hand controls base_freq (X-axis) and mod_freq (Y-axis)
+    if 'r_wrist_position' in hand_features:
+        r_x, r_y = hand_features['r_wrist_position'][0:2]
+
+        # X position controls base frequency
+        knobs['base_freq'] = float(
+            base_freq_range[0] + r_x * (base_freq_range[1] - base_freq_range[0])
+        )
+
+        # Y position controls modulation frequency (inverse mapping feels more intuitive)
+        knobs['mod_freq'] = float(
+            mod_freq_range[0] + (1 - r_y) * (mod_freq_range[1] - mod_freq_range[0])
+        )
+
+    # Left hand controls mod_mul (amplitude) with Y-axis
+    if 'l_wrist_position' in hand_features:
+        l_y = hand_features['l_wrist_position'][1]
+
+        # Y position controls modulation amplitude (inverse mapping)
+        knobs['mod_mul'] = float(
+            mod_mul_range[0] + (1 - l_y) * (mod_mul_range[1] - mod_mul_range[0])
+        )
+
+    return knobs
+
+
+def high_sines_pinch_theremin_knobs(
+    hand_features,
+    *,
+    base_freq_range: tuple = HI_SINES_FREQ_RANGE,
+    mod_freq_range: tuple = MOD_FREQ_RANGE,
+    mod_mul_range: tuple = MOD_MUL_RANGE,
+) -> Dict[str, float]:
+    """
+    Maps hand positions and pinch gesture to intro_high_sines parameters:
+    - Right hand X: Controls base_freq
+    - Right pinch distance: Controls mod_freq
+    - Left pinch distance: Controls mod_mul
+
+    Args:
+        hand_features (dict): Extracted hand feature dictionary
+        base_freq_range (tuple): Min and max frequency for the base sine wave (Hz)
+        mod_freq_range (tuple): Min and max frequency for modulation (Hz)
+        mod_mul_range (tuple): Min and max amplitude for modulation
+
+    Returns:
+        Dict[str, float]: Dictionary with 'base_freq', 'mod_freq', 'mod_mul' keys
+    """
+    knobs = {}
+
+    # Default values (middle of ranges)
+    knobs['base_freq'] = (base_freq_range[0] + base_freq_range[1]) / 2
+    knobs['mod_freq'] = (mod_freq_range[0] + mod_freq_range[1]) / 2
+    knobs['mod_mul'] = (mod_mul_range[0] + mod_mul_range[1]) / 2
+
+    # If no hands detected, return default values
+    if not hand_features:
+        return knobs
+
+    # Right hand controls base_freq with X position
+    if 'r_wrist_position' in hand_features:
+        r_x = hand_features['r_wrist_position'][0]
+        knobs['base_freq'] = float(
+            base_freq_range[0] + r_x * (base_freq_range[1] - base_freq_range[0])
+        )
+
+    # Right hand pinch controls mod_freq (if available)
+    if 'r_thumb_index_distance' in hand_features:
+        # Map thumb-index distance (typically 0-0.2) to modulation frequency
+        # Normalize to 0-1 range assuming max distance of 0.2
+        pinch_distance = min(hand_features['r_thumb_index_distance'], 0.2) / 0.2
+        knobs['mod_freq'] = float(
+            mod_freq_range[0] + pinch_distance * (mod_freq_range[1] - mod_freq_range[0])
+        )
+
+    # Left hand pinch controls mod_mul (if available)
+    if 'l_thumb_index_distance' in hand_features:
+        # Normalize to 0-1 range assuming max distance of 0.2
+        pinch_distance = min(hand_features['l_thumb_index_distance'], 0.2) / 0.2
+        knobs['mod_mul'] = float(
+            mod_mul_range[0] + pinch_distance * (mod_mul_range[1] - mod_mul_range[0])
+        )
+
+    return knobs
+
+
+def high_sines_openness_theremin_knobs(
+    hand_features,
+    *,
+    base_freq_range: tuple = HI_SINES_FREQ_RANGE,
+    mod_freq_range: tuple = MOD_FREQ_RANGE,
+    mod_mul_range: tuple = MOD_MUL_RANGE,
+) -> Dict[str, float]:
+    """
+    Maps hand positions and hand openness to intro_high_sines parameters:
+    - Right hand X: Controls base_freq
+    - Right hand openness: Controls mod_freq
+    - Left hand openness: Controls mod_mul
+
+    Args:
+        hand_features (dict): Extracted hand feature dictionary
+        base_freq_range (tuple): Min and max frequency for the base sine wave (Hz)
+        mod_freq_range (tuple): Min and max frequency for modulation (Hz)
+        mod_mul_range (tuple): Min and max amplitude for modulation
+
+    Returns:
+        Dict[str, float]: Dictionary with 'base_freq', 'mod_freq', 'mod_mul' keys
+    """
+    knobs = {}
+
+    # Default values (middle of ranges)
+    knobs['base_freq'] = (base_freq_range[0] + base_freq_range[1]) / 2
+    knobs['mod_freq'] = (mod_freq_range[0] + mod_freq_range[1]) / 2
+    knobs['mod_mul'] = (mod_mul_range[0] + mod_mul_range[1]) / 2
+
+    # If no hands detected, return default values
+    if not hand_features:
+        return knobs
+
+    # Right hand controls base_freq with X position
+    if 'r_wrist_position' in hand_features:
+        r_x = hand_features['r_wrist_position'][0]
+        knobs['base_freq'] = float(
+            base_freq_range[0] + r_x * (base_freq_range[1] - base_freq_range[0])
+        )
+
+    # Right hand openness controls mod_freq (if available)
+    if 'r_openness' in hand_features:
+        # Normalize openness to 0-1 range (typically ranges from 0.05 to 0.3)
+        openness = np.clip((hand_features['r_openness'] - 0.05) / 0.25, 0, 1)
+        knobs['mod_freq'] = float(
+            mod_freq_range[0] + openness * (mod_freq_range[1] - mod_freq_range[0])
+        )
+
+    # Left hand openness controls mod_mul (if available)
+    if 'l_openness' in hand_features:
+        # Normalize openness to 0-1 range
+        openness = np.clip((hand_features['l_openness'] - 0.05) / 0.25, 0, 1)
+        knobs['mod_mul'] = float(
+            mod_mul_range[0] + openness * (mod_mul_range[1] - mod_mul_range[0])
+        )
+
+    return knobs
+
+
 # -------------------------------------------------------------------------------
 # Module exports
 # -------------------------------------------------------------------------------
@@ -287,10 +488,14 @@ synth_funcs = {
     "chorused_sine_synth": chorused_sine_synth,
     "phase_distortion_synth": phase_distortion_synth,
     "two_voice_synth_func": two_voice_synth_func,
+    "intro_high_sines": intro_high_sines,
 }
 
 # Dictionary of available audio feature extractors
 audio_feature_funcs = {
     "two_hand_freq_and_volume_knobs": two_hand_freq_and_volume_knobs,
     "theremin_knobs": theremin_knobs,
+    "high_sines_theremin_knobs": high_sines_theremin_knobs,
+    "high_sines_pinch_theremin_knobs": high_sines_pinch_theremin_knobs,
+    "high_sines_openness_theremin_knobs": high_sines_openness_theremin_knobs,
 }

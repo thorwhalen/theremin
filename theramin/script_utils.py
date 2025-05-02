@@ -98,7 +98,7 @@ DFLT_AUDIO_FEATURES_NAME = "two_hand_freq_and_volume_knobs"
 DFLT_SYNTH_FUNC_NAME = "theremin_synth"
 
 
-def run_theremin(
+def run_theramin(
     *,
     hand_features: Union[str, Callable] = DFLT_HAND_FEATURES_NAME,
     audio_features: Union[str, Callable] = DFLT_AUDIO_FEATURES_NAME,

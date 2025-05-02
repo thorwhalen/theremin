@@ -6,9 +6,11 @@ This version uses the refactored modular architecture with:
 - audio.py - Audio synthesis and knob functions
 - display.py - Screen drawing and visualization
 - script_utils.py - Main function and script utilities
+
+For a command-line interface, see the theremin_cli.py script.
 """
 
-from theramin.script_utils import run_theremin, print_plus_newline
+from theramin.script_utils import run_theramin, print_plus_newline
 
 # -------------------------------------------------------------------------------
 # Main script
@@ -19,7 +21,7 @@ if __name__ == "__main__":
     # - hand_features: "many_hand_features"
     # - audio_features: "theremin_knobs"
     # - synth_func: "theremin_synth"
-    run_theremin(
+    run_theramin(
         # Optional: customize the components
         # hand_features="many_hand_features",
         audio_features="theremin_knobs",
