@@ -23,7 +23,7 @@ if __name__ == "__main__":
         # audio_features="high_sines_pinch_theremin_knobs",  # Uses pinch gesture
         # audio_features="high_sines_openness_theremin_knobs",  # Uses hand openness
         # Enable to see what features are being extracted:
-        # log_hand_features=print_plus_newline,
+        # log_video_features=print_plus_newline,
         # log_audio_features=print_plus_newline,
         # Save the recording to a custom file:
         save_recording="high_sines_theremin_recording.wav",

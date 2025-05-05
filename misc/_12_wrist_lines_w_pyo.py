@@ -258,7 +258,7 @@ def _calculate_freq_and_vol_from_wrist(wrist, min_freq, max_freq):
 
 
 def two_hand_freq_and_volume_knobs(
-    hand_features,
+    video_features,
     *,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
@@ -272,24 +272,24 @@ def two_hand_freq_and_volume_knobs(
     knobs['r_freq'] = mid_freq
     knobs['r_volume'] = 0.0
 
-    if not hand_features:
+    if not video_features:
         return knobs
     else:
-        print(f"{hand_features=}, {type(hand_features)=}")
-        if 'l_wrist_position' in hand_features:
+        print(f"{video_features=}, {type(video_features)=}")
+        if 'l_wrist_position' in video_features:
             knobs['l_freq'], knobs['l_volume'] = _calculate_freq_and_vol_from_wrist(
-                hand_features['l_wrist_position'], min_freq, max_freq
+                video_features['l_wrist_position'], min_freq, max_freq
             )
-        if 'r_wrist_position' in hand_features:
+        if 'r_wrist_position' in video_features:
             knobs['r_freq'], knobs['r_volume'] = _calculate_freq_and_vol_from_wrist(
-                hand_features['r_wrist_position'], min_freq, max_freq
+                video_features['r_wrist_position'], min_freq, max_freq
             )
 
     return knobs
 
 
 def theremin_knobs(
-    hand_features,
+    video_features,
     *,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
@@ -299,7 +299,7 @@ def theremin_knobs(
     mimicking a classic theremin control scheme.
 
     Args:
-        hand_features (dict): Extracted hand feature dictionary.
+        video_features (dict): Extracted hand feature dictionary.
         min_freq (float): Minimum frequency for pitch control.
         max_freq (float): Maximum frequency for pitch control.
 
@@ -309,13 +309,15 @@ def theremin_knobs(
     X, Y = 0, 1
     knobs = {}
 
-    if not hand_features:
+    if not video_features:
         return knobs
-    elif 'r_wrist_position' in hand_features and 'l_wrist_position' in hand_features:
+    elif 'r_wrist_position' in video_features and 'l_wrist_position' in video_features:
         knobs['freq'] = float(
-            min_freq + hand_features['r_wrist_position'][X] * (max_freq - min_freq)
+            min_freq + video_features['r_wrist_position'][X] * (max_freq - min_freq)
         )
-        knobs['volume'] = float(np.clip(1 - hand_features['l_wrist_position'][Y], 0, 1))
+        knobs['volume'] = float(
+            np.clip(1 - video_features['l_wrist_position'][Y], 0, 1)
+        )
     else:
         mid_freq = (min_freq + max_freq) / 2
         silent = 0.0
@@ -638,7 +640,7 @@ def many_single_hand_features(
     return out
 
 
-def many_hand_features(hand_detection, include=DFLT_HAND_FEATURES_INCLUDE, exclude=()):
+def many_video_features(hand_detection, include=DFLT_HAND_FEATURES_INCLUDE, exclude=()):
     """
     Calls many_single_hand_features for each hand in the detection.
     Returns a dictionary corresponding to the many_single_hand_features output,
@@ -651,19 +653,19 @@ def many_hand_features(hand_detection, include=DFLT_HAND_FEATURES_INCLUDE, exclu
     hands = {}
 
     # for hand_landmarks in hand_detection.multi_hand_landmarks:
-    #     _hand_features = hand_features(hand_landmarks)
-    #     if log_hand_features:
-    #         log_hand_features(_hand_features)
+    #     _video_features = video_features(hand_landmarks)
+    #     if log_video_features:
+    #         log_video_features(_video_features)
 
     for idx, hand_landmarks in enumerate(hand_detection.multi_hand_landmarks):
         handedness = hand_detection.multi_handedness[idx].classification[0].label
-        hand_features = many_single_hand_features(
+        video_features = many_single_hand_features(
             hand_landmarks, include=include, exclude=exclude
         )
         if handedness == "Left":
-            hands["l_"] = hand_features
+            hands["l_"] = video_features
         elif handedness == "Right":
-            hands["r_"] = hand_features
+            hands["r_"] = video_features
 
     # Merge the dictionaries and add prefixes
     merged_hands = {}
@@ -841,9 +843,9 @@ resolve_synth_func = partial(resolve_object, object_map=synth_funcs)
 
 
 hand_feature_funcs = {
-    "many_hand_features": many_hand_features,
+    "many_video_features": many_video_features,
 }
-resolve_hand_features = partial(resolve_object, object_map=hand_feature_funcs)
+resolve_video_features = partial(resolve_object, object_map=hand_feature_funcs)
 
 
 def print_plus_newline(x):
@@ -856,7 +858,7 @@ def print_plus_newline(x):
 # Main function
 # -------------------------------------------------------------------------------
 
-DFLT_HAND_FEATURES_NAME = "many_hand_features"
+DFLT_HAND_FEATURES_NAME = "many_video_features"
 
 DFLT_AUDIO_FEATURES_NAME = "two_hand_freq_and_volume_knobs"
 DFLT_SYNTH_FUNC_NAME = "two_voice_synth_func"
@@ -868,17 +870,17 @@ DFLT_SYNTH_FUNC_NAME = "theremin_synth"
 
 def main(
     *,
-    hand_features: Union[str, Callable] = DFLT_HAND_FEATURES_NAME,
+    video_features: Union[str, Callable] = DFLT_HAND_FEATURES_NAME,
     audio_features: Union[str, Callable] = DFLT_AUDIO_FEATURES_NAME,
     synth_func: Union[str, Callable] = DFLT_SYNTH_FUNC_NAME,
     draw_on_screen=draw_on_screen,
-    log_hand_features=print_plus_newline,
+    log_video_features=print_plus_newline,
     log_audio_features=print_plus_newline,
     save_recording='theremin_recording.wav',
 ):
     """Main function to run the hand gesture recognition with pyo theremin."""
 
-    hand_features = resolve_hand_features(hand_features)
+    video_features = resolve_video_features(video_features)
     audio_features = resolve_audio_features(audio_features)
     synth_func = resolve_synth_func(synth_func)
 
@@ -900,12 +902,12 @@ def main(
                 img, hand_detection = recognizer.find_hands(img)
 
                 # Compute the hand features
-                _hand_features = hand_features(hand_detection)
-                if log_hand_features:
-                    log_hand_features(_hand_features)
+                _video_features = video_features(hand_detection)
+                if log_video_features:
+                    log_video_features(_video_features)
 
                 # Compute sound features from hand landmarks
-                _audio_features = audio_features(_hand_features)
+                _audio_features = audio_features(_video_features)
                 if log_audio_features:
                     log_audio_features(_audio_features)
                 if _audio_features is not None:

@@ -2,7 +2,7 @@
 
 import cv2
 import numpy as np
-from typing import Union, Tuple, Dict, Optional, Callable
+from typing import Union, Tuple, Dict, Optional, Callable, Iterable
 
 # -------------------------------------------------------------------------------
 # Types
@@ -165,6 +165,7 @@ def draw_on_screen(
     *,
     draw_landmarks: bool = True,
     draw_sound_features: Optional[Callable] = display_sound_features_on_image,
+    draw_frequencies: Optional[Iterable] = None,
 ):
     """
     Draw hand landmarks, wrist lines, and sound features on the image.
@@ -176,6 +177,7 @@ def draw_on_screen(
         sound_features: Sound parameter values to display
         draw_landmarks: Whether to draw hand landmarks
         draw_sound_features: Function to draw sound features (or None to skip)
+        draw_frequencies: Iterable of frequencies to display as scale points on screen
 
     Returns:
         img: The image with visualizations added
@@ -192,5 +194,47 @@ def draw_on_screen(
     # Display sound features
     if draw_sound_features and sound_features:
         img = draw_sound_features(img, sound_features)
+
+    # Draw frequency scale points
+    if draw_frequencies:
+        h, w, _ = img.shape
+        vertical_center = h // 2
+        
+        # Calculate the range for mapping frequencies
+        from theramin.audio import DFLT_MIN_FREQ, DFLT_MAX_FREQ
+        min_freq = DFLT_MIN_FREQ
+        max_freq = DFLT_MAX_FREQ
+        
+        # Draw each frequency as a point
+        for freq in draw_frequencies:
+            # Map frequency to x-coordinate (0 to 1, then scaled to image width)
+            # Use the same mapping logic as in the audio functions
+            norm_x = (freq - min_freq) / (max_freq - min_freq)
+            x_pos = int(norm_x * w)
+            
+            # Skip if outside the image bounds
+            if 0 <= x_pos < w:
+                # Draw a visible point
+                point_size = 5
+                point_color = (0, 0, 255)  # Red in BGR
+                cv2.circle(img, (x_pos, vertical_center), point_size, point_color, -1)
+                
+                # Add small frequency label below the point
+                label = f"{int(freq)}"
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                font_scale = 0.4
+                text_color = (0, 200, 200)  # Yellow-green in BGR
+                thickness = 1
+                
+                # Get text size for better positioning
+                (text_width, text_height), _ = cv2.getTextSize(
+                    label, font, font_scale, thickness
+                )
+                
+                # Position text centered below the point
+                text_x = x_pos - text_width // 2
+                text_y = vertical_center + 20
+                
+                cv2.putText(img, label, (text_x, text_y), font, font_scale, text_color, thickness)
 
     return img

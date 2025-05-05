@@ -180,3 +180,47 @@ def annotate_with(annotation_type):
         return func
 
     return decorator
+
+
+import json
+from typing import Union, Iterator, Dict, Any
+from pathlib import Path
+
+
+def json_lines(string_or_path_to_string: Union[str, Path]) -> Iterator[Dict[str, Any]]:
+    """
+    Parse a file or string containing JSON-like dictionaries on each line.
+    Yields only the lines that can be deserialized to dictionaries.
+    
+    Parameters:
+        string_or_path_to_string: A file path or the content as a string
+        
+    Yields:
+        dict: Each successfully parsed dictionary
+        
+    """
+    # Determine if we're dealing with a file path or string content
+    try:
+        path = Path(string_or_path_to_string)
+        if path.exists():
+            content = path.read_text()
+        else:
+            content = string_or_path_to_string
+    except:
+        content = string_or_path_to_string
+    
+    # Process line by line
+    for line in content.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+            
+        try:
+            # Try to parse as JSON
+            data = json.loads(line)
+            # Only yield if it's a dictionary
+            if isinstance(data, dict):
+                yield data
+        except json.JSONDecodeError:
+            # Skip non-JSON lines
+            continue
