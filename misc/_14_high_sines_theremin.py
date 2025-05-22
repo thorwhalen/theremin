@@ -12,10 +12,10 @@ Controls:
 Alternative control schemes are available by changing the audio_features parameter.
 """
 
-from theramin.script_utils import run_theramin, print_plus_newline
+from theremin.script_utils import run_theremin, print_plus_newline
 
 if __name__ == "__main__":
-    run_theramin(
+    run_theremin(
         # Use the intro_high_sines synth with our custom knob function
         synth_func="intro_high_sines",
         audio_features="high_sines_theremin_knobs",  # <-- Default mapping

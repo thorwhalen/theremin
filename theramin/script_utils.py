@@ -6,9 +6,9 @@ from typing import Union, Callable, Dict, Optional, Any
 from functools import partial
 import json
 
-from theramin.video_features import HandGestureRecognizer, hand_feature_funcs
-from theramin.audio import synth_funcs, audio_feature_funcs
-from theramin.display import draw_on_screen as DFLT_DRAW_ON_SCREEN
+from theremin.video_features import HandGestureRecognizer, hand_feature_funcs
+from theremin.audio import synth_funcs, audio_feature_funcs
+from theremin.display import draw_on_screen as DFLT_DRAW_ON_SCREEN
 from hum.pyo_util import Synth
 
 # -------------------------------------------------------------------------------
@@ -196,7 +196,7 @@ BREAK_KEYS = set([ESCAPE_KEY_ASCII])
 
 
 from hum.util import scale_snapper, scale_frequencies, return_none as do_nothing
-from theramin.audio import DFLT_MIN_FREQ, DFLT_MAX_FREQ
+from theremin.audio import DFLT_MIN_FREQ, DFLT_MAX_FREQ
 
 scale = (0, 2, 4, 5, 7, 9, 11)
 freq_trans = scale_snapper(scale=scale)
@@ -207,7 +207,7 @@ _scale_frequencies = [
 _DFLT_DRAW_ON_SCREEN = partial(DFLT_DRAW_ON_SCREEN, draw_frequencies=_scale_frequencies)
 
 
-def run_theramin(
+def run_theremin(
     *,
     video_features: Union[str, Callable] = DFLT_VIDEO_FEATURES,
     audio_features: Union[str, Callable] = DFLT_AUDIO_FEATURES,
@@ -341,7 +341,7 @@ def run_theramin(
             cv2.destroyAllWindows()
 
 
-def theramin_cli(
+def theremin_cli(
     # Core components
     video_features: str = "many_video_features",
     audio_features: str = "theremin_knobs",
@@ -376,8 +376,8 @@ def theramin_cli(
         list_video_features: List available hand feature extraction functions and exit
     """
     # Import here to avoid loading everything if just listing components
-    from theramin.audio import synth_funcs, audio_feature_funcs
-    from theramin.video_features import hand_feature_funcs
+    from theremin.audio import synth_funcs, audio_feature_funcs
+    from theremin.video_features import hand_feature_funcs
 
     # Handle listing available components
     if list_synths:
@@ -407,7 +407,7 @@ def theramin_cli(
     log_audio_features_callback = print_json_if_possible if log_audio_features else None
 
     # Run the theremin application
-    run_theramin(
+    run_theremin(
         video_features=video_features,
         audio_features=audio_features,
         synth_func=synth_func,

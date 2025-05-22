@@ -199,42 +199,51 @@ def draw_on_screen(
     if draw_frequencies:
         h, w, _ = img.shape
         vertical_center = h // 2
-        
+
         # Calculate the range for mapping frequencies
-        from theramin.audio import DFLT_MIN_FREQ, DFLT_MAX_FREQ
+        from theremin.audio import DFLT_MIN_FREQ, DFLT_MAX_FREQ
+
         min_freq = DFLT_MIN_FREQ
         max_freq = DFLT_MAX_FREQ
-        
+
         # Draw each frequency as a point
         for freq in draw_frequencies:
             # Map frequency to x-coordinate (0 to 1, then scaled to image width)
             # Use the same mapping logic as in the audio functions
             norm_x = (freq - min_freq) / (max_freq - min_freq)
             x_pos = int(norm_x * w)
-            
+
             # Skip if outside the image bounds
             if 0 <= x_pos < w:
                 # Draw a visible point
                 point_size = 5
                 point_color = (0, 0, 255)  # Red in BGR
                 cv2.circle(img, (x_pos, vertical_center), point_size, point_color, -1)
-                
+
                 # Add small frequency label below the point
                 label = f"{int(freq)}"
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 font_scale = 0.4
                 text_color = (0, 200, 200)  # Yellow-green in BGR
                 thickness = 1
-                
+
                 # Get text size for better positioning
                 (text_width, text_height), _ = cv2.getTextSize(
                     label, font, font_scale, thickness
                 )
-                
+
                 # Position text centered below the point
                 text_x = x_pos - text_width // 2
                 text_y = vertical_center + 20
-                
-                cv2.putText(img, label, (text_x, text_y), font, font_scale, text_color, thickness)
+
+                cv2.putText(
+                    img,
+                    label,
+                    (text_x, text_y),
+                    font,
+                    font_scale,
+                    text_color,
+                    thickness,
+                )
 
     return img

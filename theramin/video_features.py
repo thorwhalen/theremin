@@ -7,7 +7,7 @@ import math
 from typing import Dict, Any, Optional, Set, Tuple, Union, List
 from collections import namedtuple
 from types import MappingProxyType
-from theramin.util import data_files
+from theremin.util import data_files
 
 # Path to the gesture recognizer model
 gesture_recognizer_path = str(data_files / 'gesture_recognizer.task')

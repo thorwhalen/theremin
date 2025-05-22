@@ -10,7 +10,7 @@ This version uses the refactored modular architecture with:
 For a command-line interface, see the theremin_cli.py script.
 """
 
-from theramin.script_utils import run_theramin, print_plus_newline
+from theremin.script_utils import run_theremin, print_plus_newline
 
 # -------------------------------------------------------------------------------
 # Main script
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     # - video_features: "many_video_features"
     # - audio_features: "theremin_knobs"
     # - synth_func: "theremin_synth"
-    run_theramin(
+    run_theremin(
         # Optional: customize the components
         # video_features="many_video_features",
         audio_features="theremin_knobs",

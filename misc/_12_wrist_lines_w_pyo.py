@@ -6,7 +6,7 @@ from typing import Optional, Dict, Union, Any, Callable
 
 from i2 import partialx, Sig as Signature
 
-from theramin.util import data_files, format_dict_values
+from theremin.util import data_files, format_dict_values
 from hum.pyo_util import Synth
 
 # Path to the gesture recognizer model

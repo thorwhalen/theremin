@@ -1,15 +1,16 @@
-"""Utils for theramin."""
+"""Utils for theremin."""
 
 from functools import partial
 import time
 from importlib.resources import files
 
-pkg_name = 'theramin'
+pkg_name = 'theremin'
 data_files = files(pkg_name) / 'data'
 
 
 # --------------------------------------------------------------------------------------
 # Placeholders
+
 
 def return_none(*args, **kwargs):
     """
@@ -18,9 +19,10 @@ def return_none(*args, **kwargs):
     """
     return None
 
+
 class AllZerosDict(dict):
     """A dict that only returns 0.0 for all keys.
-    
+
     >>> all_zeros_dict = AllZerosDict()
     >>> all_zeros_dict['anything']
     0.0
@@ -63,7 +65,6 @@ class HandLandmarkIndex:
     PINKY_PIP = 18
     PINKY_DIP = 19
     PINKY_TIP = 20
-
 
 
 # --------------------------------------------------------------------------------------
@@ -191,13 +192,13 @@ def json_lines(string_or_path_to_string: Union[str, Path]) -> Iterator[Dict[str,
     """
     Parse a file or string containing JSON-like dictionaries on each line.
     Yields only the lines that can be deserialized to dictionaries.
-    
+
     Parameters:
         string_or_path_to_string: A file path or the content as a string
-        
+
     Yields:
         dict: Each successfully parsed dictionary
-        
+
     """
     # Determine if we're dealing with a file path or string content
     try:
@@ -208,13 +209,13 @@ def json_lines(string_or_path_to_string: Union[str, Path]) -> Iterator[Dict[str,
             content = string_or_path_to_string
     except:
         content = string_or_path_to_string
-    
+
     # Process line by line
     for line in content.splitlines():
         line = line.strip()
         if not line:
             continue
-            
+
         try:
             # Try to parse as JSON
             data = json.loads(line)

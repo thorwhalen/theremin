@@ -3,10 +3,11 @@ import mediapipe as mp
 import numpy as np
 import pyaudio
 import time
-from theramin.util import data_files
+from theremin.util import data_files
 
 # Path to the gesture recognizer model
 gesture_recognizer_path = str(data_files / 'gesture_recognizer.task')
+
 
 class HandGestureRecognizer:
     """
@@ -70,7 +71,7 @@ class HandGestureRecognizer:
             channels=1,
             rate=self.fs,
             output=True,
-            stream_callback=self.audio_callback
+            stream_callback=self.audio_callback,
         )
         self.audio_bytes = b""
 
@@ -79,7 +80,9 @@ class HandGestureRecognizer:
         PyAudio callback to continuously generate sound.
         """
         t = (np.arange(frame_count) + self.fs * time_info['current_time']) / self.fs
-        wave = self.current_vol * np.sin(2 * np.pi * self.current_freq * t).astype(np.float32)
+        wave = self.current_vol * np.sin(2 * np.pi * self.current_freq * t).astype(
+            np.float32
+        )
         wave_bytes = wave.tobytes()
         self.audio_bytes += wave_bytes
         return (wave_bytes, pyaudio.paContinue)
@@ -150,6 +153,7 @@ class HandGestureRecognizer:
         else:
             self.current_vol = 0  # Set volume to 0 if no hands are detected
 
+
 def main():
     cap = cv2.VideoCapture(0)
     recognizer = HandGestureRecognizer()
@@ -171,13 +175,15 @@ def main():
                 break
     finally:
         from pathlib import Path
-        Path("theramin_audio.pcm").write_bytes(recognizer.audio_bytes)
+
+        Path("theremin_audio.pcm").write_bytes(recognizer.audio_bytes)
 
         cap.release()
         cv2.destroyAllWindows()
         recognizer.stream.stop_stream()
         recognizer.stream.close()
         recognizer.p.terminate()
+
 
 if __name__ == "__main__":
     main()

@@ -324,7 +324,7 @@ Range = Tuple[float, float]
 #     Namely, easy to specify linear (and more) from hand feature ranges to knob ranges.
 
 # video feature ranges -------------------------------
-from theramin.video_features import video_feature_ranges
+from theremin.video_features import video_feature_ranges
 
 # audio feature ranges -------------------------------
 audio_feature_ranges = {

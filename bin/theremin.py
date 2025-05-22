@@ -2,7 +2,7 @@
 """
 Command-line interface for the theremin application.
 
-This script provides a CLI wrapper around the run_theramin function, allowing all
+This script provides a CLI wrapper around the run_theremin function, allowing all
 parameters to be controlled via command-line arguments.
 
 Examples:
@@ -23,8 +23,8 @@ Examples:
 """
 
 import argh
-from theramin.script_utils import theramin_cli
+from theremin.script_utils import theremin_cli
 
 
 if __name__ == "__main__":
-    argh.dispatch_command(theramin_cli)
+    argh.dispatch_command(theremin_cli)

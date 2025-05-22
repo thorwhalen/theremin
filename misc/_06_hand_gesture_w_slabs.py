@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 import numpy as np
-from theramin.util import data_files
+from theremin.util import data_files
 
 # Path to the gesture recognizer model
 gesture_recognizer_path = str(data_files / 'gesture_recognizer.task')
@@ -77,7 +77,7 @@ class HandGestureRecognizer:
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         # Process the image and find hands
         self.results = self.hands.process(img_rgb)
-        
+
         # Draw hand landmarks if found
         if self.results.multi_hand_landmarks:
             for hand_landmarks in self.results.multi_hand_landmarks:
@@ -135,7 +135,6 @@ class HandGestureRecognizer:
 #                         img, hand_landmarks, self.mp_hands.HAND_CONNECTIONS
 #                     )
 #         return img
-    
 
 
 from meshed import Slabs

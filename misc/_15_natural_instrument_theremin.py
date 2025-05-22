@@ -16,7 +16,11 @@ Available instruments:
 - 'flute': Softer, airier woodwind-like sound
 """
 
-from theramin.script_utils import run_theramin, print_plus_newline, print_json_if_possible
+from theremin.script_utils import (
+    run_theremin,
+    print_plus_newline,
+    print_json_if_possible,
+)
 
 # Change this to 'violin', 'organ', or 'flute' to switch instruments
 INSTRUMENT = 'violin'
@@ -38,16 +42,19 @@ def _specific_video_features_log(x):
     print("Hand angles:", x['hand_angles'])
     print("Hand distances:", x['hand_distances'])
     print("Hand velocities:", x['hand_velocities'])
-    
 
-synth_func, audio_features = "natural_sounding_synth", "theremin_knobs" 
-synth_func, audio_features = "natural_sounding_synth_lr", "two_hand_freq_and_volume_knobs" 
+
+synth_func, audio_features = "natural_sounding_synth", "theremin_knobs"
+synth_func, audio_features = (
+    "natural_sounding_synth_lr",
+    "two_hand_freq_and_volume_knobs",
+)
 synth_func, audio_features = "complex_fm_synth", "complex_fm_synth_knobs"
 
 # synth_func, audio_features = 'two_hand_freq_and_volume_knobs'
 
 if __name__ == "__main__":
-    run_theramin(
+    run_theremin(
         # Use the natural_sounding_synth with our settings
         synth_func=synth_func,
         # Use default theremin control scheme (right hand=pitch, left hand=volume)

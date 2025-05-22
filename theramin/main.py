@@ -5,7 +5,7 @@ import mediapipe as mp
 import numpy as np
 import pyaudio
 import time
-from theramin.util import data_files
+from theremin.util import data_files
 
 # Path to the gesture recognizer model
 gesture_recognizer_path = str(data_files / 'gesture_recognizer.task')
@@ -178,7 +178,7 @@ def launch_app():
     finally:
         from pathlib import Path
 
-        Path("theramin_audio.pcm").write_bytes(recognizer.audio_bytes)
+        Path("theremin_audio.pcm").write_bytes(recognizer.audio_bytes)
 
         cap.release()
         cv2.destroyAllWindows()
