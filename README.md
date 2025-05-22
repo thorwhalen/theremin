@@ -17,6 +17,17 @@ The complexity of these mappings introduces a learning curve, but also vast crea
 
 Consider the extremes: on one end, AI allows someone with no musical training to generate a song by clicking a button or describing its style, offering high quality but limited personal expressivity. On the other, acoustic instruments demand years of practice to unlock their full potential, rewarding players with profound expressive control. The Theramin Project envisions a platform where users can navigate this spectrum, creating instruments that adapt to their abilities while encouraging growth. By providing intuitive tools to map movement to sound, the project aims to democratize musical expression, uncover novel modes of creativity, and inspire a new generation of digital instruments. The Theramin Project is a bold step toward this future, inviting exploration of the vast possibilities at the intersection of movement, sound, and technology.
 
+## Work in Progress
+
+The objective of this project is to enable users to easily make mappings between sensors and sound, 
+in such a way that is advantageous for whatever their goal is: 
+playing music, learning how to play music, making some sound producing installation, sonifying some data stream, etc.
+
+Note that here were's starting with video and keyboard as the main "sensors", but the plan is to generalize this to all possible streams of input control. 
+One of the main targets being controlling via sound itself. 
+That is, giving our sound producing system the ability to hear as well. 
+This, we hope, will open up many interesting abilities when paired with AI music gen, both for education and for improvisation.
+
 
 ## A few links:
 
