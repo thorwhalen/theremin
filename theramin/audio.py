@@ -637,10 +637,10 @@ def complex_fm_synth_knobs(video_features) -> Dict[str, float]:
         dist = min(video_features['r_thumb_index_distance'], 0.2) / 0.2
         knobs['distortion'] = dist
 
-    # # Left openness for reverb mix
-    # if 'l_openness' in video_features:
-    #     openness = np.clip(video_features['l_openness'], 0.0, 1.0)
-    #     knobs['reverb_mix'] = openness
+    # Left openness for reverb mix
+    if 'l_openness' in video_features:
+        openness = np.clip(video_features['l_openness'], 0.0, 1.0)
+        knobs['reverb_mix'] = float(openness)
 
     return knobs
 
