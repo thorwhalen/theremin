@@ -15,7 +15,11 @@ Musical instruments are fundamentally devices that translate physical interactio
 
 The complexity of these mappings introduces a learning curve, but also vast creative potential. A key advantage of the project’s flexible mapping approach is its adaptability: complex mappings can be simplified for beginners to quickly express themselves, with the option to gradually increase complexity as their skills develop. This scalability bridges the spectrum of musical expression, from effortless AI-generated music—where anyone can create high-quality songs with minimal input—to the nuanced, skill-intensive artistry of acoustic instruments. While AI-driven tools risk flooding the music space with low-effort content, the theremin Project seeks to explore the middle ground, fostering tools that balance accessibility with expressive depth.
 
-Consider the extremes: on one end, AI allows someone with no musical training to generate a song by clicking a button or describing its style, offering high quality but limited personal expressivity. On the other, acoustic instruments demand years of practice to unlock their full potential, rewarding players with profound expressive control. The theremin Project envisions a platform where users can navigate this spectrum, creating instruments that adapt to their abilities while encouraging growth. By providing intuitive tools to map movement to sound, the project aims to democratize musical expression, uncover novel modes of creativity, and inspire a new generation of digital instruments. The theremin Project is a bold step toward this future, inviting exploration of the vast possibilities at the intersection of movement, sound, and technology.
+Consider the extremes: on one end, AI allows someone with no musical training to generate a song by clicking a button or describing its style, offering high quality but limited personal expressivity. On the other, acoustic instruments demand years of practice to unlock their full potential, rewarding players with profound expressive control. The theremin Project envisions a platform where users can navigate this spectrum, creating instruments that adapt to their abilities while encouraging growth. By providing intuitive tools to map movement to sound, the project aims to democratize musical expression, uncover novel modes of creativity, and inspire a new generation of digital instruments. 
+
+Along with advancements in Music AI, we should be able to explore a large range of possibilities of expressive control. One point on this spectrum would be to take an existing piece of music, and direct many aspects of it's rendition via visual cues, like a conductor (which was one of the candidate names for this project, along with maestro, director, and orchestrator -- all already taken on pypi, the repository of all python packages).
+
+The theremin project is a bold step toward this future, inviting exploration of the vast possibilities at the intersection of movement, sound, and technology.
 
 ## Work in Progress
 
@@ -39,8 +43,7 @@ Someone might complain if I don't mention Led's Zepplin's Jimmy Page... [playing
 
 # Old "about"
 
-The objective of this project is to make "instruments" that work like a theremin, 
-that is, whereby the features of the sounds produced are controlled by the position of the left and right hand. 
+The objective of this project is to make "instruments" that work like a theremin, that is, whereby the features of the sounds produced are controlled by the position of the left and right hand. 
 
 That, but generalized. 
 A theremin is an analog device that whose sound is parametrized by two features only:
