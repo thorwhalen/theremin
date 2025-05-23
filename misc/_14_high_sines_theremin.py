@@ -17,8 +17,8 @@ from theremin.script_utils import run_theremin, print_plus_newline
 if __name__ == "__main__":
     run_theremin(
         # Use the intro_high_sines synth with our custom knob function
-        synth_func="intro_high_sines",
-        audio_features="high_sines_theremin_knobs",  # <-- Default mapping
+        synth="intro_high_sines",
+        knobs="high_sines_theremin_knobs",  # <-- Default mapping
         # Uncomment one of these to try alternative mappings:
         # audio_features="high_sines_pinch_theremin_knobs",  # Uses pinch gesture
         # audio_features="high_sines_openness_theremin_knobs",  # Uses hand openness
@@ -26,7 +26,7 @@ if __name__ == "__main__":
         # log_video_features=print_plus_newline,
         # log_audio_features=print_plus_newline,
         # Save the recording to a custom file:
-        save_recording="high_sines_theremin_recording.wav",
+        record_to_file="high_sines_theremin_recording.wav",
         # Custom window title
         window_name="High Sines Theremin",
     )

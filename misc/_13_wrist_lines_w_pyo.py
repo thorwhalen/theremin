@@ -24,13 +24,13 @@ if __name__ == "__main__":
     run_theremin(
         # Optional: customize the components
         # video_features="many_video_features",
-        audio_features="theremin_knobs",
-        synth_func="theremin_synth",
+        knobs="theremin_knobs",
+        synth="theremin_synth",
         # Logging options
         log_video_features=None,  # Set to print_plus_newline to see hand features
         log_audio_features=None,  # Set to print_plus_newline to see audio features
         # Recording options
-        save_recording="theremin_recording.wav",
+        record_to_file="theremin_recording.wav",
         # Display options
         window_name="Theremin with Hand Tracking",
     )

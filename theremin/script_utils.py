@@ -8,7 +8,7 @@ import json
 
 from i2 import Sig
 from theremin.video_features import HandGestureRecognizer, hand_feature_funcs
-from theremin.audio import synth_funcs, audio_feature_funcs, audio_pipelines
+from theremin.audio import synths, knobs, pipelines
 from theremin.display import draw_on_screen as DFLT_DRAW_ON_SCREEN
 from hum.pyo_util import Synth
 
@@ -26,21 +26,21 @@ from cw.resolution import parse_ast_spec
 
 resolve_video_features = partial(resolve_to_function, get_func=hand_feature_funcs)
 
-resolve_audio_pipeline = partial(resolve_to_function, get_func=audio_pipelines)
-resolve_audio_features = partial(resolve_to_function, get_func=audio_feature_funcs)
-resolve_synth_func = partial(resolve_to_function, get_func=synth_funcs)
+resolve_pipeline = partial(resolve_to_function, get_func=pipelines)
+resolve_knobs = partial(resolve_to_function, get_func=knobs)
+resolve_synth_func = partial(resolve_to_function, get_func=synths)
 
-# resolve_audio_pipeline_func = partial(
+# resolve_pipeline_func = partial(
 #     resolve_to_function,
 #     get_func={'audio_pipe': audio_pipe},
 # )
 
 
 # from theremin.audio import audio_pipe
-# def resolve_audio_pipeline(pipeline_key):
-#     func_spec = audio_pipelines.get(pipeline_key)
+# def resolve_pipeline(pipeline_key):
+#     func_spec = pipelines.get(pipeline_key)
 #     if func_spec is None:
-#         raise ValueError(f"Audio pipeline {pipeline_key} not found in audio_pipelines")
+#         raise ValueError(f"Audio pipeline {pipeline_key} not found in pipelines")
 #     func_name, func_kwargs = parse_ast_spec(func_spec)
 #     if func_name != "audio_pipe":
 #         raise ValueError(f"Should be 'audio_pipe', was {func_name}: In {func_spec}")
@@ -51,8 +51,8 @@ resolve_synth_func = partial(resolve_to_function, get_func=synth_funcs)
 #     return audio_pipe(**func_kwargs)
 
 
-# resolve_audio_pipeline = partial(
-#     resolve_to_function, get_func=lambda x: resolve_audio_pipeline_func
+# resolve_pipeline = partial(
+#     resolve_to_function, get_func=lambda x: resolve_pipeline_func
 # )
 
 
@@ -166,9 +166,9 @@ def read_camera(cap: cv2.VideoCapture) -> Any:
 
 # Default settings
 from theremin.audio import (
-    DFLT_AUDIO_FEATURES,
-    DFLT_SYNTH_FUNC_NAME,
-    DFLT_AUDIO_PIPELINE,
+    KNOBS,
+    DFLT_SYNTH,
+    DFLT_PIPELINE,
 )
 
 DFLT_VIDEO_FEATURES = "many_video_features"
@@ -194,12 +194,12 @@ _DFLT_DRAW_ON_SCREEN = partial(DFLT_DRAW_ON_SCREEN, draw_frequencies=_scale_freq
 def run_theremin(
     *,
     video_features: Union[str, Callable] = DFLT_VIDEO_FEATURES,
-    audio_pipeline: Union[str, Callable] = DFLT_AUDIO_PIPELINE,  # DFLT_AUDIO_PIPELINE,
-    audio_features: Optional[Union[str, Callable]] = None, #DFLT_AUDIO_FEATURES,
-    synth_func: Optional[Union[str, Callable]] = None, #DFLT_SYNTH_FUNC_NAME,
+    pipeline: Union[str, Callable] = DFLT_PIPELINE,  # DFLT_PIPELINE,
+    knobs: Optional[Union[str, Callable]] = None,  # DFLT_AUDIO_FEATURES,
+    synth: Optional[Union[str, Callable]] = None,  # DFLT_SYNTH_FUNC_NAME,
     log_video_features: Optional[Callable] = None,
-    log_audio_features: Optional[Callable] = None,
-    save_recording: Union[str, bool] = 'theremin_recording.wav',
+    log_knobs: Optional[Callable] = None,
+    record_to_file: Union[str, bool] = 'theremin_recording.wav',
     window_name: str = 'Hand Gesture Recognition with Theremin',
     draw_on_screen: Optional[Callable] = _DFLT_DRAW_ON_SCREEN,
     only_keep_new_freqs: bool = True,
@@ -212,44 +212,39 @@ def run_theremin(
         audio_features: Audio feature mapping function or name
         synth_func: Synthesizer function or name
         log_video_features: Function to log video features (or None to disable)
-        log_audio_features: Function to log audio features (or None to disable)
-        save_recording: Filename to save recording, True for default name, or False to disable
+        log_knobs: Function to log audio features (or None to disable)
+        record_to_file: Filename to save recording, True for default name, or False to disable
         window_name: Title for the display window
     """
     # Resolve functions from names if needed
     video_features = resolve_video_features(video_features)
-    if not audio_pipeline:
-        audio_features = resolve_audio_features(audio_features)
-        synth_func = resolve_synth_func(synth_func)
+    if not pipeline:
+        knobs = resolve_knobs(knobs)
+        synth = resolve_synth_func(synth)
     else:
-        audio_pipeline_getter = resolve_audio_pipeline(audio_pipeline)
-        pipeline_components = audio_pipeline_getter()
-        audio_features = pipeline_components.get(
-            "knobs", audio_features or DFLT_AUDIO_FEATURES
-        )
-        synth_func = pipeline_components.get(
-            "synth", synth_func or DFLT_SYNTH_FUNC_NAME
-        )
-        audio_features = resolve_audio_features(audio_features)
-        synth_func = resolve_synth_func(synth_func)
+        pipeline_getter = resolve_pipeline(pipeline)
+        pipeline_components = pipeline_getter()
+        knobs = pipeline_components.get("knobs", knobs or KNOBS)
+        synth = pipeline_components.get("synth", synth or DFLT_SYNTH)
+        knobs = resolve_knobs(knobs)
+        synth = resolve_synth_func(synth)
 
-    print(f"{audio_features=}, {synth_func=}")
+    print(f"{knobs=}, {synth=}")
 
     log_video_features = log_video_features or do_nothing
-    log_audio_features = log_audio_features or do_nothing
+    log_knobs = log_knobs or do_nothing
 
     # Initialize video capture
     cap = cv2.VideoCapture(0)
     recognizer = HandGestureRecognizer()
 
     # Initialize the pyo synth
-    if not isinstance(synth_func, Synth):
-        synth = Synth(synth_func, nchnls=2)
-        # synth = Synth(synth_func, nchnls=2, value_trans={'freq': snap_to_c_major})
-        # print(f"\n-----> Snapping to C major scale\n\n")
+    if not isinstance(synth, Synth):
+        synth_obj = Synth(synth, nchnls=2)
+        synth_obj.__name__ = synth.__name__
     else:
-        synth = synth_func
-    print(f"\nUsing synth function: {synth_func.__name__}: {list(synth.knobs)}\n")
+        synth_obj = synth
+    print(f"\nUsing synth function: {synth.__name__}: {list(synth_obj.knobs)}\n")
 
     from collections import deque
     from types import SimpleNamespace
@@ -261,7 +256,7 @@ def run_theremin(
         last_r_freq=None,
     )
 
-    with synth:
+    with synth_obj:
         try:
             while cap.isOpened():
                 try:
@@ -281,9 +276,9 @@ def run_theremin(
                     log_video_features(_video_features)
 
                     # Compute sound features from hand landmarks
-                    _audio_features = audio_features(_video_features)
+                    _audio_features = knobs(_video_features)
 
-                    # Update synth parameters if we have features
+                    # Update synth_obj parameters if we have features
                     if _audio_features:
 
                         # TODO: Pack into tool:
@@ -294,9 +289,9 @@ def run_theremin(
                                 )
                             )
 
-                        synth(**_audio_features)
+                        synth_obj(**_audio_features)
 
-                    log_audio_features(_audio_features)
+                    log_knobs(_audio_features)
 
                     # Draw visualization
                     if draw_on_screen:
@@ -312,21 +307,21 @@ def run_theremin(
 
         finally:
             # Save the recording
-            synth.stop_recording()
+            synth_obj.stop_recording()
 
-            recording = synth.get_recording()
+            recording = synth_obj.get_recording()
 
             # Print recording statistics
             print(f"\n---> Recorded {len(recording)} control events\n")
 
             # Render the recording to a WAV file?
-            if save_recording:
+            if record_to_file:
                 try:
-                    if isinstance(save_recording, str):
-                        output_path = save_recording
+                    if isinstance(record_to_file, str):
+                        output_path = record_to_file
                     else:
                         output_path = "theremin_recording.wav"
-                    synth.render_events(output_filepath=output_path)
+                    synth_obj.render_events(output_filepath=output_path)
                     print(f"Saved audio recording to {output_path}")
                 except Exception as e:
                     print(f"Warning: Failed to render events: {e}")
@@ -336,81 +331,94 @@ def run_theremin(
             cv2.destroyAllWindows()
 
 
+def list_components(param_value, components_dict, description, component_describer=Sig):
+    """
+    List available components of a specific type if the parameter value is 'list'.
+
+    Args:
+        param_value: The value of the parameter to check
+        components_dict: Dictionary of available components
+        description: Description of the components being listed
+
+    Returns:
+        bool: True if components were listed (and calling function should return),
+             False if no listing was performed
+    """
+    if isinstance(param_value, str) and param_value == 'list':
+        print(f"Available {description}:")
+        for name in sorted(components_dict.keys()):
+            func = components_dict[name]
+            print(f"  - {name}{component_describer(func)}")
+        return True
+    return False
+
+
+# TODO: get rid of the need of both record_to_file and no_recording
 def theremin_cli(
     # Core components
+    pipeline: str = "theremin",
     video_features: str = "many_video_features",
-    audio_features: str = "theremin_knobs",
-    synth_func: str = "theremin_synth",
+    knobs: str = "theremin_knobs",
+    synth: str = "theremin_synth",
     # Logging options
     log_video_features: bool = False,
-    log_audio_features: bool = False,
+    log_knobs: bool = False,
     # Recording options
-    save_recording: str = "theremin_recording.wav",
+    record_to_file: str = "theremin_recording.wav",
     no_recording: bool = False,
     # Display options
     window_name: str = "Theremin with Hand Tracking",
-    # List available components
-    list_synths: bool = False,
-    list_audio_features: bool = False,
-    list_video_features: bool = False,
 ):
     """
     Run the theremin application with the specified parameters.
 
     Args:
-        video_features: Name of the hand feature extraction function
-        audio_features: Name of the audio feature mapping function
-        synth_func: Name of the synthesizer function
+        pipeline: Name of the audio pipeline (if value is list, will list available options)
+        video_features: Name of the hand feature extraction function (if value is list, will list available options)
+        knobs: Name of the audio feature mapping function (if value is list, will list available options)
+        synth: Name of the synthesizer function (if value is list, will list available options)
+
         log_video_features: Whether to log hand features
-        log_audio_features: Whether to log audio features
-        save_recording: Filename to save recording (if no_recording is False)
+        log_knobs: Whether to log audio features
+        record_to_file: Filename to save recording (if no_recording is False)
         no_recording: Disable recording
         window_name: Title for the display window
-        list_synths: List available synthesizer functions and exit
-        list_audio_features: List available audio feature mapping functions and exit
-        list_video_features: List available hand feature extraction functions and exit
     """
     # Import here to avoid loading everything if just listing components
-    from theremin.audio import synth_funcs, audio_feature_funcs
+    from theremin.audio import synths, knobs
     from theremin.video_features import hand_feature_funcs
 
     # Handle listing available components
-    if list_synths:
-        print("Available synthesizer functions:")
-        for name in sorted(synth_funcs.keys()):
-            func = synth_funcs[name]
-            print(f"  - {name}{Sig(func)}")
+    if list_components(pipeline, pipelines, "pipelines"):
         return
 
-    if list_audio_features:
-        print("Available audio feature mapping functions:")
-        for name in sorted(audio_feature_funcs.keys()):
-            func = audio_feature_funcs[name]
-            print(f"  - {name}{Sig(func)}")
+    if list_components(synth, synths, "synthesizer functions"):
         return
 
-    if list_video_features:
-        print("Available hand feature extraction functions:")
-        for name in sorted(hand_feature_funcs.keys()):
-            func = hand_feature_funcs[name]
-            print(f"  - {name}{Sig(func)}")
+    if list_components(knobs, knobs, "audio feature mapping functions"):
+        return
+
+    if list_components(
+        video_features, hand_feature_funcs, "hand feature extraction functions"
+    ):
         return
 
     # Handle recording options
     if no_recording:
-        save_recording = False
+        record_to_file = False
 
     # Set up logging callbacks
     log_video_features_callback = print_json_if_possible if log_video_features else None
-    log_audio_features_callback = print_json_if_possible if log_audio_features else None
+    log_knobs_callback = print_json_if_possible if log_knobs else None
 
     # Run the theremin application
     run_theremin(
+        pipeline=pipeline,
         video_features=video_features,
-        audio_features=audio_features,
-        synth_func=synth_func,
+        knobs=knobs,
+        synth=synth,
         log_video_features=log_video_features_callback,
-        log_audio_features=log_audio_features_callback,
-        save_recording=save_recording,
+        log_knobs=log_knobs_callback,
+        record_to_file=record_to_file,
         window_name=window_name,
     )

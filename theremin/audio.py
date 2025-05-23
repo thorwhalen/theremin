@@ -8,7 +8,7 @@ from hum import Synth
 from hum.pyo_util import add_default_dials, add_default_settings
 from pyo import *
 
-# See DFLT_SYNTH_FUNC_NAME and DFLT_AUDIO_FEATURES definitions at the end of this module
+# See DFLT_SYNTH_FUNC_NAME and DFLT_KNOBS definitions at the end of this module
 
 
 # -------------------------------------------------------------------------------
@@ -503,7 +503,7 @@ def _calculate_freq_from_wrist(wrist, min_freq, max_freq):
     return float(min_freq + wrist[0] * (max_freq - min_freq))
 
 
-def _calculate_vol_from_wrist(wrist_position):
+def _calculate_vol_from_wrist(wrist):
     """
     Calculate volume based on wrist position.
 
@@ -555,11 +555,6 @@ def two_hand_freq_and_volume_knobs(
     if video_features:
         # get range mappers
         freq_mapper = range_mapper('wrist_position_x', 'freq')
-        # freq_mapper = range_mapper(
-        #     'wrist_position_x',
-        #     'freq',
-        #     egress=lambda x: min_freq * ((max_freq / min_freq) ** x)
-        # )
         volume_mapper = range_mapper(
             'wrist_position_y', 'volume', ingress=lambda x: 1 - x
         )
@@ -592,6 +587,15 @@ def two_hand_freq_and_volume_knobs(
             knobs['vibrato_depth'] = tid_vibrato_depth_mapper(
                 video_features['r_thumb_index_distance']
             )
+
+    # Apply frequency transformation if provided
+    if freq_trans:
+        knobs['l_freq'] = freq_trans(knobs['l_freq'])
+        knobs['r_freq'] = freq_trans(knobs['r_freq'])
+
+    # Filter to include only parameters the synth function can use
+    synth_params = {'l_freq', 'l_volume', 'r_freq', 'r_volume'}
+    return {k: float(v) for k, v in knobs.items() if k in synth_params}
 
 
 def rhythmic_fm_synth_knobs(video_features) -> Dict[str, float]:
@@ -959,13 +963,13 @@ def filter_unchanged_frequencies(_audio_features, previous_data):
 # Module exports
 # -------------------------------------------------------------------------------
 
-DFLT_SYNTH_FUNC_NAME = "theremin_synth"
-DFLT_AUDIO_FEATURES = "two_hand_freq_and_volume_knobs"
-DFLT_AUDIO_PIPELINE = "theremin"
+DFLT_SYNTH = "theremin_synth"
+KNOBS = "two_hand_freq_and_volume_knobs"
+DFLT_PIPELINE = "theremin"
 
 # Dictionary of available synth functions
-synth_funcs = {
-    "default": locals()[DFLT_SYNTH_FUNC_NAME],
+synths = {
+    "default": locals()[DFLT_SYNTH],
     "theremin_synth": theremin_synth,
     "natural_sounding_synth": natural_sounding_synth,
     "natural_sounding_synth_lr": natural_sounding_synth_lr,
@@ -983,8 +987,8 @@ synth_funcs = {
 }
 
 # Dictionary of available audio feature extractors
-audio_feature_funcs = {
-    "default": locals()[DFLT_AUDIO_FEATURES],
+knobs = {
+    "default": locals()[KNOBS],
     "two_hand_freq_and_volume_knobs": two_hand_freq_and_volume_knobs,
     "theremin_knobs": theremin_knobs,
     "rhythmic_fm_synth_knobs": rhythmic_fm_synth_knobs,
@@ -995,7 +999,11 @@ audio_feature_funcs = {
 
 
 # TODO: Make this pipeline definition and handling less of a mess!
-_audio_pipelines = {
+_pipelines = {
+    "theremin": {
+        "synth": "theremin_synth",
+        "knobs": "theremin_knobs",
+    },
     "rhythmic_fm": {
         "synth": "rhythmic_fm_synth",
         "knobs": "rhythmic_fm_synth_knobs",
@@ -1012,13 +1020,9 @@ _audio_pipelines = {
         "synth": "intro_high_sines",
         "knobs": "high_sines_openness_theremin_knobs",
     },
-    # "two_voice_and_hands": {
-    #     "synth": "two_voice_synth_func",
-    #     "knobs": "two_hand_freq_and_volume_knobs",
-    # },
-    "theremin": {
-        "synth": "theremin_synth",
-        "knobs": "theremin_knobs",
+    "two_voice_and_hands": {
+        "synth": "two_voice_synth_func",
+        "knobs": "two_hand_freq_and_volume_knobs",
     },
     "natural_sounding_synth": {
         "synth": "natural_sounding_synth",
@@ -1048,17 +1052,17 @@ _audio_pipelines = {
         "synth": "noise_synth",
         "knobs": "two_hand_freq_and_volume_knobs",
     },
-    "ringmod_two_hands": {
-        "synth": "ringmod_synth",
-        "knobs": "two_hand_freq_and_volume_knobs",
-    },
-    "chorused_two_hands": {
-        "synth": "chorused_sine_synth",
-        "knobs": "two_hand_freq_and_volume_knobs",
-    },
+    # "ringmod_two_hands": {  # Note: No sound
+    #     "synth": "ringmod_synth",
+    #     "knobs": "two_hand_freq_and_volume_knobs",
+    # },
+    # "chorused_two_hands": {  # Note: No sound
+    #     "synth": "chorused_sine_synth",
+    #     "knobs": "two_hand_freq_and_volume_knobs",
+    # },
 }
 
-_audio_pipelines["default"] = _audio_pipelines[DFLT_AUDIO_PIPELINE]
+_pipelines["default"] = _pipelines[DFLT_PIPELINE]
 
 
 def audio_pipe(*, knobs, synth):
@@ -1072,4 +1076,4 @@ def audio_pipe_call_string(*, knobs, synth):
     return f"audio_pipe(knobs='{knobs}', synth='{synth}')"
 
 
-audio_pipelines = {k: partial(audio_pipe, **v) for k, v in _audio_pipelines.items()}
+pipelines = {k: partial(audio_pipe, **v) for k, v in _pipelines.items()}

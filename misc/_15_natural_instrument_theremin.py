@@ -56,9 +56,9 @@ synth_func, audio_features = "complex_fm_synth", "complex_fm_synth_knobs"
 if __name__ == "__main__":
     run_theremin(
         # Use the natural_sounding_synth with our settings
-        synth_func=synth_func,
+        synth=synth_func,
         # Use default theremin control scheme (right hand=pitch, left hand=volume)
-        audio_features=audio_features,
+        knobs=audio_features,
         # # Pass our instrument and effect settings
         # synth_settings=SYNTH_SETTINGS,  # TODO: Integrate
         # Enable to see what features are being extracted:
