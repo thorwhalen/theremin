@@ -679,8 +679,16 @@ def theremin_knobs(
     freq_trans: Union[Callable, None] = snap_to_c_major,
 ) -> Dict[str, float]:
     """
-    Maps right hand to frequency (pitch) and left hand to volume (amplitude),
+    Maps hand positions to frequency (pitch) and volume (amplitude),
     mimicking a classic theremin control scheme.
+
+    When both hands are detected:
+    - Right hand X position controls frequency (pitch)
+    - Left hand Y position controls volume (amplitude)
+
+    When only one hand is detected:
+    - X position controls frequency (pitch)
+    - Y position controls volume (amplitude)
 
     Args:
         video_features (dict): Extracted hand feature dictionary.
@@ -696,13 +704,31 @@ def theremin_knobs(
     if not video_features:
         return knobs
     elif 'r_wrist_position' in video_features and 'l_wrist_position' in video_features:
+        # Both hands detected - classic theremin control
         knobs['freq'] = float(
             min_freq + video_features['r_wrist_position'][X] * (max_freq - min_freq)
         )
         knobs['volume'] = float(
             np.clip(1 - video_features['l_wrist_position'][Y], 0, 1)
         )
+    elif 'r_wrist_position' in video_features:
+        # Only right hand detected - use X for frequency, Y for volume
+        knobs['freq'] = float(
+            min_freq + video_features['r_wrist_position'][X] * (max_freq - min_freq)
+        )
+        knobs['volume'] = float(
+            np.clip(1 - video_features['r_wrist_position'][Y], 0, 1)
+        )
+    elif 'l_wrist_position' in video_features:
+        # Only left hand detected - use X for frequency, Y for volume
+        knobs['freq'] = float(
+            min_freq + video_features['l_wrist_position'][X] * (max_freq - min_freq)
+        )
+        knobs['volume'] = float(
+            np.clip(1 - video_features['l_wrist_position'][Y], 0, 1)
+        )
     else:
+        # No hands detected - silent
         mid_freq = (min_freq + max_freq) / 2
         silent = 0.0
         knobs['freq'] = mid_freq
