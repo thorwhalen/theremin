@@ -12,6 +12,70 @@ from pyo import *
 
 
 # -------------------------------------------------------------------------------
+# Helpers
+# -------------------------------------------------------------------------------
+
+# TODO: Not working and unfinished
+def lr_version(func=None, *, params_to_double=None):
+    """
+    Decorator that transforms a function into a left-right version by doubling specified parameters.
+    
+    Args:
+        func: The function to decorate (when used as @lr_version)
+        params_to_double: List of parameter names to double (create l_ and r_ versions)
+    
+    Returns:
+        Decorated function with l_ and r_ versions of the specified parameters
+    """
+    if params_to_double is None:
+        params_to_double = ['freq', 'volume']
+    
+    def decorator(func):
+        from functools import partial, wraps
+        
+        @wraps(func)
+        def lr_wrapper(**kwargs):
+            # Extract parameters for left and right channel
+            l_params = {param: kwargs.get(f'l_{param}', 440 if param == 'freq' else 0.0) 
+                       for param in params_to_double}
+            r_params = {param: kwargs.get(f'r_{param}', 440 if param == 'freq' else 0.0) 
+                       for param in params_to_double}
+            
+            # Get all other parameters
+            extra_kwargs = {k: v for k, v in kwargs.items() 
+                          if not any(k == f'l_{p}' or k == f'r_{p}' 
+                                    for p in params_to_double)}
+            
+            # Create synth functions
+            l_synth = partial(func, **l_params, **extra_kwargs)
+            r_synth = partial(func, **r_params, **extra_kwargs)
+            
+            # Get values needed for _two_voice_synth_func
+            l_freq = l_params.get('freq', 440)
+            l_volume = l_params.get('volume', 0.0)
+            r_freq = r_params.get('freq', 440)
+            r_volume = r_params.get('volume', 0.0)
+            
+            return _two_voice_synth_func(
+                l_freq, l_volume, r_freq, r_volume, l_synth=l_synth, r_synth=r_synth
+            )
+        
+        # Add appropriate dials
+        dial_str = ' '.join([f'l_{p} r_{p}' for p in params_to_double])
+        if hasattr(func, '_default_dials'):
+            for dial in func._default_dials.split():
+                if dial not in params_to_double:
+                    dial_str += f' {dial}'
+        
+        return add_default_dials(dial_str)(lr_wrapper)
+    
+    # Handle both @lr_version and @lr_version(params_to_double=[...]) usage
+    if func is not None:
+        return decorator(func)
+    return decorator
+
+
+# -------------------------------------------------------------------------------
 # Synthesizer functions
 # -------------------------------------------------------------------------------
 
@@ -140,6 +204,7 @@ def snap_to_c_major(freq):
     return closest
 
 
+
 @add_default_dials('freq volume vibrato_rate vibrato_depth reverb_mix ramp_time')
 def natural_sounding_synth(
     freq=440,
@@ -149,13 +214,22 @@ def natural_sounding_synth(
     vibrato_rate=5,
     vibrato_depth=5,
     reverb_mix=0.3,
-    ramp_time=0.3,
+    ramp_time=0.9,
 ):
     """
     Synthesizer with more harmonically rich, instrument-like timbres.
 
-    ...
+    Parameters:
+    - freq (float): Base frequency in Hz.
+    - volume (float): Output volume (0 to 1).
+    - instrument (str): Instrument type ('violin', 'organ', 'flute').
+    - vibrato_rate (float): Vibrato frequency in Hz.
+    - vibrato_depth (float): Vibrato depth in Hz.
+    - reverb_mix (float): Reverb mix (0 to 1).
     - ramp_time (float): Portamento time (smooth transition between frequencies).
+
+    Returns:
+    - PyoObject: The resulting audio signal.
     """
     instrument_oscillators = {
         'violin': lambda freq, mul: Blit(freq=freq, harms=10, mul=mul),
@@ -186,6 +260,13 @@ def natural_sounding_synth(
 
     return rev
 
+# TODO: Make it work
+# natural_sounding_synth_lr = lr_version(
+#     natural_sounding_synth, params_to_double=['freq', 'volume']
+# )
+# natural_sounding_synth_lr = add_default_dials(
+#     'l_freq l_volume r_freq r_volume vibrato_rate vibrato_depth reverb_mix ramp_time'
+# )(natural_sounding_synth_lr)
 
 @add_default_dials(
     'l_freq l_volume r_freq r_volume vibrato_rate vibrato_depth reverb_mix ramp_time'
@@ -211,7 +292,7 @@ def natural_sounding_synth_lr(
         natural_sounding_synth, freq=l_freq, volume=l_volume, **extra_kwargs
     )
     r_synth = partial(
-        natural_sounding_synth, freq=l_freq, volume=l_volume, **extra_kwargs
+        natural_sounding_synth, freq=r_freq, volume=r_volume, **extra_kwargs
     )
     return _two_voice_synth_func(
         l_freq, l_volume, r_freq, r_volume, l_synth=l_synth, r_synth=r_synth
@@ -340,10 +421,10 @@ audio_feature_ranges = {
     "attack": (0.0, 1.0),  # Envelope attack time in seconds
     "release": (0.0, 1.0),  # Envelope release time in seconds
     # Vibrato parameters
-    "vibrato_rate": (1.0, 10.0),  # Vibrato frequency in Hz (typical musical range)
+    "vibrato_rate": (1.0, 20.0),  # Vibrato frequency in Hz (typical musical range)
     "vibrato_depth": (
         0.0,
-        10.0,
+        20.0,
     ),  # Vibrato depth in Hz (typically 0-10Hz for expressiveness)
     # Spatial effects
     "reverb_mix": (0.0, 1.0),  # Reverb dry/wet mix ratio
@@ -489,30 +570,10 @@ def _calculate_freq_and_vol_from_wrist(wrist, min_freq, max_freq):
 
 
 def _calculate_freq_from_wrist(wrist, min_freq, max_freq):
-    """
-    Calculate frequency based on wrist position.
-
-    Args:
-        wrist: Position of the wrist (tuple or array with x, y coordinates)
-        min_freq: Minimum frequency value
-        max_freq: Maximum frequency value
-
-    Returns:
-        float: Frequency
-    """
     return float(min_freq + wrist[0] * (max_freq - min_freq))
 
 
 def _calculate_vol_from_wrist(wrist):
-    """
-    Calculate volume based on wrist position.
-
-    Args:
-        wrist: Position of the wrist (tuple or array with x, y coordinates)
-
-    Returns:
-        float: Volume
-    """
     return float(np.clip(1 - wrist, 0, 1))
 
 
@@ -594,7 +655,8 @@ def two_hand_freq_and_volume_knobs(
         knobs['r_freq'] = freq_trans(knobs['r_freq'])
 
     # Filter to include only parameters the synth function can use
-    synth_params = {'l_freq', 'l_volume', 'r_freq', 'r_volume'}
+    synth_params = {'l_freq', 'l_volume', 'r_freq', 'r_volume', 
+                    'vibrato_rate', 'vibrato_depth', 'reverb_mix'}
     return {k: float(v) for k, v in knobs.items() if k in synth_params}
 
 
@@ -1024,10 +1086,10 @@ _pipelines = {
         "synth": "two_voice_synth_func",
         "knobs": "two_hand_freq_and_volume_knobs",
     },
-    "natural_sounding_synth": {
-        "synth": "natural_sounding_synth",
-        "knobs": "two_hand_freq_and_volume_knobs",
-    },
+    # "natural_sounding_synth": {
+    #     "synth": "natural_sounding_synth",
+    #     "knobs": "two_hand_freq_and_volume_knobs",  # TODO: Needs a knobs that works
+    # },
     "natural_sounding_synth_lr": {
         "synth": "natural_sounding_synth_lr",
         "knobs": "two_hand_freq_and_volume_knobs",
@@ -1052,14 +1114,14 @@ _pipelines = {
         "synth": "noise_synth",
         "knobs": "two_hand_freq_and_volume_knobs",
     },
-    # "ringmod_two_hands": {  # Note: No sound
-    #     "synth": "ringmod_synth",
-    #     "knobs": "two_hand_freq_and_volume_knobs",
-    # },
-    # "chorused_two_hands": {  # Note: No sound
-    #     "synth": "chorused_sine_synth",
-    #     "knobs": "two_hand_freq_and_volume_knobs",
-    # },
+    "ringmod_two_hands": {  # Note: No sound
+        "synth": "ringmod_synth",
+        "knobs": "two_hand_freq_and_volume_knobs",
+    },
+    "chorused_two_hands": {  # Note: No sound
+        "synth": "chorused_sine_synth",
+        "knobs": "two_hand_freq_and_volume_knobs",
+    },
 }
 
 _pipelines["default"] = _pipelines[DFLT_PIPELINE]
