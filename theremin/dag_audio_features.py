@@ -9,13 +9,7 @@ from typing import Dict, Any, Callable, Union
 import numpy as np
 from functools import partial
 
-# Import meshed DAG functionality
-try:
-    from meshed import DAG, FuncNode
-except ImportError:
-    print("Warning: meshed not available, DAG functionality disabled")
-    DAG = None
-    FuncNode = None
+from meshed import DAG, FuncNode
 
 from theremin.audio import (
     DFLT_MIN_FREQ,
