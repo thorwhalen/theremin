@@ -2,6 +2,7 @@
 
 import cv2
 import time
+import argh
 from typing import Union, Callable, Dict, Optional, Any
 from functools import partial
 import json
@@ -354,12 +355,40 @@ def list_components(param_value, components_dict, description, component_describ
 
 
 # TODO: get rid of the need of both record_to_file and no_recording
+@argh.arg(
+    '--pipeline',
+    '-p',
+    nargs='?',
+    const='list',
+    help='Audio pipeline name (use without argument to list available pipelines)',
+)
+@argh.arg(
+    '--synth',
+    '-s',
+    nargs='?',
+    const='list',
+    help='Synthesizer function name (use without argument to list available synths)',
+)
+@argh.arg(
+    '--knobs',
+    '-k',
+    nargs='?',
+    const='list',
+    help='Audio knobs function name (use without argument to list available knobs)',
+)
+@argh.arg(
+    '--video-features',
+    '-v',
+    nargs='?',
+    const='list',
+    help='Video features function name (use without argument to list available video features)',
+)
 def theremin_cli(
     # Core components
-    pipeline: str = "theremin",
-    video_features: str = "many_video_features",
-    knobs: str = "theremin_knobs",
-    synth: str = "theremin_synth",
+    pipeline: Optional[str] = "theremin",
+    video_features: Optional[str] = "many_video_features",
+    knobs: Optional[str] = "theremin_knobs",
+    synth: Optional[str] = "theremin_synth",
     # Logging options
     log_video_features: bool = False,
     log_knobs: bool = False,
@@ -373,10 +402,10 @@ def theremin_cli(
     Run the theremin application with the specified parameters.
 
     Args:
-        pipeline: Name of the audio pipeline (if value is list, will list available options)
-        video_features: Name of the hand feature extraction function (if value is list, will list available options)
-        knobs: Name of the audio feature mapping function (if value is list, will list available options)
-        synth: Name of the synthesizer function (if value is list, will list available options)
+        pipeline: Name of the audio pipeline (use flag without argument to list available options)
+        video_features: Name of the hand feature extraction function (use flag without argument to list available options)
+        knobs: Name of the audio feature mapping function (use flag without argument to list available options)
+        synth: Name of the synthesizer function (use flag without argument to list available options)
 
         log_video_features: Whether to log hand features
         log_knobs: Whether to log audio features
@@ -385,7 +414,7 @@ def theremin_cli(
         window_name: Title for the display window
     """
     # Import here to avoid loading everything if just listing components
-    from theremin.audio import synths, knobs
+    from theremin.audio import synths, knobs as knobs_dict
     from theremin.video_features import hand_feature_funcs
 
     # Handle listing available components
@@ -395,7 +424,7 @@ def theremin_cli(
     if list_components(synth, synths, "synthesizer functions"):
         return
 
-    if list_components(knobs, knobs, "audio feature mapping functions"):
+    if list_components(knobs, knobs_dict, "audio feature mapping functions"):
         return
 
     if list_components(
