@@ -1496,7 +1496,10 @@ def supersaw_two_hands_knobs(
     return {k: float(v) for k, v in knobs.items()}
 
 
-def rhythmic_fm_synth_knobs(video_features) -> Dict[str, float]:
+def rhythmic_fm_synth_knobs(
+    video_features,
+    freq_trans: Union[Callable, None] = snap_to_c_major,
+) -> Dict[str, float]:
     """
     Maps video features to the parameters of rhythmic_fm_synth.
 
