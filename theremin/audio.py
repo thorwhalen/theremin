@@ -198,14 +198,12 @@ def snap_to_c_major(freq):
     # Frequencies of C major scale over several octaves (C, D, E, F, G, A, B)
     semitones_in_c_major = np.array([0, 2, 4, 5, 7, 9, 11])
     scale_freqs = []
-
     for octave in range(0, 9):
         base_midi = 12 * octave
         for st in semitones_in_c_major:
             midi_note = base_midi + st
             hz = 440.0 * 2 ** ((midi_note - 69) / 12)
             scale_freqs.append(hz)
-
     scale_freqs = np.array(scale_freqs)
     closest = scale_freqs[np.argmin(np.abs(scale_freqs - freq))]
     return closest
@@ -1708,6 +1706,129 @@ def high_sines_theremin_knobs(
     # Left hand controls mod_mul (amplitude) with Y-axis
     if 'l_wrist_position' in video_features:
         y = video_features['l_wrist_position'][1]
+
+        # Y position controls modulation amplitude (inverse mapping)
         knobs['mod_mul'] = float(
             mod_mul_range[0] + (1 - y) * (mod_mul_range[1] - mod_mul_range[0])
         )
+
+    return knobs
+
+
+def high_sines_pinch_theremin_knobs(
+    video_features,
+    *,
+    base_freq_range: tuple = HI_SINES_FREQ_RANGE,
+    mod_freq_range: tuple = MOD_FREQ_RANGE,
+    mod_mul_range: tuple = MOD_MUL_RANGE,
+) -> Dict[str, float]:
+    """
+    Maps hand positions and pinch gesture to intro_high_sines parameters:
+    - Right hand X: Controls base_freq
+    - Right pinch distance: Controls mod_freq
+    - Left pinch distance: Controls mod_mul
+
+    Args:
+        video_features (dict): Extracted hand feature dictionary
+        base_freq_range (tuple): Min and max frequency for the base sine wave (Hz)
+        mod_freq_range (tuple): Min and max frequency for modulation (Hz)
+        mod_mul_range (tuple): Min and max amplitude for modulation
+
+    Returns:
+        Dict[str, float]: Dictionary with 'base_freq', 'mod_freq', 'mod_mul' keys
+    """
+    knobs = {}
+
+    # Default values (middle of ranges)
+    knobs['base_freq'] = (base_freq_range[0] + base_freq_range[1]) / 2
+    knobs['mod_freq'] = (mod_freq_range[0] + mod_freq_range[1]) / 2
+    knobs['mod_mul'] = (mod_mul_range[0] + mod_mul_range[1]) / 2
+
+    # If no hands detected, return default values
+    if not video_features:
+        return knobs
+
+    # Right hand controls base_freq with X position
+    if 'r_wrist_position' in video_features:
+        r_x = video_features['r_wrist_position'][0]
+        knobs['base_freq'] = float(
+            base_freq_range[0] + r_x * (base_freq_range[1] - base_freq_range[0])
+        )
+
+    # Right hand pinch controls mod_freq (if available)
+    if 'r_thumb_index_distance' in video_features:
+        # Map thumb-index distance (typically 0-0.2) to modulation frequency
+        # Normalize to 0-1 range assuming max distance of 0.2
+        pinch_distance = min(video_features['r_thumb_index_distance'], 0.2) / 0.2
+        knobs['mod_freq'] = float(
+            mod_freq_range[0] + pinch_distance * (mod_freq_range[1] - mod_freq_range[0])
+        )
+
+    # Left hand pinch controls mod_mul (if available)
+    if 'l_thumb_index_distance' in video_features:
+        # Normalize to 0-1 range assuming max distance of 0.2
+        pinch_distance = min(video_features['l_thumb_index_distance'], 0.2) / 0.2
+        knobs['mod_mul'] = float(
+            mod_mul_range[0] + pinch_distance * (mod_mul_range[1] - mod_mul_range[0])
+        )
+
+    return knobs
+
+
+def high_sines_openness_theremin_knobs(
+    video_features,
+    *,
+    base_freq_range: tuple = HI_SINES_FREQ_RANGE,
+    mod_freq_range: tuple = MOD_FREQ_RANGE,
+    mod_mul_range: tuple = MOD_MUL_RANGE,
+) -> Dict[str, float]:
+    """
+    Maps hand positions and hand openness to intro_high_sines parameters:
+    - Right hand X: Controls base_freq
+    - Right hand openness: Controls mod_freq
+    - Left hand openness: Controls mod_mul
+
+    Args:
+        video_features (dict): Extracted hand feature dictionary
+        base_freq_range (tuple): Min and max frequency for the base sine wave (Hz)
+        mod_freq_range (tuple): Min and max frequency for modulation (Hz)
+        mod_mul_range (tuple): Min and max amplitude for modulation
+
+    Returns:
+        Dict[str, float]: Dictionary with 'base_freq', 'mod_freq', 'mod_mul' keys
+    """
+    knobs = {}
+
+    # Default values (middle of ranges)
+    knobs['base_freq'] = (base_freq_range[0] + base_freq_range[1]) / 2
+    knobs['mod_freq'] = (mod_freq_range[0] + mod_freq_range[1]) / 2
+    knobs['mod_mul'] = (mod_mul_range[0] + mod_mul_range[1]) / 2
+
+    # If no hands detected, return default values
+    if not video_features:
+        return knobs
+
+    # Right hand controls base_freq with X position
+    if 'r_wrist_position' in video_features:
+        r_x = video_features['r_wrist_position'][0]
+        knobs['base_freq'] = float(
+            base_freq_range[0] + r_x * (base_freq_range[1] - base_freq_range[0])
+        )
+
+    # Right hand openness controls mod_freq (if available)
+    if 'r_openness' in video_features:
+        # Normalize openness to 0-1 range (typically ranges from 0.05 to 0.3)
+        openness = np.clip((video_features['r_openness'] - 0.05) / 0.25, 0, 1)
+        knobs['mod_freq'] = float(
+            mod_freq_range[0] + openness * (mod_freq_range[1] - mod_freq_range[0])
+        )
+
+    # Left hand openness controls mod_mul (if available)
+    if 'l_openness' in video_features:
+        # Normalize openness to 0-1 range
+        openness = np.clip((video_features['l_openness'] - 0.05) / 0.25, 0, 1)
+        knobs['mod_mul'] = float(
+            mod_mul_range[0] + openness * (mod_mul_range[1] - mod_mul_range[0])
+        )
+
+    return knobs
