@@ -166,6 +166,10 @@ def draw_on_screen(
     draw_landmarks: bool = True,
     draw_sound_features: Optional[Callable] = display_sound_features_on_image,
     draw_frequencies: Optional[Iterable] = None,
+    scale_name: Optional[str] = None,
+    freq_mapping: Optional[callable] = None,
+    min_freq: float = 100,
+    max_freq: float = 2000,
 ):
     """
     Draw hand landmarks, wrist lines, and sound features on the image.
@@ -178,6 +182,10 @@ def draw_on_screen(
         draw_landmarks: Whether to draw hand landmarks
         draw_sound_features: Function to draw sound features (or None to skip)
         draw_frequencies: Iterable of frequencies to display as scale points on screen
+        scale_name: Name of the scale to display at the top right
+        freq_mapping: Frequency mapping function
+        min_freq: Minimum frequency for guide points
+        max_freq: Maximum frequency for guide points
 
     Returns:
         img: The image with visualizations added
@@ -199,43 +207,36 @@ def draw_on_screen(
     if draw_frequencies:
         h, w, _ = img.shape
         vertical_center = h // 2
+        # Use freq_mapping for position mapping
+        if freq_mapping is None:
+            from theremin.audio_features import log_freq_mapping
 
-        # Calculate the range for mapping frequencies
-        from theremin.audio import DFLT_MIN_FREQ, DFLT_MAX_FREQ
-
-        min_freq = DFLT_MIN_FREQ
-        max_freq = DFLT_MAX_FREQ
-
+            freq_mapping = log_freq_mapping
         # Draw each frequency as a point
         for freq in draw_frequencies:
-            # Map frequency to x-coordinate (0 to 1, then scaled to image width)
-            # Use the same mapping logic as in the audio functions
-            norm_x = (freq - min_freq) / (max_freq - min_freq)
-            x_pos = int(norm_x * w)
-
-            # Skip if outside the image bounds
+            # Find x such that freq_mapping(x, min_freq, max_freq) == freq
+            # x = log(freq/min_freq) / log(max_freq/min_freq) for log mapping
+            if freq <= 0:
+                continue
+            if freq_mapping.__name__ == 'log_freq_mapping':
+                x_norm = np.log(freq / min_freq) / np.log(max_freq / min_freq)
+            else:
+                x_norm = (freq - min_freq) / (max_freq - min_freq)
+            x_pos = int(x_norm * w)
             if 0 <= x_pos < w:
-                # Draw a visible point
                 point_size = 5
-                point_color = (0, 0, 255)  # Red in BGR
+                point_color = (0, 0, 255)
                 cv2.circle(img, (x_pos, vertical_center), point_size, point_color, -1)
-
-                # Add small frequency label below the point
                 label = f"{int(freq)}"
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 font_scale = 0.4
-                text_color = (0, 200, 200)  # Yellow-green in BGR
+                text_color = (0, 200, 200)
                 thickness = 1
-
-                # Get text size for better positioning
                 (text_width, text_height), _ = cv2.getTextSize(
                     label, font, font_scale, thickness
                 )
-
-                # Position text centered below the point
                 text_x = x_pos - text_width // 2
                 text_y = vertical_center + 20
-
                 cv2.putText(
                     img,
                     label,
@@ -245,5 +246,21 @@ def draw_on_screen(
                     text_color,
                     thickness,
                 )
+
+    # Draw scale name at top right
+    if scale_name:
+        h, w, _ = img.shape
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        font_scale = 0.8
+        color = (0, 255, 255)  # Yellow
+        thickness = 2
+        margin = 10
+        text = f"Scale: {scale_name}"
+        (text_width, text_height), _ = cv2.getTextSize(
+            text, font, font_scale, thickness
+        )
+        x = w - text_width - margin
+        y = text_height + margin
+        cv2.putText(img, text, (x, y), font, font_scale, color, thickness, cv2.LINE_AA)
 
     return img

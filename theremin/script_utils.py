@@ -6,6 +6,7 @@ import argh
 from typing import Union, Callable, Dict, Optional, Any
 from functools import partial
 import json
+import sys
 
 from i2 import Sig
 from theremin.video_features import HandGestureRecognizer, hand_feature_funcs
@@ -204,6 +205,9 @@ def run_theremin(
     window_name: str = 'Hand Gesture Recognition with Theremin',
     draw_on_screen: Optional[Callable] = _DFLT_DRAW_ON_SCREEN,
     only_keep_new_freqs: bool = True,
+    freq_trans=None,
+    scale_name: Optional[str] = None,  # NEW
+    freq_mapping: Optional[Callable] = None,
 ):
     """
     Run the hand gesture theremin application.
@@ -256,6 +260,17 @@ def run_theremin(
         last_l_freq=None,
         last_r_freq=None,
     )
+
+    # Patch draw_on_screen to include scale_name, only once
+    if draw_on_screen is not None and not hasattr(draw_on_screen, '_with_scale_name'):
+        orig_draw_on_screen = draw_on_screen
+
+        def draw_on_screen_with_scale(*args, **kwargs):
+            kwargs['scale_name'] = scale_name
+            return orig_draw_on_screen(*args, **kwargs)
+
+        draw_on_screen_with_scale._with_scale_name = True
+        draw_on_screen = draw_on_screen_with_scale
 
     with synth_obj:
         try:
@@ -331,6 +346,28 @@ def run_theremin(
             cap.release()
             cv2.destroyAllWindows()
 
+    # After resolving knobs, wrap with partial if it accepts freq_trans
+    import inspect
+
+    if knobs is not None and callable(knobs):
+        sig = inspect.signature(knobs)
+        if 'freq_trans' in sig.parameters:
+            from functools import partial
+
+            knobs = partial(knobs, freq_trans=freq_trans)
+
+    # Select mapping function
+    from theremin.audio_features import log_freq_mapping, linear_freq_mapping
+
+    if freq_mapping == 'log':
+        freq_mapping_func = log_freq_mapping
+    elif freq_mapping == 'linear':
+        freq_mapping_func = linear_freq_mapping
+    else:
+        print(f"Unknown freq mapping: {freq_mapping}. Using log.")
+        freq_mapping_func = log_freq_mapping
+    print(f"Using frequency mapping: {freq_mapping}")
+
 
 def list_components(param_value, components_dict, description, component_describer=Sig):
     """
@@ -383,6 +420,18 @@ def list_components(param_value, components_dict, description, component_describ
     const='list',
     help='Video features function name (use without argument to list available video features)',
 )
+@argh.arg(
+    '--snap-scale',
+    nargs='?',
+    default='C major',
+    help='Scale to snap frequencies to (e.g., "A minor", "C blues", or "none" for no snapping, or "list" to see options).',
+)
+@argh.arg(
+    '--freq-mapping',
+    nargs='?',
+    default='log',
+    help='Frequency mapping: log (default, equal semitone spacing) or linear (legacy).',
+)
 def theremin_cli(
     # Core components
     pipeline: Optional[str] = "theremin",
@@ -397,6 +446,9 @@ def theremin_cli(
     no_recording: bool = False,
     # Display options
     window_name: str = "Theremin with Hand Tracking",
+    # New snapping option
+    snap_scale: str = "C major",
+    freq_mapping: str = "log",
 ):
     """
     Run the theremin application with the specified parameters.
@@ -412,9 +464,11 @@ def theremin_cli(
         record_to_file: Filename to save recording (if no_recording is False)
         no_recording: Disable recording
         window_name: Title for the display window
+        snap_scale: Scale to snap frequencies to (e.g., "A minor", "C blues", or "none" for no snapping)
+        freq_mapping: Frequency mapping: log (default, equal semitone spacing) or linear (legacy)
     """
     # Import here to avoid loading everything if just listing components
-    from theremin.audio import synths, knobs as knobs_dict
+    from theremin.audio import synths, knobs as knobs_dict, snap_to_scale
     from theremin.video_features import hand_feature_funcs
 
     # Handle listing available components
@@ -440,6 +494,54 @@ def theremin_cli(
     log_video_features_callback = print_json_if_possible if log_video_features else None
     log_knobs_callback = print_json_if_possible if log_knobs else None
 
+    # Handle --snap-scale list or invalid scale
+    if snap_scale.strip().lower() == 'list':
+        from tonal.notes import list_root_notes, list_scale_qualities
+
+        print("\nValid root notes:")
+        print(", ".join(sorted(list_root_notes().keys())))
+        print("\nValid scale qualities:")
+        print(", ".join(sorted(list_scale_qualities().keys())))
+        sys.exit(0)
+    # Validate scale
+    freq_trans = None
+    if snap_scale.strip().lower() == 'none':
+        freq_trans = lambda x: x
+    else:
+        try:
+            freq_trans = snap_to_scale(snap_scale)
+            # Print the actual snap frequencies for debugging
+            print(f"\nRequested scale: {snap_scale}")
+            # If freq_trans is a ListSnapper, print its snap_values
+            if hasattr(freq_trans, 'snap_values'):
+                snap_freqs = [f for f in freq_trans.snap_values if 100 <= f <= 2000]
+                print(
+                    f"Snap frequencies (100-2000 Hz):\n{[round(f,2) for f in snap_freqs]}"
+                )
+                # Optionally, show what 440 Hz would snap to
+                print(f"440 Hz would snap to: {freq_trans(440.0)} Hz")
+        except Exception as e:
+            print(f"\nERROR: The scale '{snap_scale}' is not recognized.\n{e}\n")
+            from tonal.notes import list_root_notes, list_scale_qualities
+
+            print("Valid root notes:")
+            print(", ".join(sorted(list_root_notes().keys())))
+            print("\nValid scale qualities:")
+            print(", ".join(sorted(list_scale_qualities().keys())))
+            sys.exit(1)
+
+    # Select mapping function
+    from theremin.audio_features import log_freq_mapping, linear_freq_mapping
+
+    if freq_mapping == 'log':
+        freq_mapping_func = log_freq_mapping
+    elif freq_mapping == 'linear':
+        freq_mapping_func = linear_freq_mapping
+    else:
+        print(f"Unknown freq mapping: {freq_mapping}. Using log.")
+        freq_mapping_func = log_freq_mapping
+    print(f"Using frequency mapping: {freq_mapping}")
+
     # Run the theremin application
     run_theremin(
         pipeline=pipeline,
@@ -450,4 +552,9 @@ def theremin_cli(
         log_knobs=log_knobs_callback,
         record_to_file=record_to_file,
         window_name=window_name,
+        freq_trans=freq_trans,
+        scale_name=(
+            snap_scale if snap_scale.strip().lower() not in ("none", "list") else None
+        ),
+        freq_mapping=freq_mapping_func,
     )

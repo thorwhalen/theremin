@@ -10,6 +10,8 @@ import os
 import pytest
 from pathlib import Path
 from typing import Dict, Any
+import importlib
+import numpy as np
 
 # Import the new systems
 from theremin.audio_features import (
@@ -397,6 +399,80 @@ def test_malformed_video_features():
     assert isinstance(audio_features, dict)
 
 
+def test_snap_to_scale_changes_scale():
+    from theremin.audio import snap_to_scale
+    import numpy as np
+
+    # Pick a frequency near A (440 Hz)
+    freq = 440.0
+    # C major should snap to 440 (A4 is in C major)
+    c_major_snap = snap_to_scale("C major")
+    assert np.isclose(c_major_snap(freq), 440.0, atol=1.0)
+    # A minor pentatonic should snap to 440 (A4 is in A minor pentatonic)
+    a_minor_pent_snap = snap_to_scale("A minor pentatonic")
+    assert np.isclose(a_minor_pent_snap(freq), 440.0, atol=1.0)
+    # G major should snap to the nearest G (392 Hz or 392*2=784 Hz)
+    g_major_snap = snap_to_scale("G major")
+    snapped = g_major_snap(freq)
+    print('C major snap values near 440:', [c_major_snap(f) for f in range(430, 451)])
+    print('G major snap values near 440:', [g_major_snap(f) for f in range(430, 451)])
+    # Should not be 440, should be closer to 392 or 392*2=784
+    assert not np.isclose(
+        snapped, 440.0, atol=1.0
+    ), f"G major snap gave {snapped} for 440 Hz"
+
+
+def test_pentatonic_scale_snapping():
+    """Test that snapping to A minor pentatonic produces only 5 unique pitch classes (modulo octave)."""
+    import numpy as np
+    from theremin.audio_features import create_theremin_builder
+    from hum.util import scale_snapper
+    import json
+    from pathlib import Path
+
+    # Load video features
+    TEST_FEATURES_PATH = (
+        Path(__file__).parent / "testing_data" / "theremin_test_1__video_features.json"
+    )
+    with open(TEST_FEATURES_PATH, 'r') as f:
+        frames = json.load(f)
+
+    # Use only frames with valid right wrist position
+    def has_valid_r_wrist_position(f):
+        feats = f['features']
+        return (
+            isinstance(feats, dict)
+            and 'r_wrist_position' in feats
+            and isinstance(feats['r_wrist_position'], (list, tuple))
+            and len(feats['r_wrist_position']) > 0
+        )
+
+    video_features_list = [
+        f['features'] for f in frames if has_valid_r_wrist_position(f)
+    ]
+
+    # Pentatonic scale snapper
+    snapper = scale_snapper("A minor pentatonic")
+    builder = create_theremin_builder(freq_transform=snapper)
+
+    snapped_freqs = []
+    for vf in video_features_list:
+        audio = builder(vf)
+        if 'freq' in audio:
+            snapped_freqs.append(audio['freq'])
+
+    # Convert to pitch class (modulo octave)
+    def pitch_class(freq):
+        return np.round(12 * np.log2(freq / 440)) % 12
+
+    pitch_classes = set(pitch_class(f) for f in snapped_freqs)
+    print(f"Snapped frequencies: {snapped_freqs}")
+    print(f"Pitch classes (mod 12): {sorted(pitch_classes)}")
+    assert (
+        len(pitch_classes) == 5
+    ), f"Expected 5 unique pitch classes, got {len(pitch_classes)}: {pitch_classes}"
+
+
 # --------------------------------------------------------------------------------------
 # Run tests if script is executed directly
 # --------------------------------------------------------------------------------------
@@ -443,6 +519,8 @@ if __name__ == "__main__":
     test_two_hand_builder()
     test_empty_video_features()
     test_malformed_video_features()
+    test_snap_to_scale_changes_scale()
+    test_pentatonic_scale_snapping()
     print("✓ Edge case tests passed")
 
     print("\n🎉 All tests completed!")
@@ -460,3 +538,21 @@ if __name__ == "__main__":
         print(f"Pipelines with issues: {list(broken_pipelines.keys())}")
         for name, issues in broken_pipelines.items():
             print(f"  {name}: {issues}")
+
+    # Smoke test: ensure all main modules import without error
+    def test_imports_smoke():
+        modules = [
+            'theremin.audio',
+            'theremin.audio_features',
+            'theremin.dag_audio_features',
+            'theremin.display',
+            'theremin.main',
+            'theremin.pipelines',
+            'theremin.script_utils',
+            'theremin.util',
+            'theremin.video_features',
+        ]
+        for mod in modules:
+            importlib.import_module(mod)
+
+    test_imports_smoke()

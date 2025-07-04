@@ -40,12 +40,24 @@ class FeatureMapping:
             print(f"Warning: Audio parameter '{self.audio_param}' not in known ranges")
 
 
+def linear_freq_mapping(x, min_freq, max_freq):
+    return min_freq + x * (max_freq - min_freq)
+
+
+def log_freq_mapping(x, min_freq, max_freq):
+    # Map x in [0,1] to log space between min_freq and max_freq
+    if min_freq == 0:
+        raise ValueError("min_freq must be > 0 for log_freq_mapping (got 0)")
+    return min_freq * (max_freq / min_freq) ** x
+
+
 def range_transformer(
     input_range: Tuple[float, float] = (0, 1),
     output_range: Tuple[float, float] = (220, 1760),
     pre_transform: Callable = identity,
     post_transform: Callable = identity,
     clip: bool = True,
+    freq_mapping: Callable = None,
 ) -> Callable[[float], float]:
     """
     Create a function that maps input range to output range with optional transformations.
@@ -56,6 +68,7 @@ def range_transformer(
         pre_transform: Function to apply to input before range mapping (e.g., lambda x: 1-x)
         post_transform: Function to apply after range mapping (e.g., snap_to_c_major)
         clip: Whether to clip values to the output range
+        freq_mapping: Function to map normalized values to frequency range
 
     Returns:
         A function that transforms input values to the output range
@@ -64,24 +77,21 @@ def range_transformer(
     output_min, output_max = output_range
     input_span = input_max - input_min
     output_span = output_max - output_min
+    if freq_mapping is None:
+        freq_mapping = log_freq_mapping  # Default: log mapping
 
     def transformer(value):
         if value is None:
             return (output_min + output_max) / 2  # Return midpoint for None values
-
         # Apply pre-transformation
         value = pre_transform(value)
-
         # Normalize to 0-1 range
         normalized = (value - input_min) / input_span
-
         # Clip if requested
         if clip:
             normalized = np.clip(normalized, 0, 1)
-
-        # Map to output range
-        result = output_min + normalized * output_span
-
+        # Map to output range using freq_mapping
+        result = freq_mapping(normalized, output_min, output_max)
         # Apply post-transformation
         return post_transform(result)
 
@@ -177,6 +187,7 @@ def create_theremin_builder(
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
     freq_transform: Callable = snap_to_c_major,
+    freq_mapping: Callable = None,
 ) -> AudioFeatureBuilder:
     """Create an audio feature builder for classic theremin control (right hand freq, left hand volume)"""
 
@@ -184,6 +195,7 @@ def create_theremin_builder(
         input_range=(0, 1),
         output_range=(min_freq, max_freq),
         post_transform=freq_transform,
+        freq_mapping=freq_mapping,
     )
 
     return AudioFeatureBuilder(
@@ -203,6 +215,7 @@ def create_two_hand_builder(
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
     freq_transform: Callable = snap_to_c_major,
+    freq_mapping: Callable = None,
 ) -> AudioFeatureBuilder:
     """Create builder for independent left/right hand control"""
 
@@ -210,6 +223,7 @@ def create_two_hand_builder(
         input_range=(0, 1),
         output_range=(min_freq, max_freq),
         post_transform=freq_transform,
+        freq_mapping=freq_mapping,
     )
 
     return AudioFeatureBuilder(

@@ -1,7 +1,7 @@
 """Audio and synthesizer functions for theremin."""
 
 import numpy as np
-from typing import Dict, Union, Callable
+from typing import Dict, Union, Callable, Optional
 from functools import lru_cache, partial
 
 from hum import Synth
@@ -588,7 +588,7 @@ def _calculate_vol_from_wrist(wrist):
 def two_hand_freq_and_volume_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
+    freq_trans: Union[Callable, None] = None,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
     audio_features: list = (
@@ -601,17 +601,8 @@ def two_hand_freq_and_volume_knobs(
         'reverb_mix',
     ),
 ) -> Dict[str, float]:
-    """
-    Maps hand positions to frequency and volume for both hands.
-
-    Args:
-        video_features (dict): Extracted hand feature dictionary.
-        min_freq (float): Minimum frequency for pitch control.
-        max_freq (float): Maximum frequency for pitch control.
-
-    Returns:
-        Dict[str, float]: Dictionary with 'l_freq', 'l_volume', 'r_freq', 'r_volume' keys.
-    """
+    if freq_trans is None:
+        freq_trans = snap_to_scale()
     knobs = {}
 
     # Set default silence
@@ -678,24 +669,12 @@ def two_hand_freq_and_volume_knobs(
 def two_voice_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
+    freq_trans: Union[Callable, None] = None,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
 ) -> Dict[str, float]:
-    """
-    Maps hand positions to frequency and volume for both hands.
-    Specifically designed for two_voice_synth_func which only accepts
-    l_freq, l_volume, r_freq, r_volume parameters.
-
-    Args:
-        video_features (dict): Extracted hand feature dictionary.
-        min_freq (float): Minimum frequency for pitch control.
-        max_freq (float): Maximum frequency for pitch control.
-        freq_trans: Optional frequency transformation function.
-
-    Returns:
-        Dict[str, float]: Dictionary with 'l_freq', 'l_volume', 'r_freq', 'r_volume' keys.
-    """
+    if freq_trans is None:
+        freq_trans = snap_to_scale()
     knobs = {}
 
     # Set default silence
@@ -734,14 +713,12 @@ def two_voice_knobs(
 def simple_two_hands_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
+    freq_trans: Union[Callable, None] = None,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
 ) -> Dict[str, float]:
-    """
-    Maps hand positions to simple freq and volume parameters.
-    For simple synths that only need freq and volume.
-    """
+    if freq_trans is None:
+        freq_trans = snap_to_scale()
     knobs = {
         'freq': (min_freq + max_freq) / 2,
         'volume': 0.0,
@@ -769,16 +746,12 @@ def simple_two_hands_knobs(
     return {k: float(v) for k, v in knobs.items()}
 
 
-def rhythmic_fm_synth_knobs(video_features) -> Dict[str, float]:
-    """
-    Maps video features to the parameters of rhythmic_fm_synth.
-
-    Args:
-        video_features (dict): Hand tracking data from video.
-
-    Returns:
-        Dict[str, float]: Audio knob values for rhythmic_fm_synth.
-    """
+def rhythmic_fm_synth_knobs(
+    video_features,
+    freq_trans: Union[Callable, None] = None,
+) -> Dict[str, float]:
+    if freq_trans is None:
+        freq_trans = snap_to_scale()
     knobs = {
         'carrier_freq_base': 220.0,
         'fm_transpo': 1.0,
@@ -830,7 +803,7 @@ def rhythmic_fm_synth_knobs(video_features) -> Dict[str, float]:
 
 from hum.util import scale_snapper
 
-snap_to_c_major = scale_snapper(scale=(0, 2, 4, 5, 7, 9, 11))
+snap_to_scale = scale_snapper
 
 
 def theremin_knobs(
@@ -838,28 +811,10 @@ def theremin_knobs(
     *,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
+    freq_trans: Union[Callable, None] = None,
 ) -> Dict[str, float]:
-    """
-    Maps hand positions to frequency (pitch) and volume (amplitude),
-    mimicking a classic theremin control scheme.
-
-    When both hands are detected:
-    - Right hand X position controls frequency (pitch)
-    - Left hand Y position controls volume (amplitude)
-
-    When only one hand is detected:
-    - X position controls frequency (pitch)
-    - Y position controls volume (amplitude)
-
-    Args:
-        video_features (dict): Extracted hand feature dictionary.
-        min_freq (float): Minimum frequency for pitch control.
-        max_freq (float): Maximum frequency for pitch control.
-
-    Returns:
-        Dict[str, float]: Dictionary with 'freq', 'volume' keys.
-    """
+    if freq_trans is None:
+        freq_trans = snap_to_scale()
     X, Y = 0, 1
     knobs = {}
 
@@ -1267,447 +1222,3 @@ def audio_pipe_call_string(*, knobs, synth):
 
 
 pipelines = {k: partial(audio_pipe, **v) for k, v in _pipelines.items()}
-
-
-def two_voice_knobs(
-    video_features,
-    *,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
-    min_freq: float = DFLT_MIN_FREQ,
-    max_freq: float = DFLT_MAX_FREQ,
-) -> Dict[str, float]:
-    """
-    Maps hand positions to frequency and volume for both hands.
-    Specifically designed for two_voice_synth_func which only accepts
-    l_freq, l_volume, r_freq, r_volume parameters.
-
-    Args:
-        video_features (dict): Extracted hand feature dictionary.
-        min_freq (float): Minimum frequency for pitch control.
-        max_freq (float): Maximum frequency for pitch control.
-        freq_trans: Optional frequency transformation function.
-
-    Returns:
-        Dict[str, float]: Dictionary with 'l_freq', 'l_volume', 'r_freq', 'r_volume' keys.
-    """
-    knobs = {}
-
-    # Set default silence
-    mid_freq = (min_freq + max_freq) / 2
-    knobs['l_freq'] = mid_freq
-    knobs['l_volume'] = 0.0
-    knobs['r_freq'] = mid_freq
-    knobs['r_volume'] = 0.0
-
-    if video_features:
-        # get range mappers
-        freq_mapper = range_mapper('wrist_position_x', 'freq')
-        volume_mapper = range_mapper(
-            'wrist_position_y', 'volume', ingress=lambda x: 1 - x
-        )
-
-        if 'l_wrist_position' in video_features:
-            wrist = video_features['l_wrist_position']
-            knobs['l_freq'] = freq_mapper(wrist[0])
-            knobs['l_volume'] = volume_mapper(wrist[1])
-        if 'r_wrist_position' in video_features:
-            wrist = video_features['r_wrist_position']
-            knobs['r_freq'] = freq_mapper(wrist[0])
-            knobs['r_volume'] = volume_mapper(wrist[1])
-
-    # Apply frequency transformation if provided
-    if freq_trans:
-        knobs['l_freq'] = freq_trans(knobs['l_freq'])
-        knobs['r_freq'] = freq_trans(knobs['r_freq'])
-
-    # Only return parameters that two_voice_synth_func can handle
-    synth_params = {'l_freq', 'l_volume', 'r_freq', 'r_volume'}
-    return {k: float(v) for k, v in knobs.items() if k in synth_params}
-
-
-def simple_two_hands_knobs(
-    video_features,
-    *,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
-    min_freq: float = DFLT_MIN_FREQ,
-    max_freq: float = DFLT_MAX_FREQ,
-) -> Dict[str, float]:
-    """
-    Maps hand positions to simple freq and volume parameters.
-    For simple synths that only need freq and volume.
-
-    Args:
-        video_features (dict): Extracted hand feature dictionary.
-        min_freq (float): Minimum frequency for pitch control.
-        max_freq (float): Maximum frequency for pitch control.
-        freq_trans: Optional frequency transformation function.
-
-    Returns:
-        Dict[str, float]: Dictionary with 'freq', 'volume' keys.
-    """
-    knobs = {
-        'freq': (min_freq + max_freq) / 2,  # Default middle frequency
-        'volume': 0.0,  # Default silence
-    }
-
-    if video_features:
-        # get range mappers
-        freq_mapper = range_mapper('wrist_position_x', 'freq')
-        volume_mapper = range_mapper(
-            'wrist_position_y', 'volume', ingress=lambda x: 1 - x
-        )
-
-        # Use left hand for main frequency and volume (fallback to right if no left)
-        primary_hand = None
-        if 'l_wrist_position' in video_features:
-            primary_hand = video_features['l_wrist_position']
-        elif 'r_wrist_position' in video_features:
-            primary_hand = video_features['r_wrist_position']
-
-        if primary_hand:
-            knobs['freq'] = freq_mapper(primary_hand[0])
-            knobs['volume'] = volume_mapper(primary_hand[1])
-
-    # Apply frequency transformation if provided
-    if freq_trans:
-        knobs['freq'] = freq_trans(knobs['freq'])
-
-    return {k: float(v) for k, v in knobs.items()}
-
-
-def ringmod_two_hands_knobs(
-    video_features,
-    *,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
-    min_freq: float = DFLT_MIN_FREQ,
-    max_freq: float = DFLT_MAX_FREQ,
-) -> Dict[str, float]:
-    """
-    Maps hand positions to parameters for ringmod_synth.
-    Combines both hands into a single frequency and volume, plus modulation ratio.
-
-    Args:
-        video_features (dict): Extracted hand feature dictionary.
-        min_freq (float): Minimum frequency for pitch control.
-        max_freq (float): Maximum frequency for pitch control.
-        freq_trans: Optional frequency transformation function.
-
-    Returns:
-        Dict[str, float]: Dictionary with 'freq', 'volume', 'mod_freq_ratio' keys.
-    """
-    knobs = {
-        'freq': (min_freq + max_freq) / 2,  # Default middle frequency
-        'volume': 0.0,  # Default silence
-        'mod_freq_ratio': 1.5,  # Default modulation ratio
-    }
-
-    if video_features:
-        # get range mappers
-        freq_mapper = range_mapper('wrist_position_x', 'freq')
-        volume_mapper = range_mapper(
-            'wrist_position_y', 'volume', ingress=lambda x: 1 - x
-        )
-
-        # Use left hand for main frequency and volume (fallback to right if no left)
-        primary_hand = None
-        if 'l_wrist_position' in video_features:
-            primary_hand = video_features['l_wrist_position']
-        elif 'r_wrist_position' in video_features:
-            primary_hand = video_features['r_wrist_position']
-
-        if primary_hand:
-            knobs['freq'] = freq_mapper(primary_hand[0])
-            knobs['volume'] = volume_mapper(primary_hand[1])
-
-        # Use right hand openness for modulation ratio (if available)
-        if 'r_openness' in video_features:
-            # Map openness (0-1) to modulation ratio range (0.5-5.0)
-            knobs['mod_freq_ratio'] = 0.5 + video_features['r_openness'] * 4.5
-
-    # Apply frequency transformation if provided
-    if freq_trans:
-        knobs['freq'] = freq_trans(knobs['freq'])
-
-    return {k: float(v) for k, v in knobs.items()}
-
-
-def supersaw_two_hands_knobs(
-    video_features,
-    *,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
-    min_freq: float = DFLT_MIN_FREQ,
-    max_freq: float = DFLT_MAX_FREQ,
-) -> Dict[str, float]:
-    """
-    Maps hand positions to parameters for supersaw_synth.
-    Combines both hands into a single frequency and volume, plus detune and n_voices.
-
-    Args:
-        video_features (dict): Extracted hand feature dictionary.
-        min_freq (float): Minimum frequency for pitch control.
-        max_freq (float): Maximum frequency for pitch control.
-        freq_trans: Optional frequency transformation function.
-
-    Returns:
-        Dict[str, float]: Dictionary with 'freq', 'volume', 'detune', 'n_voices' keys.
-    """
-    knobs = {
-        'freq': (min_freq + max_freq) / 2,  # Default middle frequency
-        'volume': 0.0,  # Default silence
-        'detune': 0.01,  # Default detune amount
-        'n_voices': 7,  # Default number of voices
-    }
-
-    if video_features:
-        # get range mappers
-        freq_mapper = range_mapper('wrist_position_x', 'freq')
-        volume_mapper = range_mapper(
-            'wrist_position_y', 'volume', ingress=lambda x: 1 - x
-        )
-
-        # Use left hand for main frequency and volume (fallback to right if no left)
-        primary_hand = None
-        if 'l_wrist_position' in video_features:
-            primary_hand = video_features['l_wrist_position']
-        elif 'r_wrist_position' in video_features:
-            primary_hand = video_features['r_wrist_position']
-
-        if primary_hand:
-            knobs['freq'] = freq_mapper(primary_hand[0])
-            knobs['volume'] = volume_mapper(primary_hand[1])
-
-        # Use right hand openness for detune amount (if available)
-        if 'r_openness' in video_features:
-            # Map openness (0-1) to detune range (0.001-0.1)
-            knobs['detune'] = 0.001 + video_features['r_openness'] * 0.099
-
-        # Use right thumb-index distance for number of voices (if available)
-        if 'r_thumb_index_distance' in video_features:
-            # Map distance to n_voices range (3-15)
-            normalized_distance = np.clip(
-                video_features['r_thumb_index_distance'], 0, 1
-            )
-            knobs['n_voices'] = int(3 + normalized_distance * 12)
-
-    # Apply frequency transformation if provided
-    if freq_trans:
-        knobs['freq'] = freq_trans(knobs['freq'])
-
-    return {k: float(v) for k, v in knobs.items()}
-
-
-def rhythmic_fm_synth_knobs(
-    video_features,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
-) -> Dict[str, float]:
-    """
-    Maps video features to the parameters of rhythmic_fm_synth.
-
-    Args:
-        video_features (dict): Hand tracking data from video.
-
-    Returns:
-        Dict[str, float]: Audio knob values for rhythmic_fm_synth.
-    """
-    knobs = {
-        'carrier_freq_base': 220.0,
-        'fm_transpo': 1.0,
-        'index_amount': 5.0,
-        'beat_density': 0.1125,
-        'reverb_mix': 0.3,
-        'noise_level': 0.1,
-        'env_attack': 0.01,
-        'env_release': 0.5,
-        'feedback': 0.1,
-        'pan_pos': 0.5,
-        'distortion': 0.0,
-    }
-
-    if not video_features:
-        return knobs
-
-    # Map right wrist X to carrier frequency base
-    if 'r_wrist_position' in video_features:
-        x = video_features['r_wrist_position'][0]
-        knobs['carrier_freq_base'] = 220 + x * (880 - 220)  # Range 220–880 Hz
-
-    # Map left wrist Y to index amount
-    if 'l_wrist_position' in video_features:
-        y = video_features['l_wrist_position'][1]
-        knobs['index_amount'] = 10 * (1 - y)  # Inverse: higher hand = more index
-
-    # Right openness controls feedback
-    if 'r_openness' in video_features:
-        knobs['feedback'] = np.clip(video_features['r_openness'], 0.0, 1.0)
-
-    # Thumb-index distance controls distortion
-    if 'r_thumb_index_distance' in video_features:
-        dist = min(video_features['r_thumb_index_distance'], 0.2) / 0.2
-        knobs['distortion'] = dist
-
-    # Left openness for reverb mix
-    if 'l_openness' in video_features:
-        openness = np.clip(video_features['l_openness'], 0.0, 1.0)
-        knobs['reverb_mix'] = float(openness)
-
-    # Apply frequency transformation if provided
-    if freq_trans:
-        knobs['l_freq'] = freq_trans(knobs['l_freq'])
-        knobs['r_freq'] = freq_trans(knobs['r_freq'])
-
-    return {k: float(v) for k, v in knobs.items()}
-
-
-from hum.util import scale_snapper
-
-snap_to_c_major = scale_snapper(scale=(0, 2, 4, 5, 7, 9, 11))
-
-
-def theremin_knobs(
-    video_features,
-    *,
-    min_freq: float = DFLT_MIN_FREQ,
-    max_freq: float = DFLT_MAX_FREQ,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
-) -> Dict[str, float]:
-    """
-    Maps hand positions to frequency (pitch) and volume (amplitude),
-    mimicking a classic theremin control scheme.
-
-    When both hands are detected:
-    - Right hand X position controls frequency (pitch)
-    - Left hand Y position controls volume (amplitude)
-
-    When only one hand is detected:
-    - X position controls frequency (pitch)
-    - Y position controls volume (amplitude)
-
-    Args:
-        video_features (dict): Extracted hand feature dictionary.
-        min_freq (float): Minimum frequency for pitch control.
-        max_freq (float): Maximum frequency for pitch control.
-
-    Returns:
-        Dict[str, float]: Dictionary with 'freq', 'volume' keys.
-    """
-    X, Y = 0, 1
-    knobs = {}
-
-    if not video_features:
-        return knobs
-    elif 'r_wrist_position' in video_features and 'l_wrist_position' in video_features:
-        # Both hands detected - classic theremin control
-        knobs['freq'] = float(
-            min_freq + video_features['r_wrist_position'][X] * (max_freq - min_freq)
-        )
-        knobs['volume'] = float(
-            np.clip(1 - video_features['l_wrist_position'][Y], 0, 1)
-        )
-    elif 'r_wrist_position' in video_features:
-        # Only right hand detected - use X for frequency, Y for volume
-        knobs['freq'] = float(
-            min_freq + video_features['r_wrist_position'][X] * (max_freq - min_freq)
-        )
-        knobs['volume'] = float(
-            np.clip(1 - video_features['r_wrist_position'][Y], 0, 1)
-        )
-    elif 'l_wrist_position' in video_features:
-        # Only left hand detected - use X for frequency, Y for volume
-        knobs['freq'] = float(
-            min_freq + video_features['l_wrist_position'][X] * (max_freq - min_freq)
-        )
-        knobs['volume'] = float(
-            np.clip(1 - video_features['l_wrist_position'][Y], 0, 1)
-        )
-    else:
-        # No hands detected - silent
-        mid_freq = (min_freq + max_freq) / 2
-        silent = 0.0
-        knobs['freq'] = mid_freq
-        knobs['volume'] = silent
-
-    if freq_trans:
-        knobs['freq'] = freq_trans(knobs['freq'])
-
-    return knobs
-
-
-MOD_FREQ = 0.4
-MOD_MUL = 0.1
-
-
-@add_default_settings('freq_src')
-def intro_high_sines(
-    base_freq=4000, mod_freq=MOD_FREQ, mod_mul=MOD_MUL, *, freq_src=DFLT_OSC
-):
-    wav = HarmTable([0.1, 0, 0.2, 0, 0.1, 0, 0, 0, 0.04, 0, 0, 0, 0.02])
-    fade = Fader(fadein=3, fadeout=20, mul=mod_mul)
-    fade.play()
-    mod = Osc(table=wav, freq=mod_freq)
-    car = freq_src(freq=[base_freq, base_freq + 40, base_freq - 10], mul=mod)
-    pan = SPan(car, pan=[0, 0.5, 1], mul=fade)
-    return pan
-
-
-HI_BASE_FREQ_RANGE = (2000, 6000)
-MID_BASE_FREQ_RANGE = (1000, 4000)
-LO_BASE_FREQ_RANGE = (200, 1000)
-MOD_FREQ_RANGE = (0.1, 1.0)
-MOD_MUL_RANGE = (0.000, 0.5)
-
-HI_SINES_FREQ_RANGE = MID_BASE_FREQ_RANGE
-
-
-def high_sines_theremin_knobs(
-    video_features,
-    *,
-    base_freq_range: tuple = HI_SINES_FREQ_RANGE,
-    mod_freq_range: tuple = MOD_FREQ_RANGE,
-    mod_mul_range: tuple = MOD_MUL_RANGE,
-) -> Dict[str, float]:
-    """
-    Maps hand positions to the three parameters of intro_high_sines synth:
-    - Right hand X: Controls base_freq
-    - Right hand Y: Controls mod_freq
-    - Left hand Y: Controls mod_mul (amplitude)
-
-    Args:
-        video_features (dict): Extracted hand feature dictionary
-        base_freq_range (tuple): Min and max frequency for the base sine wave (Hz)
-        mod_freq_range (tuple): Min and max frequency for modulation (Hz)
-        mod_mul_range (tuple): Min and max amplitude for modulation
-
-    Returns:
-        Dict[str, float]: Dictionary with 'base_freq', 'mod_freq', 'mod_mul' keys
-    """
-    knobs = {}
-
-    # Default values (middle of ranges)
-    knobs['base_freq'] = (base_freq_range[0] + base_freq_range[1]) / 2
-    knobs['mod_freq'] = (mod_freq_range[0] + mod_freq_range[1]) / 2
-    knobs['mod_mul'] = (mod_mul_range[0] + mod_mul_range[1]) / 2
-
-    # If no hands detected, return default values
-    if not video_features:
-        return knobs
-
-    # Right hand controls base_freq (X-axis) and mod_freq (Y-axis)
-    if 'r_wrist_position' in video_features:
-        r_x, r_y = video_features['r_wrist_position'][0:2]
-
-        # X position controls base frequency
-        knobs['base_freq'] = float(
-            base_freq_range[0] + r_x * (base_freq_range[1] - base_freq_range[0])
-        )
-
-        # Y position controls modulation frequency (inverse mapping feels more intuitive)
-        knobs['mod_freq'] = float(
-            mod_freq_range[0] + (1 - r_y) * (mod_freq_range[1] - mod_freq_range[0])
-        )
-
-    # Left hand controls mod_mul (amplitude) with Y-axis
-    if 'l_wrist_position' in video_features:
-        y = video_features['l_wrist_position'][1]
-        knobs['mod_mul'] = float(
-            mod_mul_range[0] + (1 - y) * (mod_mul_range[1] - mod_mul_range[0])
-        )
