@@ -14,7 +14,7 @@ from meshed import DAG, FuncNode
 from theremin.audio import (
     DFLT_MIN_FREQ,
     DFLT_MAX_FREQ,
-    snap_to_c_major,
+    snap_to_scale,
     audio_feature_ranges,
 )
 from theremin.audio_features import range_transformer
@@ -33,7 +33,7 @@ def wrist_x_to_freq(
         return (min_freq + max_freq) / 2
     x = r_wrist_position[0]
     freq = min_freq + x * (max_freq - min_freq)
-    return snap_to_c_major(freq)
+    return snap_to_scale(freq)
 
 
 def wrist_y_to_volume(l_wrist_position=None):
@@ -80,7 +80,7 @@ def left_wrist_to_freq(
         return (min_freq + max_freq) / 2
     x = l_wrist_position[0]
     freq = min_freq + x * (max_freq - min_freq)
-    return snap_to_c_major(freq)
+    return snap_to_scale(freq)
 
 
 def left_wrist_to_volume(l_wrist_position=None):
@@ -99,7 +99,7 @@ def right_wrist_to_freq(
         return (min_freq + max_freq) / 2
     x = r_wrist_position[0]
     freq = min_freq + x * (max_freq - min_freq)
-    return snap_to_c_major(freq)
+    return snap_to_scale(freq)
 
 
 def right_wrist_to_volume(r_wrist_position=None):

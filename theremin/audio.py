@@ -192,15 +192,19 @@ def chorused_sine_synth(freq=440, volume=0, depth=5, speed=0.3):
 # Natural sounding synth (instrument-like timbres)
 # -------------------------------------------------------------------------------
 
+from tonal import scale_midi_notes
 
-def snap_to_c_major(freq):
+DFLT_SCALE = "A penta"
+
+def snap_to_scale(freq, scale=DFLT_SCALE):
     """Snap frequency to the nearest note in the C major scale."""
     # Frequencies of C major scale over several octaves (C, D, E, F, G, A, B)
-    semitones_in_c_major = np.array([0, 2, 4, 5, 7, 9, 11])
+    # semitones_in_scale = np.array([0, 2, 4, 5, 7, 9, 11])
+    semitones_in_scale = scale_midi_notes(scale, midi_range=(0, 12))
     scale_freqs = []
     for octave in range(0, 9):
         base_midi = 12 * octave
-        for st in semitones_in_c_major:
+        for st in semitones_in_scale:
             midi_note = base_midi + st
             hz = 440.0 * 2 ** ((midi_note - 69) / 12)
             scale_freqs.append(hz)
@@ -586,7 +590,7 @@ def _calculate_vol_from_wrist(wrist):
 def two_hand_freq_and_volume_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
+    freq_trans: Union[Callable, None] = snap_to_scale,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
     audio_features: list = (
@@ -676,7 +680,7 @@ def two_hand_freq_and_volume_knobs(
 def two_voice_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
+    freq_trans: Union[Callable, None] = snap_to_scale,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
 ) -> Dict[str, float]:
@@ -732,7 +736,7 @@ def two_voice_knobs(
 def simple_two_hands_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
+    freq_trans: Union[Callable, None] = snap_to_scale,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
 ) -> Dict[str, float]:
@@ -828,7 +832,7 @@ def rhythmic_fm_synth_knobs(video_features) -> Dict[str, float]:
 
 from hum.util import scale_snapper
 
-snap_to_c_major = scale_snapper(scale=(0, 2, 4, 5, 7, 9, 11))
+snap_to_scale = scale_snapper(scale=(0, 2, 4, 5, 7, 9, 11))
 
 
 def theremin_knobs(
@@ -836,7 +840,7 @@ def theremin_knobs(
     *,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
+    freq_trans: Union[Callable, None] = snap_to_scale,
 ) -> Dict[str, float]:
     """
     Maps hand positions to frequency (pitch) and volume (amplitude),
@@ -1270,7 +1274,7 @@ pipelines = {k: partial(audio_pipe, **v) for k, v in _pipelines.items()}
 def two_voice_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
+    freq_trans: Union[Callable, None] = snap_to_scale,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
 ) -> Dict[str, float]:
@@ -1326,7 +1330,7 @@ def two_voice_knobs(
 def simple_two_hands_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
+    freq_trans: Union[Callable, None] = snap_to_scale,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
 ) -> Dict[str, float]:
@@ -1376,7 +1380,7 @@ def simple_two_hands_knobs(
 def ringmod_two_hands_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
+    freq_trans: Union[Callable, None] = snap_to_scale,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
 ) -> Dict[str, float]:
@@ -1432,7 +1436,7 @@ def ringmod_two_hands_knobs(
 def supersaw_two_hands_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
+    freq_trans: Union[Callable, None] = snap_to_scale,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
 ) -> Dict[str, float]:
@@ -1496,7 +1500,7 @@ def supersaw_two_hands_knobs(
 
 def rhythmic_fm_synth_knobs(
     video_features,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
+    freq_trans: Union[Callable, None] = snap_to_scale,
 ) -> Dict[str, float]:
     """
     Maps video features to the parameters of rhythmic_fm_synth.
@@ -1558,7 +1562,7 @@ def rhythmic_fm_synth_knobs(
 
 from hum.util import scale_snapper
 
-snap_to_c_major = scale_snapper(scale=(0, 2, 4, 5, 7, 9, 11))
+snap_to_scale = scale_snapper(scale=(0, 2, 4, 5, 7, 9, 11))
 
 
 def theremin_knobs(
@@ -1566,7 +1570,7 @@ def theremin_knobs(
     *,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-    freq_trans: Union[Callable, None] = snap_to_c_major,
+    freq_trans: Union[Callable, None] = snap_to_scale,
 ) -> Dict[str, float]:
     """
     Maps hand positions to frequency (pitch) and volume (amplitude),
