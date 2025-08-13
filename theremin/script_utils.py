@@ -136,8 +136,41 @@ def _get_scale_frequencies():
 # Lazy default drawing function wrapper
 
 
+def _get_default_draw_on_screen_for_scale(scale: Optional[str]):
+    """Return draw_on_screen partial with scale-dependent frequencies.
+
+    If scale is None: use default cached scale frequencies; if set to disables snapping
+    (e.g., 'none'), return no draw_frequencies so existing draw code can handle empty.
+    """
+    from theremin.display import draw_on_screen as DFLT_DRAW_ON_SCREEN  # lazy
+    from theremin.audio import (
+        DFLT_MIN_FREQ,
+        DFLT_MAX_FREQ,
+        DFLT_SCALE as AUDIO_DFLT_SCALE,
+        scale_frequencies_for_range,
+        resolve_scale_to_freq_trans,
+    )
+
+    # Interpret the CLI-provided scale string similar to freq_trans_override
+    freq_trans_marker = resolve_scale_to_freq_trans(scale)
+
+    if freq_trans_marker is None:
+        draw_freqs = []  # snapping disabled -> no scale guides
+    else:
+        # Decide which scale string to use for guides
+        scale_name = (
+            AUDIO_DFLT_SCALE if freq_trans_marker == "__USE_DEFAULT__" else scale
+        )
+        draw_freqs = scale_frequencies_for_range(
+            scale_name, DFLT_MIN_FREQ, DFLT_MAX_FREQ
+        )
+    return partial(DFLT_DRAW_ON_SCREEN, draw_frequencies=draw_freqs)
+
+
+# Existing generic factory kept for backward-compat
+
+
 def _get_default_draw_on_screen():
-    """Return draw_on_screen partial with lazily-computed scale frequencies."""
     from theremin.display import draw_on_screen as DFLT_DRAW_ON_SCREEN  # lazy
 
     return partial(DFLT_DRAW_ON_SCREEN, draw_frequencies=_get_scale_frequencies())
@@ -413,6 +446,9 @@ def theremin_cli(
     log_video_features_cb = print_json_if_possible if log_video_features else None
     log_knobs_cb = print_json_if_possible if log_knobs else None
 
+    # Pick a draw_on_screen that reflects the chosen scale guides
+    draw_on_screen = _get_default_draw_on_screen_for_scale(scale)
+
     # No wrapping here; let run_theremin handle freq_trans override injection
     knobs_arg = knobs
 
@@ -426,4 +462,5 @@ def theremin_cli(
         record_to_file=record_to_file,
         window_name=window_name,
         freq_trans_override=freq_trans_override,
+        draw_on_screen=draw_on_screen,
     )
