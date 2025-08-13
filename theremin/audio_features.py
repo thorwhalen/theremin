@@ -176,14 +176,14 @@ distance_to_reverb = range_transformer(
 def create_theremin_builder(
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-    freq_transform: Callable = snap_to_scale,
+    freq_trans: Callable = snap_to_scale,
 ) -> AudioFeatureBuilder:
     """Create an audio feature builder for classic theremin control (right hand freq, left hand volume)"""
 
     freq_transformer = range_transformer(
         input_range=(0, 1),
         output_range=(min_freq, max_freq),
-        post_transform=freq_transform,
+        post_transform=freq_trans,
     )
 
     return AudioFeatureBuilder(
@@ -202,14 +202,14 @@ def create_theremin_builder(
 def create_two_hand_builder(
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-    freq_transform: Callable = snap_to_scale,
+    freq_trans: Callable = snap_to_scale,
 ) -> AudioFeatureBuilder:
     """Create builder for independent left/right hand control"""
 
     freq_transformer = range_transformer(
         input_range=(0, 1),
         output_range=(min_freq, max_freq),
-        post_transform=freq_transform,
+        post_transform=freq_trans,
     )
 
     return AudioFeatureBuilder(
@@ -235,14 +235,14 @@ def create_two_hand_builder(
 def create_enhanced_theremin_builder(
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-    freq_transform: Callable = snap_to_scale,
+    freq_trans: Callable = snap_to_scale,
 ) -> AudioFeatureBuilder:
     """Create enhanced theremin with vibrato and reverb controls"""
 
     freq_transformer = range_transformer(
         input_range=(0, 1),
         output_range=(min_freq, max_freq),
-        post_transform=freq_transform,
+        post_transform=freq_trans,
     )
 
     return AudioFeatureBuilder(
@@ -316,14 +316,14 @@ class FallbackAudioFeatureBuilder(AudioFeatureBuilder):
 def create_fallback_theremin_builder(
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-    freq_transform: Callable = snap_to_scale,
+    freq_trans: Callable = snap_to_scale,
 ) -> FallbackAudioFeatureBuilder:
     """Create theremin builder with single-hand fallback behavior"""
 
     freq_transformer = range_transformer(
         input_range=(0, 1),
         output_range=(min_freq, max_freq),
-        post_transform=freq_transform,
+        post_transform=freq_trans,
     )
 
     # Primary mappings for two-hand operation

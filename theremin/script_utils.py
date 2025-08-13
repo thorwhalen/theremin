@@ -45,6 +45,7 @@ def print_json_if_possible(x):
 
 class KeyboardBreakSignal(Exception):
     """Raised internally to break the main loop when a designated key is pressed."""
+
     pass
 
 
@@ -53,6 +54,7 @@ def _ensure_cv2():
     global cv2
     if 'cv2' not in globals():  # pragma: no cover - trivial
         import cv2  # type: ignore
+
         globals()['cv2'] = cv2
     return cv2
 
@@ -83,6 +85,7 @@ def keyboard_feature_vector(key_code: int) -> Dict[str, Any]:
 
 class CameraReadError(Exception):
     """Raised when a frame cannot be read from the camera."""
+
     pass
 
 
@@ -121,23 +124,29 @@ def _get_scale_frequencies():
     global _scale_frequencies_cache
     if _scale_frequencies_cache is None:
         from theremin.audio import DFLT_MIN_FREQ, DFLT_MAX_FREQ  # lazy
+
         _scale_frequencies_cache = [
-            freq for freq in scale_frequencies() if DFLT_MIN_FREQ <= freq <= DFLT_MAX_FREQ
+            freq
+            for freq in scale_frequencies()
+            if DFLT_MIN_FREQ <= freq <= DFLT_MAX_FREQ
         ]
     return _scale_frequencies_cache
 
 
 # Lazy default drawing function wrapper
 
+
 def _get_default_draw_on_screen():
     """Return draw_on_screen partial with lazily-computed scale frequencies."""
     from theremin.display import draw_on_screen as DFLT_DRAW_ON_SCREEN  # lazy
+
     return partial(DFLT_DRAW_ON_SCREEN, draw_frequencies=_get_scale_frequencies())
 
 
 # -------------------------------------------------------------------------------
 # Main run function (heavy imports are done inside)
 # -------------------------------------------------------------------------------
+
 
 def run_theremin(
     *,
@@ -151,6 +160,7 @@ def run_theremin(
     window_name: str = 'Hand Gesture Recognition with Theremin',
     draw_on_screen: Optional[Callable] = None,
     only_keep_new_freqs: bool = True,
+    freq_trans_override: Optional[Union[str, Callable]] = "__USE_DEFAULT__",
 ):
     """Run the realtime theremin loop.
 
@@ -165,8 +175,17 @@ def run_theremin(
     # Heavy imports here
     _ensure_cv2()
     from theremin.video_features import HandGestureRecognizer, hand_feature_funcs
-    from theremin.audio import synths, knobs as KNOBS_DICT, pipelines, filter_unchanged_frequencies
-    from theremin.audio import KNOBS as DFLT_KNOBS, DFLT_SYNTH as DFLT_SYNTH_FUNC, DFLT_PIPELINE as DFLT_PIPELINE_NAME
+    from theremin.audio import (
+        synths,
+        knobs as KNOBS_DICT,
+        pipelines,
+        filter_unchanged_frequencies,
+    )
+    from theremin.audio import (
+        KNOBS as DFLT_KNOBS,
+        DFLT_SYNTH as DFLT_SYNTH_FUNC,
+        DFLT_PIPELINE as DFLT_PIPELINE_NAME,
+    )
     from hum.pyo_util import Synth
     from cw import resolve_to_function
 
@@ -198,6 +217,21 @@ def run_theremin(
         synth = pipeline_components.get("synth", synth or DFLT_SYNTH_FUNC)
         knobs = resolve_knobs(knobs)
         synth = resolve_synth_func(synth)
+
+    # If requested, override freq_trans by wrapping the knobs function
+    if freq_trans_override != "__USE_DEFAULT__":
+        try:
+            from inspect import signature
+
+            if 'freq_trans' in signature(knobs).parameters:
+                base_knobs = knobs
+
+                def _knobs_with_override(vf):
+                    return base_knobs(vf, freq_trans=freq_trans_override)
+
+                knobs = _knobs_with_override
+        except Exception:
+            pass
 
     print(f"{knobs=}, {synth=}")
 
@@ -240,8 +274,10 @@ def run_theremin(
                     _audio_features = knobs(_video_features)
                     if _audio_features:
                         if only_keep_new_freqs:
-                            _audio_features, previous_data = filter_unchanged_frequencies(
-                                _audio_features, previous_data
+                            _audio_features, previous_data = (
+                                filter_unchanged_frequencies(
+                                    _audio_features, previous_data
+                                )
                             )
                         synth_obj(**_audio_features)
                     log_knobs(_audio_features)
@@ -259,7 +295,9 @@ def run_theremin(
         if record_to_file:
             try:
                 output_path = (
-                    record_to_file if isinstance(record_to_file, str) else 'theremin_recording.wav'
+                    record_to_file
+                    if isinstance(record_to_file, str)
+                    else 'theremin_recording.wav'
                 )
                 synth_obj.render_events(output_filepath=output_path)
                 print(f"Saved audio recording to {output_path}")
@@ -283,15 +321,51 @@ def list_components(param_value, components_dict, description, component_describ
     return False
 
 
-@argh.arg('--pipeline','-p',nargs='?',const='list',help='Audio pipeline name (use without argument to list available pipelines)')
-@argh.arg('--synth','-s',nargs='?',const='list',help='Synthesizer function name (use without argument to list available synths)')
-@argh.arg('--knobs','-k',nargs='?',const='list',help='Audio knobs function name (use without argument to list available knobs)')
-@argh.arg('--video-features','-v',nargs='?',const='list',help='Video features function name (use without argument to list available video features)')
+@argh.arg(
+    '--pipeline',
+    '-p',
+    nargs='?',
+    const='list',
+    help='Audio pipeline name (use without argument to list available pipelines)',
+)
+@argh.arg(
+    '--synth',
+    '-s',
+    nargs='?',
+    const='list',
+    help='Synthesizer function name (use without argument to list available synths)',
+)
+@argh.arg(
+    '--knobs',
+    '-k',
+    nargs='?',
+    const='list',
+    help='Audio knobs function name (use without argument to list available knobs)',
+)
+@argh.arg(
+    '--video-features',
+    '-v',
+    nargs='?',
+    const='list',
+    help='Video features function name (use without argument to list available video features)',
+)
 @argh.arg('--log-video-features', help='Log hand features', default=False)
 @argh.arg('--log-knobs', help='Log audio features', default=False)
-@argh.arg('-r','--record-to-file', help='Filename to save recording', default='theremin_recording.wav')
-@argh.arg('-n','--no-recording', help='Disable recording', default=False)
-@argh.arg('-w','--window-name', help='Window title', default='Theremin with Hand Tracking')
+@argh.arg(
+    '-r',
+    '--record-to-file',
+    help='Filename to save recording',
+    default='theremin_recording.wav',
+)
+@argh.arg('-n', '--no-recording', help='Disable recording', default=False)
+@argh.arg(
+    '-w', '--window-name', help='Window title', default='Theremin with Hand Tracking'
+)
+@argh.arg(
+    '--scale',
+    help='Scale name for snapping (e.g., "A penta", "C major"). Use none/null/off to disable. Default uses audio.DFLT_SCALE.',
+    default=None,
+)
 def theremin_cli(
     pipeline: Optional[str] = 'theremin',
     video_features: Optional[str] = 'many_video_features',
@@ -302,13 +376,20 @@ def theremin_cli(
     record_to_file: str = 'theremin_recording.wav',
     no_recording: bool = False,
     window_name: str = 'Theremin with Hand Tracking',
+    scale: Optional[str] = None,
 ):
     """CLI entry: list components (when argument value is 'list') or run theremin.
 
     Heavy imports are still deferred until a run is actually initiated.
     """
     # Lazy import of component registries ONLY if listing or running
-    from theremin.audio import synths, knobs as knobs_dict, pipelines
+    from theremin.audio import (
+        synths,
+        knobs as knobs_dict,
+        pipelines,
+        resolve_scale_to_freq_trans,
+        DFLT_SCALE,
+    )
     from theremin.video_features import hand_feature_funcs
 
     # Handle listing
@@ -318,22 +399,31 @@ def theremin_cli(
         return
     if list_components(knobs, knobs_dict, 'audio feature mapping functions'):
         return
-    if list_components(video_features, hand_feature_funcs, 'hand feature extraction functions'):
+    if list_components(
+        video_features, hand_feature_funcs, 'hand feature extraction functions'
+    ):
         return
 
     if no_recording:
         record_to_file = False
 
+    # Resolve scale argument to freq transformation override
+    freq_trans_override = resolve_scale_to_freq_trans(scale)
+
     log_video_features_cb = print_json_if_possible if log_video_features else None
     log_knobs_cb = print_json_if_possible if log_knobs else None
+
+    # No wrapping here; let run_theremin handle freq_trans override injection
+    knobs_arg = knobs
 
     run_theremin(
         pipeline=pipeline,
         video_features=video_features,
-        knobs=knobs,
+        knobs=knobs_arg,
         synth=synth,
         log_video_features=log_video_features_cb,
         log_knobs=log_knobs_cb,
         record_to_file=record_to_file,
         window_name=window_name,
+        freq_trans_override=freq_trans_override,
     )
