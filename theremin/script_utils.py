@@ -396,7 +396,9 @@ def list_components(param_value, components_dict, description, component_describ
 )
 @argh.arg(
     '--scale',
-    help='Scale name for snapping (e.g., "A penta", "C major"). Use none/null/off to disable. Default uses audio.DFLT_SCALE.',
+    nargs='?',
+    const='list',
+    help='Scale for snapping. Use flag without value to list scales; use none/null/off to disable. Default uses audio.DFLT_SCALE.',
     default=None,
 )
 def theremin_cli(
@@ -425,7 +427,7 @@ def theremin_cli(
     )
     from theremin.video_features import hand_feature_funcs
 
-    # Handle listing
+    # Handle listing of components
     if list_components(pipeline, pipelines, 'pipelines'):
         return
     if list_components(synth, synths, 'synthesizer functions'):
@@ -437,8 +439,36 @@ def theremin_cli(
     ):
         return
 
+    # Handle scale listing/help when flag provided without value
+    if scale == 'list':
+        try:
+            from tonal.notes import list_scales_string
+
+            print(list_scales_string())
+        except Exception as e:
+            print(f"Could not list scales ({e.__class__.__name__}: {e})")
+        return
+
     if no_recording:
         record_to_file = False
+
+    # Validate scale if provided and not a disable marker
+    scale_disable_markers = {"none", "null", "off", "false", "no", "0", ""}
+    if isinstance(scale, str) and scale.strip().lower() not in scale_disable_markers:
+        try:
+            from tonal.notes import scale_params, IncorrectScaleSpecification
+
+            # Will raise IncorrectScaleSpecification on failure
+            scale_params(scale)
+        except IncorrectScaleSpecification as e:
+            print(f"{e.__class__.__name__}: {e}")
+            return
+        except Exception as e:
+            # Non-fatal: fall back to runtime behavior, but inform the user
+            print(
+                "Warning: unexpected issue while validating scale; proceeding anyway. "
+                f"{e.__class__.__name__}: {e}"
+            )
 
     # Resolve scale argument to freq transformation override
     freq_trans_override = resolve_scale_to_freq_trans(scale)
