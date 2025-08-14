@@ -18,6 +18,7 @@ from theremin.audio import (
     audio_feature_ranges,
 )
 from theremin.audio_features import range_transformer
+from theremin.util import ensure_plain_types
 
 
 # --------------------------------------------------------------------------------------
@@ -234,6 +235,35 @@ def create_fallback_theremin_dag():
 # --------------------------------------------------------------------------------------
 
 
+def ensure_dag_output_is_dict(dag, out):
+    """Normalize DAG output to a dict with meaningful keys when possible.
+
+    - If ``out`` is already a dict, return as-is.
+    - If the DAG exposes output names via ``dag.out`` (list/tuple), zip them.
+    - Otherwise, fall back to common shapes:
+      2-tuple -> ['freq', 'volume']
+      4-tuple -> ['l_freq', 'l_volume', 'r_freq', 'r_volume']
+    - If no keys can be inferred, return the original ``out``.
+    """
+    if isinstance(out, dict):
+        return out
+
+    keys = None
+    if hasattr(dag, 'out') and isinstance(getattr(dag, 'out'), (list, tuple)):
+        keys = list(getattr(dag, 'out'))
+
+    if keys is None and isinstance(out, (list, tuple)):
+        if len(out) == 2:
+            keys = ['freq', 'volume']
+        elif len(out) == 4:
+            keys = ['l_freq', 'l_volume', 'r_freq', 'r_volume']
+
+    if isinstance(out, (list, tuple)) and keys:
+        return dict(zip(keys, out))
+
+    return out
+
+
 def dag_to_knobs_function(dag) -> Callable:
     """Convert a DAG to a function that matches the old knobs function signature"""
 
@@ -246,7 +276,9 @@ def dag_to_knobs_function(dag) -> Callable:
                 return {'freq': (DFLT_MIN_FREQ + DFLT_MAX_FREQ) / 2, 'volume': 0.0}
 
         # Call the DAG with video features as keyword arguments
-        return dag(**video_features)
+        out = dag(**video_features)
+        out = ensure_dag_output_is_dict(dag, out)
+        return ensure_plain_types(out)
 
     return knobs_function
 

@@ -3,6 +3,13 @@
 from functools import partial
 import time
 from importlib.resources import files
+from typing import Any
+import numbers
+
+try:  # optional numpy import for isinstance checks
+    import numpy as _np  # type: ignore
+except Exception:  # pragma: no cover - numpy may not be present in some envs
+    _np = None
 
 pkg_name = 'theremin'
 data_files = files(pkg_name) / 'data'
@@ -225,3 +232,51 @@ def json_lines(string_or_path_to_string: Union[str, Path]) -> Iterator[Dict[str,
         except json.JSONDecodeError:
             # Skip non-JSON lines
             continue
+
+
+# --------------------------------------------------------------------------------------
+# Type sanitation helpers
+# --------------------------------------------------------------------------------------
+
+
+def to_builtin_number(x: Any) -> Any:
+    """Convert numpy numeric scalars to builtin numbers; leave others unchanged.
+
+    - numpy floating -> float
+    - numpy integer -> int
+    - python numbers.Number -> unchanged
+    - numpy arrays -> x.tolist() if 0-d array then recurse to scalar
+    - other types -> unchanged
+    """
+    # Handle numpy scalar types when numpy is available
+    if _np is not None:
+        if isinstance(x, (_np.floating,)):
+            return float(x)
+        if isinstance(x, (_np.integer,)):
+            return int(x)
+        # 0-dim arrays: treat as scalars
+        if isinstance(x, _np.ndarray):
+            if x.ndim == 0:
+                return to_builtin_number(x.item())
+            # For non-scalar arrays, convert to list (non-audio inputs)
+            return x.tolist()
+    # For plain python numeric types, return as-is
+    if isinstance(x, numbers.Number):
+        return x
+    return x
+
+
+def ensure_plain_types(obj: Any) -> Any:
+    """Recursively convert numpy numbers/arrays in common containers to builtin types.
+
+    Supports dicts, lists, tuples, sets; leaves other types unchanged.
+    """
+    if isinstance(obj, dict):
+        return {k: ensure_plain_types(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [ensure_plain_types(v) for v in obj]
+    if isinstance(obj, tuple):
+        return tuple(ensure_plain_types(v) for v in obj)
+    if isinstance(obj, set):
+        return {ensure_plain_types(v) for v in obj}
+    return to_builtin_number(obj)

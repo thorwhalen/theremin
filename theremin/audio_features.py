@@ -18,6 +18,7 @@ from theremin.audio import (
     identity,
 )
 from theremin.video_features import video_feature_ranges
+from theremin.util import ensure_plain_types
 
 
 @dataclass
@@ -82,8 +83,12 @@ def range_transformer(
         # Map to output range
         result = output_min + normalized * output_span
 
-        # Apply post-transformation
-        return post_transform(result)
+        # Apply post-transformation and ensure builtin float
+        result = post_transform(result)
+        try:
+            return float(result)
+        except Exception:
+            return result
 
     return transformer
 
@@ -127,7 +132,7 @@ class AudioFeatureBuilder:
             except (KeyError, TypeError, IndexError, ValueError):
                 audio_features[mapping.audio_param] = mapping.default
 
-        return audio_features
+        return ensure_plain_types(audio_features)
 
     @property
     def output_params(self) -> List[str]:

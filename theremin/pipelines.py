@@ -40,6 +40,7 @@ from theremin.dag_audio_features import (
     enhanced_theremin_dag_knobs,
     two_voice_dag_knobs,
 )
+from theremin.util import ensure_plain_types
 
 
 @dataclass
@@ -121,6 +122,7 @@ class AudioPipeline:
     def __call__(self, video_features: Dict) -> Any:
         """Execute the full pipeline: video_features -> audio_features -> synth"""
         audio_features = self.audio_features(video_features)
+        audio_features = ensure_plain_types(audio_features)
 
         # Filter to only parameters the synth accepts
         synth_sig = Sig(self.synth)
@@ -152,9 +154,7 @@ ENHANCED_THEREMIN_PIPELINE = AudioPipeline(
 # Simple sine wave with basic controls
 SIMPLE_SINE_PIPELINE = AudioPipeline(
     name="simple_sine",
-    audio_features=create_theremin_builder(
-        freq_transform=lambda x: x
-    ),  # No quantization
+    audio_features=create_theremin_builder(freq_trans=lambda x: x),  # No quantization
     synth=sine_synth,
 )
 

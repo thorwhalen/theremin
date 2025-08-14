@@ -211,7 +211,7 @@ def snap_to_scale(freq, scale=DFLT_SCALE):
             scale_freqs.append(hz)
     scale_freqs = np.array(scale_freqs)
     closest = scale_freqs[np.argmin(np.abs(scale_freqs - freq))]
-    return closest
+    return float(closest)
 
 
 # --- New: export frequencies of a given scale in a range ---
@@ -556,13 +556,16 @@ class RangeMapper:
             value_range: The range of the input value (min, max)
             target_range: The range to map to (min, max)
         """
-        self.value_min, self.value_max = value_range
-        self.target_min, self.target_max = target_range
+        # Normalize ranges to floats to ensure consistent float outputs
+        self.value_min, self.value_max = float(value_range[0]), float(value_range[1])
+        self.target_min, self.target_max = float(target_range[0]), float(
+            target_range[1]
+        )
 
         # Precompute frequently used values for performance
-        self._value_span = self.value_max - self.value_min
-        self._target_span = self.target_max - self.target_min
-        self._scale_factor = self._target_span / self._value_span
+        self._value_span = float(self.value_max - self.value_min)
+        self._target_span = float(self.target_max - self.target_min)
+        self._scale_factor = float(self._target_span / self._value_span)
         self.ingress = ingress
         self.egress = egress
 
@@ -708,10 +711,7 @@ def two_hand_freq_and_volume_knobs(
                 video_features['r_thumb_index_distance']
             )
 
-    # Apply frequency transformation if provided
-    if freq_trans:
-        knobs['l_freq'] = freq_trans(knobs['l_freq'])
-        knobs['r_freq'] = freq_trans(knobs['r_freq'])
+    # No frequency transformation needed here; this knobs set doesn't expose l_/r_ freq
 
     # Filter to include only parameters the synth function can use
     synth_params = {
@@ -772,10 +772,7 @@ def two_voice_knobs(
             knobs['r_freq'] = freq_mapper(wrist[0])
             knobs['r_volume'] = volume_mapper(wrist[1])
 
-    # Apply frequency transformation if provided
-    if freq_trans:
-        knobs['l_freq'] = freq_trans(knobs['l_freq'])
-        knobs['r_freq'] = freq_trans(knobs['r_freq'])
+    # No frequency transformation needed here; this knobs set doesn't expose l_/r_ freq
 
     # Only return parameters that two_voice_synth_func can handle
     synth_params = {'l_freq', 'l_volume', 'r_freq', 'r_volume'}
@@ -1007,11 +1004,6 @@ def rhythmic_fm_synth_knobs(
         openness = np.clip(video_features['l_openness'], 0.0, 1.0)
         knobs['reverb_mix'] = float(openness)
 
-    # Apply frequency transformation if provided
-    if freq_trans:
-        knobs['l_freq'] = freq_trans(knobs['l_freq'])
-        knobs['r_freq'] = freq_trans(knobs['r_freq'])
-
     return {k: float(v) for k, v in knobs.items()}
 
 
@@ -1086,7 +1078,8 @@ def theremin_knobs(
     if freq_trans:
         knobs['freq'] = freq_trans(knobs['freq'])
 
-    return knobs
+    # Ensure plain Python floats (avoid numpy types for pyo compatibility)
+    return {k: float(v) for k, v in knobs.items()}
 
 
 MOD_FREQ = 0.4
@@ -1737,11 +1730,6 @@ def rhythmic_fm_synth_knobs(
         openness = np.clip(video_features['l_openness'], 0.0, 1.0)
         knobs['reverb_mix'] = float(openness)
 
-    # Apply frequency transformation if provided
-    if freq_trans:
-        knobs['l_freq'] = freq_trans(knobs['l_freq'])
-        knobs['r_freq'] = freq_trans(knobs['r_freq'])
-
     return {k: float(v) for k, v in knobs.items()}
 
 
@@ -1816,7 +1804,8 @@ def theremin_knobs(
     if freq_trans:
         knobs['freq'] = freq_trans(knobs['freq'])
 
-    return knobs
+    # Ensure plain Python floats (avoid numpy types for pyo compatibility)
+    return {k: float(v) for k, v in knobs.items()}
 
 
 MOD_FREQ = 0.4

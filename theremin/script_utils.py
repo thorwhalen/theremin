@@ -219,6 +219,7 @@ def run_theremin(
         DFLT_SYNTH as DFLT_SYNTH_FUNC,
         DFLT_PIPELINE as DFLT_PIPELINE_NAME,
     )
+    from theremin.util import ensure_plain_types
     from hum.pyo_util import Synth
     from cw import resolve_to_function
 
@@ -305,6 +306,7 @@ def run_theremin(
                     _video_features = video_features(hand_detection)
                     log_video_features(_video_features)
                     _audio_features = knobs(_video_features)
+                    _audio_features = ensure_plain_types(_audio_features)
                     if _audio_features:
                         if only_keep_new_freqs:
                             _audio_features, previous_data = (
