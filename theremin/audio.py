@@ -6,6 +6,7 @@ from functools import lru_cache, partial
 
 from hum import Synth
 from hum.pyo_util import add_default_dials, add_default_settings
+
 from pyo import *
 
 # See DFLT_SYNTH_FUNC_NAME and DFLT_KNOBS definitions at the end of this module
@@ -432,21 +433,7 @@ def _two_voice_synth_func(
     return sound1 + sound2
 
 
-def obfuscate_args(func, keep_args):
-    """
-    Creates a new function with only the specified arguments,
-    with other arguments fixed to their defaults.
-    """
-    from i2 import partialx, Sig as Signature
-
-    func_sig = Signature(func)
-    if not all([arg in keep_args for arg in func_sig.names[: len(keep_args)]]):
-        raise ValueError("keep_args must be in the beginning of Sig(foo).names")
-    defaults_of_other_args = {
-        k: v for k, v in func_sig.defaults.items() if k not in keep_args
-    }
-    return partialx(func, **defaults_of_other_args, _rm_partialize=True)
-
+from theremin.util import obfuscate_args
 
 # Create a simplified two-voice synth function that only exposes the necessary parameters
 two_voice_synth_func = obfuscate_args(
@@ -2010,47 +1997,6 @@ def high_sines_openness_theremin_knobs(
         )
 
     return knobs
-
-
-# -------------------------------------------------------------------------------
-# Misc utils
-# -------------------------------------------------------------------------------
-
-
-def filter_unchanged_frequencies(_audio_features, previous_data):
-    """
-    Filter out frequency values that haven't changed since the last update.
-
-    Args:
-        _audio_features: Dictionary containing audio feature values
-        previous_data: Object storing previous frequency values
-
-    Returns:
-        Modified _audio_features with unchanged frequencies removed, and the updated previous_data
-    """
-    if 'freq' in _audio_features:
-        freq = _audio_features['freq']
-        previous_data.last_raw_freqs.append(freq)
-        if freq == previous_data.last_freq:
-            del _audio_features['freq']
-        else:
-            previous_data.last_freq = freq
-
-    if 'l_freq' in _audio_features:
-        l_freq = _audio_features['l_freq']
-        if l_freq == previous_data.last_l_freq:
-            del _audio_features['l_freq']
-        else:
-            previous_data.last_l_freq = l_freq
-
-    if 'r_freq' in _audio_features:
-        r_freq = _audio_features['r_freq']
-        if r_freq == previous_data.last_r_freq:
-            del _audio_features['r_freq']
-        else:
-            previous_data.last_r_freq = r_freq
-
-    return _audio_features, previous_data
 
 
 # -------------------------------------------------------------------------------

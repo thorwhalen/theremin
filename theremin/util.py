@@ -147,6 +147,23 @@ def format_label_xyz(label, x, y, z, *, label_width=15, coord_width=8):
 # --------------------------------------------------------------------------------------
 # Misc
 
+from i2 import partialx, Sig as Signature
+
+
+def obfuscate_args(func, keep_args):
+    """
+    Creates a new function with only the specified arguments,
+    with other arguments fixed to their defaults.
+    """
+
+    func_sig = Signature(func)
+    if not all([arg in keep_args for arg in func_sig.names[: len(keep_args)]]):
+        raise ValueError("keep_args must be in the beginning of Sig(foo).names")
+    defaults_of_other_args = {
+        k: v for k, v in func_sig.defaults.items() if k not in keep_args
+    }
+    return partialx(func, **defaults_of_other_args, _rm_partialize=True)
+
 
 import inspect
 

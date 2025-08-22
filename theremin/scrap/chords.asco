@@ -1,0 +1,35 @@
+@set_osc_handling_double(true)
+
+OSCRECEIVE /tempo_change 9000 $tempo ; Listen for tempo changes on port 9000
+OSCRECEIVE /play_next 9000 $play     ; Listen for a trigger to play the next chord on port 9000
+
+@whenever ($tempo) {
+  BPM $tempo
+}
+
+@whenever ($play) {
+  if ($play == 1) {
+    print "Playing C major chord"
+    NOTE 60 1 ; C
+    NOTE 64 1 ; E
+    NOTE 67 1 ; G
+  }
+}
+
+@whenever ($play) {
+  if ($play == 2) {
+    print "Playing G major chord"
+    NOTE 67 1 ; G
+    NOTE 71 1 ; B
+    NOTE 74 1 ; D
+  }
+}
+
+@whenever ($play) {
+  if ($play == 3) {
+    print "Playing F major chord"
+    NOTE 65 1 ; F
+    NOTE 69 1 ; A
+    NOTE 72 1 ; C
+  }
+}
