@@ -3,6 +3,13 @@
 from functools import partial
 import time
 from importlib.resources import files
+from typing import Any
+import numbers
+
+try:  # optional numpy import for isinstance checks
+    import numpy as _np  # type: ignore
+except Exception:  # pragma: no cover - numpy may not be present in some envs
+    _np = None
 
 pkg_name = 'theremin'
 data_files = files(pkg_name) / 'data'
@@ -140,6 +147,23 @@ def format_label_xyz(label, x, y, z, *, label_width=15, coord_width=8):
 # --------------------------------------------------------------------------------------
 # Misc
 
+from i2 import partialx, Sig as Signature
+
+
+def obfuscate_args(func, keep_args):
+    """
+    Creates a new function with only the specified arguments,
+    with other arguments fixed to their defaults.
+    """
+
+    func_sig = Signature(func)
+    if not all([arg in keep_args for arg in func_sig.names[: len(keep_args)]]):
+        raise ValueError("keep_args must be in the beginning of Sig(foo).names")
+    defaults_of_other_args = {
+        k: v for k, v in func_sig.defaults.items() if k not in keep_args
+    }
+    return partialx(func, **defaults_of_other_args, _rm_partialize=True)
+
 
 import inspect
 
@@ -184,11 +208,12 @@ def annotate_with(annotation_type):
 
 
 import json
-from typing import Union, Iterator, Dict, Any
+from typing import Union, Dict, Any
+from collections.abc import Iterator
 from pathlib import Path
 
 
-def json_lines(string_or_path_to_string: Union[str, Path]) -> Iterator[Dict[str, Any]]:
+def json_lines(string_or_path_to_string: str | Path) -> Iterator[dict[str, Any]]:
     """
     Parse a file or string containing JSON-like dictionaries on each line.
     Yields only the lines that can be deserialized to dictionaries.
@@ -225,3 +250,51 @@ def json_lines(string_or_path_to_string: Union[str, Path]) -> Iterator[Dict[str,
         except json.JSONDecodeError:
             # Skip non-JSON lines
             continue
+
+
+# --------------------------------------------------------------------------------------
+# Type sanitation helpers
+# --------------------------------------------------------------------------------------
+
+
+def to_builtin_number(x: Any) -> Any:
+    """Convert numpy numeric scalars to builtin numbers; leave others unchanged.
+
+    - numpy floating -> float
+    - numpy integer -> int
+    - python numbers.Number -> unchanged
+    - numpy arrays -> x.tolist() if 0-d array then recurse to scalar
+    - other types -> unchanged
+    """
+    # Handle numpy scalar types when numpy is available
+    if _np is not None:
+        if isinstance(x, (_np.floating,)):
+            return float(x)
+        if isinstance(x, (_np.integer,)):
+            return int(x)
+        # 0-dim arrays: treat as scalars
+        if isinstance(x, _np.ndarray):
+            if x.ndim == 0:
+                return to_builtin_number(x.item())
+            # For non-scalar arrays, convert to list (non-audio inputs)
+            return x.tolist()
+    # For plain python numeric types, return as-is
+    if isinstance(x, numbers.Number):
+        return x
+    return x
+
+
+def ensure_plain_types(obj: Any) -> Any:
+    """Recursively convert numpy numbers/arrays in common containers to builtin types.
+
+    Supports dicts, lists, tuples, sets; leaves other types unchanged.
+    """
+    if isinstance(obj, dict):
+        return {k: ensure_plain_types(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [ensure_plain_types(v) for v in obj]
+    if isinstance(obj, tuple):
+        return tuple(ensure_plain_types(v) for v in obj)
+    if isinstance(obj, set):
+        return {ensure_plain_types(v) for v in obj}
+    return to_builtin_number(obj)

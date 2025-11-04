@@ -5,7 +5,8 @@ This module provides a cleaner, more composable way to map video features to aud
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, Callable, Any, Union, List, Tuple, Optional
+from typing import Dict, Any, Union, List, Tuple, Optional
+from collections.abc import Callable
 import numpy as np
 from functools import partial
 
@@ -18,6 +19,7 @@ from theremin.audio import (
     identity,
 )
 from theremin.video_features import video_feature_ranges
+from theremin.util import ensure_plain_types
 
 
 @dataclass
@@ -41,8 +43,8 @@ class FeatureMapping:
 
 
 def range_transformer(
-    input_range: Tuple[float, float] = (0, 1),
-    output_range: Tuple[float, float] = (220, 1760),
+    input_range: tuple[float, float] = (0, 1),
+    output_range: tuple[float, float] = (220, 1760),
     pre_transform: Callable = identity,
     post_transform: Callable = identity,
     clip: bool = True,
@@ -82,13 +84,17 @@ def range_transformer(
         # Map to output range
         result = output_min + normalized * output_span
 
-        # Apply post-transformation
-        return post_transform(result)
+        # Apply post-transformation and ensure builtin float
+        result = post_transform(result)
+        try:
+            return float(result)
+        except Exception:
+            return result
 
     return transformer
 
 
-def extract_nested_value(data: Dict, path: str) -> Any:
+def extract_nested_value(data: dict, path: str) -> Any:
     """
     Extract nested values from a dictionary using dot notation.
 
@@ -113,10 +119,10 @@ def extract_nested_value(data: Dict, path: str) -> Any:
 class AudioFeatureBuilder:
     """Builds audio features from video features using mappings and transformations"""
 
-    def __init__(self, mappings: List[FeatureMapping]):
+    def __init__(self, mappings: list[FeatureMapping]):
         self.mappings = mappings
 
-    def __call__(self, video_features: Dict) -> Dict[str, float]:
+    def __call__(self, video_features: dict) -> dict[str, float]:
         """Extract audio features from video features"""
         audio_features = {}
 
@@ -127,10 +133,10 @@ class AudioFeatureBuilder:
             except (KeyError, TypeError, IndexError, ValueError):
                 audio_features[mapping.audio_param] = mapping.default
 
-        return audio_features
+        return ensure_plain_types(audio_features)
 
     @property
-    def output_params(self) -> List[str]:
+    def output_params(self) -> list[str]:
         """Get list of audio parameters this builder produces"""
         return [mapping.audio_param for mapping in self.mappings]
 
@@ -176,14 +182,14 @@ distance_to_reverb = range_transformer(
 def create_theremin_builder(
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-    freq_transform: Callable = snap_to_scale,
+    freq_trans: Callable = snap_to_scale,
 ) -> AudioFeatureBuilder:
     """Create an audio feature builder for classic theremin control (right hand freq, left hand volume)"""
 
     freq_transformer = range_transformer(
         input_range=(0, 1),
         output_range=(min_freq, max_freq),
-        post_transform=freq_transform,
+        post_transform=freq_trans,
     )
 
     return AudioFeatureBuilder(
@@ -202,14 +208,14 @@ def create_theremin_builder(
 def create_two_hand_builder(
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-    freq_transform: Callable = snap_to_scale,
+    freq_trans: Callable = snap_to_scale,
 ) -> AudioFeatureBuilder:
     """Create builder for independent left/right hand control"""
 
     freq_transformer = range_transformer(
         input_range=(0, 1),
         output_range=(min_freq, max_freq),
-        post_transform=freq_transform,
+        post_transform=freq_trans,
     )
 
     return AudioFeatureBuilder(
@@ -235,14 +241,14 @@ def create_two_hand_builder(
 def create_enhanced_theremin_builder(
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-    freq_transform: Callable = snap_to_scale,
+    freq_trans: Callable = snap_to_scale,
 ) -> AudioFeatureBuilder:
     """Create enhanced theremin with vibrato and reverb controls"""
 
     freq_transformer = range_transformer(
         input_range=(0, 1),
         output_range=(min_freq, max_freq),
-        post_transform=freq_transform,
+        post_transform=freq_trans,
     )
 
     return AudioFeatureBuilder(
@@ -285,13 +291,13 @@ class FallbackAudioFeatureBuilder(AudioFeatureBuilder):
 
     def __init__(
         self,
-        mappings: List[FeatureMapping],
-        fallback_mappings: List[FeatureMapping] = None,
+        mappings: list[FeatureMapping],
+        fallback_mappings: list[FeatureMapping] = None,
     ):
         super().__init__(mappings)
         self.fallback_mappings = fallback_mappings or []
 
-    def __call__(self, video_features: Dict) -> Dict[str, float]:
+    def __call__(self, video_features: dict) -> dict[str, float]:
         # Try primary mappings first
         audio_features = super().__call__(video_features)
 
@@ -316,14 +322,14 @@ class FallbackAudioFeatureBuilder(AudioFeatureBuilder):
 def create_fallback_theremin_builder(
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-    freq_transform: Callable = snap_to_scale,
+    freq_trans: Callable = snap_to_scale,
 ) -> FallbackAudioFeatureBuilder:
     """Create theremin builder with single-hand fallback behavior"""
 
     freq_transformer = range_transformer(
         input_range=(0, 1),
         output_range=(min_freq, max_freq),
-        post_transform=freq_transform,
+        post_transform=freq_trans,
     )
 
     # Primary mappings for two-hand operation

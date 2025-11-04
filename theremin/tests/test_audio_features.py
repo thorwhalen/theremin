@@ -34,7 +34,7 @@ from theremin.pipelines import (
     ALL_PIPELINES,
     validate_all_pipelines,
     get_working_pipelines,
-    test_pipeline_with_video_features,
+    test_pipeline_with_video_features as run_pipeline_with_video_features,
 )
 
 # Import video processing to generate test data
@@ -116,11 +116,11 @@ def load_test_video_features():
         if features is None:
             return None
 
-    with open(TEST_FEATURES_PATH, 'r') as f:
+    with open(TEST_FEATURES_PATH) as f:
         return json.load(f)
 
 
-def get_sample_video_features() -> Dict[str, Any]:
+def get_sample_video_features() -> dict[str, Any]:
     """Get a representative sample of video features for testing"""
     all_features = load_test_video_features()
     if all_features:
@@ -307,7 +307,7 @@ def test_pipeline_execution():
 
     for pipeline_name in pipelines_to_test:
         if pipeline_name in ALL_PIPELINES:
-            result = test_pipeline_with_video_features(pipeline_name, sample_features)
+            result = run_pipeline_with_video_features(pipeline_name, sample_features)
 
             print(f"Testing pipeline '{pipeline_name}':")
             print(f"  Success: {result['success']}")

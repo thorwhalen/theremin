@@ -1,11 +1,13 @@
 """Audio and synthesizer functions for theremin."""
 
 import numpy as np
-from typing import Dict, Union, Callable
+from typing import Dict, Union
+from collections.abc import Callable
 from functools import lru_cache, partial
 
 from hum import Synth
 from hum.pyo_util import add_default_dials, add_default_settings
+
 from pyo import *
 
 # See DFLT_SYNTH_FUNC_NAME and DFLT_KNOBS definitions at the end of this module
@@ -196,6 +198,7 @@ from tonal import scale_midi_notes
 
 DFLT_SCALE = "A penta"
 
+
 def snap_to_scale(freq, scale=DFLT_SCALE):
     """Snap frequency to the nearest note in the C major scale."""
     # Frequencies of C major scale over several octaves (C, D, E, F, G, A, B)
@@ -210,7 +213,55 @@ def snap_to_scale(freq, scale=DFLT_SCALE):
             scale_freqs.append(hz)
     scale_freqs = np.array(scale_freqs)
     closest = scale_freqs[np.argmin(np.abs(scale_freqs - freq))]
-    return closest
+    return float(closest)
+
+
+# --- New: export frequencies of a given scale in a range ---
+from typing import List
+
+
+def scale_frequencies_for_range(
+    scale: str, min_freq: float, max_freq: float
+) -> list[float]:
+    """Return all frequencies (Hz) for the given scale within [min_freq, max_freq]."""
+    semitones_in_scale = scale_midi_notes(scale, midi_range=(0, 12))
+    freqs: list[float] = []
+    # Iterate through a wide octave range; filter by min/max
+    for octave in range(0, 12):
+        base_midi = 12 * octave
+        for st in semitones_in_scale:
+            midi_note = base_midi + st
+            hz = 440.0 * 2 ** ((midi_note - 69) / 12)
+            if min_freq <= hz <= max_freq:
+                freqs.append(hz)
+    # Deduplicate and sort
+    return sorted(set(freqs))
+
+
+# --- New: scale resolver for CLI / runtime configuration ---
+from typing import Optional
+
+
+def resolve_scale_to_freq_trans(scale: str | None):
+    """Resolve a scale string to a frequency transform function or None.
+
+    - If scale is None: return a sentinel indicating to use the default behavior of
+      the target knobs function (i.e., don't override its freq_trans).
+    - If scale is in {"none","null","off","false","no","0",""}: return None to disable snapping.
+    - Otherwise: return partial(snap_to_scale, scale=<scale>).
+    """
+    if scale is None:
+        # Do not override; let the callee use its default (usually snap_to_scale with DFLT_SCALE)
+        return "__USE_DEFAULT__"
+    s = str(scale).strip().lower()
+    if s in {"none", "null", "off", "false", "no", "0", ""}:
+        return None
+    # Any other string: try to create a snapper using tonal scale name
+    try:
+        return partial(snap_to_scale, scale=scale)
+    except Exception:
+        # Fallback: disable if unknown
+        return None
 
 
 @add_default_dials('freq volume vibrato_rate vibrato_depth reverb_mix ramp_time')
@@ -383,21 +434,7 @@ def _two_voice_synth_func(
     return sound1 + sound2
 
 
-def obfuscate_args(func, keep_args):
-    """
-    Creates a new function with only the specified arguments,
-    with other arguments fixed to their defaults.
-    """
-    from i2 import partialx, Sig as Signature
-
-    func_sig = Signature(func)
-    if not all([arg in keep_args for arg in func_sig.names[: len(keep_args)]]):
-        raise ValueError("keep_args must be in the beginning of Sig(foo).names")
-    defaults_of_other_args = {
-        k: v for k, v in func_sig.defaults.items() if k not in keep_args
-    }
-    return partialx(func, **defaults_of_other_args, _rm_partialize=True)
-
+from theremin.util import obfuscate_args
 
 # Create a simplified two-voice synth function that only exposes the necessary parameters
 two_voice_synth_func = obfuscate_args(
@@ -411,7 +448,7 @@ two_voice_synth_func = obfuscate_args(
 
 from typing import Tuple
 
-Range = Tuple[float, float]
+Range = tuple[float, float]
 
 
 # TODO: Make video_features to knobs tools to increase reusability and UX.
@@ -494,8 +531,8 @@ class RangeMapper:
 
     def __init__(
         self,
-        value_range: Tuple[float, float],
-        target_range: Tuple[float, float],
+        value_range: tuple[float, float],
+        target_range: tuple[float, float],
         *,
         ingress=identity,
         egress=identity,
@@ -507,13 +544,16 @@ class RangeMapper:
             value_range: The range of the input value (min, max)
             target_range: The range to map to (min, max)
         """
-        self.value_min, self.value_max = value_range
-        self.target_min, self.target_max = target_range
+        # Normalize ranges to floats to ensure consistent float outputs
+        self.value_min, self.value_max = float(value_range[0]), float(value_range[1])
+        self.target_min, self.target_max = float(target_range[0]), float(
+            target_range[1]
+        )
 
         # Precompute frequently used values for performance
-        self._value_span = self.value_max - self.value_min
-        self._target_span = self.target_max - self.target_min
-        self._scale_factor = self._target_span / self._value_span
+        self._value_span = float(self.value_max - self.value_min)
+        self._target_span = float(self.target_max - self.target_min)
+        self._scale_factor = float(self._target_span / self._value_span)
         self.ingress = ingress
         self.egress = egress
 
@@ -590,7 +630,7 @@ def _calculate_vol_from_wrist(wrist):
 def two_hand_freq_and_volume_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_scale,
+    freq_trans: Callable | None = snap_to_scale,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
     audio_features: list = (
@@ -602,7 +642,7 @@ def two_hand_freq_and_volume_knobs(
         'vibrato_depth',
         'reverb_mix',
     ),
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Maps hand positions to frequency and volume for both hands.
 
@@ -659,10 +699,7 @@ def two_hand_freq_and_volume_knobs(
                 video_features['r_thumb_index_distance']
             )
 
-    # Apply frequency transformation if provided
-    if freq_trans:
-        knobs['l_freq'] = freq_trans(knobs['l_freq'])
-        knobs['r_freq'] = freq_trans(knobs['r_freq'])
+    # No frequency transformation needed here; this knobs set doesn't expose l_/r_ freq
 
     # Filter to include only parameters the synth function can use
     synth_params = {
@@ -680,10 +717,10 @@ def two_hand_freq_and_volume_knobs(
 def two_voice_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_scale,
+    freq_trans: Callable | None = snap_to_scale,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Maps hand positions to frequency and volume for both hands.
     Specifically designed for two_voice_synth_func which only accepts
@@ -723,10 +760,7 @@ def two_voice_knobs(
             knobs['r_freq'] = freq_mapper(wrist[0])
             knobs['r_volume'] = volume_mapper(wrist[1])
 
-    # Apply frequency transformation if provided
-    if freq_trans:
-        knobs['l_freq'] = freq_trans(knobs['l_freq'])
-        knobs['r_freq'] = freq_trans(knobs['r_freq'])
+    # No frequency transformation needed here; this knobs set doesn't expose l_/r_ freq
 
     # Only return parameters that two_voice_synth_func can handle
     synth_params = {'l_freq', 'l_volume', 'r_freq', 'r_volume'}
@@ -736,25 +770,36 @@ def two_voice_knobs(
 def simple_two_hands_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_scale,
+    freq_trans: Callable | None = snap_to_scale,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Maps hand positions to simple freq and volume parameters.
     For simple synths that only need freq and volume.
+
+    Args:
+        video_features (dict): Extracted hand feature dictionary.
+        min_freq (float): Minimum frequency for pitch control.
+        max_freq (float): Maximum frequency for pitch control.
+        freq_trans: Optional frequency transformation function.
+
+    Returns:
+        Dict[str, float]: Dictionary with 'freq', 'volume' keys.
     """
     knobs = {
-        'freq': (min_freq + max_freq) / 2,
-        'volume': 0.0,
+        'freq': (min_freq + max_freq) / 2,  # Default middle frequency
+        'volume': 0.0,  # Default silence
     }
 
     if video_features:
+        # get range mappers
         freq_mapper = range_mapper('wrist_position_x', 'freq')
         volume_mapper = range_mapper(
             'wrist_position_y', 'volume', ingress=lambda x: 1 - x
         )
 
+        # Use left hand for main frequency and volume (fallback to right if no left)
         primary_hand = None
         if 'l_wrist_position' in video_features:
             primary_hand = video_features['l_wrist_position']
@@ -765,13 +810,138 @@ def simple_two_hands_knobs(
             knobs['freq'] = freq_mapper(primary_hand[0])
             knobs['volume'] = volume_mapper(primary_hand[1])
 
+    # Apply frequency transformation if provided
     if freq_trans:
         knobs['freq'] = freq_trans(knobs['freq'])
 
     return {k: float(v) for k, v in knobs.items()}
 
 
-def rhythmic_fm_synth_knobs(video_features) -> Dict[str, float]:
+def ringmod_two_hands_knobs(
+    video_features,
+    *,
+    freq_trans: Callable | None = snap_to_scale,
+    min_freq: float = DFLT_MIN_FREQ,
+    max_freq: float = DFLT_MAX_FREQ,
+) -> dict[str, float]:
+    """
+    Maps hand positions to parameters for ringmod_synth.
+    Combines both hands into a single frequency and volume, plus modulation ratio.
+
+    Args:
+        video_features (dict): Extracted hand feature dictionary.
+        min_freq (float): Minimum frequency for pitch control.
+        max_freq (float): Maximum frequency for pitch control.
+        freq_trans: Optional frequency transformation function.
+
+    Returns:
+        Dict[str, float]: Dictionary with 'freq', 'volume', 'mod_freq_ratio' keys.
+    """
+    knobs = {
+        'freq': (min_freq + max_freq) / 2,  # Default middle frequency
+        'volume': 0.0,  # Default silence
+        'mod_freq_ratio': 1.5,  # Default modulation ratio
+    }
+
+    if video_features:
+        # get range mappers
+        freq_mapper = range_mapper('wrist_position_x', 'freq')
+        volume_mapper = range_mapper(
+            'wrist_position_y', 'volume', ingress=lambda x: 1 - x
+        )
+
+        # Use left hand for main frequency and volume (fallback to right if no left)
+        primary_hand = None
+        if 'l_wrist_position' in video_features:
+            primary_hand = video_features['l_wrist_position']
+        elif 'r_wrist_position' in video_features:
+            primary_hand = video_features['r_wrist_position']
+
+        if primary_hand:
+            knobs['freq'] = freq_mapper(primary_hand[0])
+            knobs['volume'] = volume_mapper(primary_hand[1])
+
+        # Use right hand openness for modulation ratio (if available)
+        if 'r_openness' in video_features:
+            # Map openness (0-1) to modulation ratio range (0.5-5.0)
+            knobs['mod_freq_ratio'] = 0.5 + video_features['r_openness'] * 4.5
+
+    # Apply frequency transformation if provided
+    if freq_trans:
+        knobs['freq'] = freq_trans(knobs['freq'])
+
+    return {k: float(v) for k, v in knobs.items()}
+
+
+def supersaw_two_hands_knobs(
+    video_features,
+    *,
+    freq_trans: Callable | None = snap_to_scale,
+    min_freq: float = DFLT_MIN_FREQ,
+    max_freq: float = DFLT_MAX_FREQ,
+) -> dict[str, float]:
+    """
+    Maps hand positions to parameters for supersaw_synth.
+    Combines both hands into a single frequency and volume, plus detune and n_voices.
+
+    Args:
+        video_features (dict): Extracted hand feature dictionary.
+        min_freq (float): Minimum frequency for pitch control.
+        max_freq (float): Maximum frequency for pitch control.
+        freq_trans: Optional frequency transformation function.
+
+    Returns:
+        Dict[str, float]: Dictionary with 'freq', 'volume', 'detune', 'n_voices' keys.
+    """
+    knobs = {
+        'freq': (min_freq + max_freq) / 2,  # Default middle frequency
+        'volume': 0.0,  # Default silence
+        'detune': 0.01,  # Default detune amount
+        'n_voices': 7,  # Default number of voices
+    }
+
+    if video_features:
+        # get range mappers
+        freq_mapper = range_mapper('wrist_position_x', 'freq')
+        volume_mapper = range_mapper(
+            'wrist_position_y', 'volume', ingress=lambda x: 1 - x
+        )
+
+        # Use left hand for main frequency and volume (fallback to right if no left)
+        primary_hand = None
+        if 'l_wrist_position' in video_features:
+            primary_hand = video_features['l_wrist_position']
+        elif 'r_wrist_position' in video_features:
+            primary_hand = video_features['r_wrist_position']
+
+        if primary_hand:
+            knobs['freq'] = freq_mapper(primary_hand[0])
+            knobs['volume'] = volume_mapper(primary_hand[1])
+
+        # Use right hand openness for detune amount (if available)
+        if 'r_openness' in video_features:
+            # Map openness (0-1) to detune range (0.001-0.1)
+            knobs['detune'] = 0.001 + video_features['r_openness'] * 0.099
+
+        # Use right thumb-index distance for number of voices (if available)
+        if 'r_thumb_index_distance' in video_features:
+            # Map distance to n_voices range (3-15)
+            normalized_distance = np.clip(
+                video_features['r_thumb_index_distance'], 0, 1
+            )
+            knobs['n_voices'] = int(3 + normalized_distance * 12)
+
+    # Apply frequency transformation if provided
+    if freq_trans:
+        knobs['freq'] = freq_trans(knobs['freq'])
+
+    return {k: float(v) for k, v in knobs.items()}
+
+
+def rhythmic_fm_synth_knobs(
+    video_features,
+    freq_trans: Callable | None = snap_to_scale,
+) -> dict[str, float]:
     """
     Maps video features to the parameters of rhythmic_fm_synth.
 
@@ -822,17 +992,12 @@ def rhythmic_fm_synth_knobs(video_features) -> Dict[str, float]:
         openness = np.clip(video_features['l_openness'], 0.0, 1.0)
         knobs['reverb_mix'] = float(openness)
 
-    # Apply frequency transformation if provided
-    if freq_trans:
-        knobs['l_freq'] = freq_trans(knobs['l_freq'])
-        knobs['r_freq'] = freq_trans(knobs['r_freq'])
-
     return {k: float(v) for k, v in knobs.items()}
 
 
-from hum.util import scale_snapper
+# from hum.util import scale_snapper
 
-snap_to_scale = scale_snapper(scale=(0, 2, 4, 5, 7, 9, 11))
+# snap_to_scale = scale_snapper(scale=(0, 2, 4, 5, 7, 9, 11))
 
 
 def theremin_knobs(
@@ -840,8 +1005,8 @@ def theremin_knobs(
     *,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-    freq_trans: Union[Callable, None] = snap_to_scale,
-) -> Dict[str, float]:
+    freq_trans: Callable | None = snap_to_scale,
+) -> dict[str, float]:
     """
     Maps hand positions to frequency (pitch) and volume (amplitude),
     mimicking a classic theremin control scheme.
@@ -901,7 +1066,8 @@ def theremin_knobs(
     if freq_trans:
         knobs['freq'] = freq_trans(knobs['freq'])
 
-    return knobs
+    # Ensure plain Python floats (avoid numpy types for pyo compatibility)
+    return {k: float(v) for k, v in knobs.items()}
 
 
 MOD_FREQ = 0.4
@@ -936,7 +1102,7 @@ def high_sines_theremin_knobs(
     base_freq_range: tuple = HI_SINES_FREQ_RANGE,
     mod_freq_range: tuple = MOD_FREQ_RANGE,
     mod_mul_range: tuple = MOD_MUL_RANGE,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Maps hand positions to the three parameters of intro_high_sines synth:
     - Right hand X: Controls base_freq
@@ -979,11 +1145,11 @@ def high_sines_theremin_knobs(
 
     # Left hand controls mod_mul (amplitude) with Y-axis
     if 'l_wrist_position' in video_features:
-        l_y = video_features['l_wrist_position'][1]
+        y = video_features['l_wrist_position'][1]
 
         # Y position controls modulation amplitude (inverse mapping)
         knobs['mod_mul'] = float(
-            mod_mul_range[0] + (1 - l_y) * (mod_mul_range[1] - mod_mul_range[0])
+            mod_mul_range[0] + (1 - y) * (mod_mul_range[1] - mod_mul_range[0])
         )
 
     return knobs
@@ -995,7 +1161,7 @@ def high_sines_pinch_theremin_knobs(
     base_freq_range: tuple = HI_SINES_FREQ_RANGE,
     mod_freq_range: tuple = MOD_FREQ_RANGE,
     mod_mul_range: tuple = MOD_MUL_RANGE,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Maps hand positions and pinch gesture to intro_high_sines parameters:
     - Right hand X: Controls base_freq
@@ -1055,7 +1221,7 @@ def high_sines_openness_theremin_knobs(
     base_freq_range: tuple = HI_SINES_FREQ_RANGE,
     mod_freq_range: tuple = MOD_FREQ_RANGE,
     mod_mul_range: tuple = MOD_MUL_RANGE,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Maps hand positions and hand openness to intro_high_sines parameters:
     - Right hand X: Controls base_freq
@@ -1274,10 +1440,10 @@ pipelines = {k: partial(audio_pipe, **v) for k, v in _pipelines.items()}
 def two_voice_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_scale,
+    freq_trans: Callable | None = snap_to_scale,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Maps hand positions to frequency and volume for both hands.
     Specifically designed for two_voice_synth_func which only accepts
@@ -1330,10 +1496,10 @@ def two_voice_knobs(
 def simple_two_hands_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_scale,
+    freq_trans: Callable | None = snap_to_scale,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Maps hand positions to simple freq and volume parameters.
     For simple synths that only need freq and volume.
@@ -1380,10 +1546,10 @@ def simple_two_hands_knobs(
 def ringmod_two_hands_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_scale,
+    freq_trans: Callable | None = snap_to_scale,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Maps hand positions to parameters for ringmod_synth.
     Combines both hands into a single frequency and volume, plus modulation ratio.
@@ -1436,10 +1602,10 @@ def ringmod_two_hands_knobs(
 def supersaw_two_hands_knobs(
     video_features,
     *,
-    freq_trans: Union[Callable, None] = snap_to_scale,
+    freq_trans: Callable | None = snap_to_scale,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Maps hand positions to parameters for supersaw_synth.
     Combines both hands into a single frequency and volume, plus detune and n_voices.
@@ -1500,8 +1666,8 @@ def supersaw_two_hands_knobs(
 
 def rhythmic_fm_synth_knobs(
     video_features,
-    freq_trans: Union[Callable, None] = snap_to_scale,
-) -> Dict[str, float]:
+    freq_trans: Callable | None = snap_to_scale,
+) -> dict[str, float]:
     """
     Maps video features to the parameters of rhythmic_fm_synth.
 
@@ -1552,17 +1718,12 @@ def rhythmic_fm_synth_knobs(
         openness = np.clip(video_features['l_openness'], 0.0, 1.0)
         knobs['reverb_mix'] = float(openness)
 
-    # Apply frequency transformation if provided
-    if freq_trans:
-        knobs['l_freq'] = freq_trans(knobs['l_freq'])
-        knobs['r_freq'] = freq_trans(knobs['r_freq'])
-
     return {k: float(v) for k, v in knobs.items()}
 
 
-from hum.util import scale_snapper
+# from hum.util import scale_snapper
 
-snap_to_scale = scale_snapper(scale=(0, 2, 4, 5, 7, 9, 11))
+# snap_to_scale = scale_snapper(scale=(0, 2, 4, 5, 7, 9, 11))
 
 
 def theremin_knobs(
@@ -1570,8 +1731,8 @@ def theremin_knobs(
     *,
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
-    freq_trans: Union[Callable, None] = snap_to_scale,
-) -> Dict[str, float]:
+    freq_trans: Callable | None = snap_to_scale,
+) -> dict[str, float]:
     """
     Maps hand positions to frequency (pitch) and volume (amplitude),
     mimicking a classic theremin control scheme.
@@ -1631,7 +1792,8 @@ def theremin_knobs(
     if freq_trans:
         knobs['freq'] = freq_trans(knobs['freq'])
 
-    return knobs
+    # Ensure plain Python floats (avoid numpy types for pyo compatibility)
+    return {k: float(v) for k, v in knobs.items()}
 
 
 MOD_FREQ = 0.4
@@ -1666,7 +1828,7 @@ def high_sines_theremin_knobs(
     base_freq_range: tuple = HI_SINES_FREQ_RANGE,
     mod_freq_range: tuple = MOD_FREQ_RANGE,
     mod_mul_range: tuple = MOD_MUL_RANGE,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Maps hand positions to the three parameters of intro_high_sines synth:
     - Right hand X: Controls base_freq
@@ -1725,7 +1887,7 @@ def high_sines_pinch_theremin_knobs(
     base_freq_range: tuple = HI_SINES_FREQ_RANGE,
     mod_freq_range: tuple = MOD_FREQ_RANGE,
     mod_mul_range: tuple = MOD_MUL_RANGE,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Maps hand positions and pinch gesture to intro_high_sines parameters:
     - Right hand X: Controls base_freq
@@ -1785,7 +1947,7 @@ def high_sines_openness_theremin_knobs(
     base_freq_range: tuple = HI_SINES_FREQ_RANGE,
     mod_freq_range: tuple = MOD_FREQ_RANGE,
     mod_mul_range: tuple = MOD_MUL_RANGE,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Maps hand positions and hand openness to intro_high_sines parameters:
     - Right hand X: Controls base_freq
@@ -1836,3 +1998,125 @@ def high_sines_openness_theremin_knobs(
         )
 
     return knobs
+
+
+# -------------------------------------------------------------------------------
+# Module exports
+# -------------------------------------------------------------------------------
+
+DFLT_SYNTH = "theremin_synth"
+KNOBS = "two_hand_freq_and_volume_knobs"
+DFLT_PIPELINE = "theremin"
+
+# Dictionary of available synth functions
+synths = {
+    "default": locals()[DFLT_SYNTH],
+    "theremin_synth": theremin_synth,
+    "natural_sounding_synth": natural_sounding_synth,
+    "natural_sounding_synth_lr": natural_sounding_synth_lr,
+    "rhythmic_fm_synth": rhythmic_fm_synth,
+    "sine_synth": sine_synth,
+    "fm_synth": fm_synth,
+    "supersaw_synth": supersaw_synth,
+    "square_synth": square_synth,
+    "noise_synth": noise_synth,
+    "ringmod_synth": ringmod_synth,
+    "chorused_sine_synth": chorused_sine_synth,
+    "phase_distortion_synth": phase_distortion_synth,
+    "two_voice_synth_func": two_voice_synth_func,
+    "intro_high_sines": intro_high_sines,
+}
+
+# Dictionary of available audio feature extractors
+knobs = {
+    "default": locals()[KNOBS],
+    "two_hand_freq_and_volume_knobs": two_hand_freq_and_volume_knobs,
+    "two_voice_knobs": two_voice_knobs,
+    "theremin_knobs": theremin_knobs,
+    "simple_two_hands_knobs": simple_two_hands_knobs,
+    "rhythmic_fm_synth_knobs": rhythmic_fm_synth_knobs,
+    "high_sines_theremin_knobs": high_sines_theremin_knobs,
+    "high_sines_pinch_theremin_knobs": high_sines_pinch_theremin_knobs,
+    "high_sines_openness_theremin_knobs": high_sines_openness_theremin_knobs,
+}
+
+
+# TODO: Make this pipeline definition and handling less of a mess!
+_pipelines = {
+    "theremin": {
+        "synth": "theremin_synth",
+        "knobs": "theremin_knobs",
+    },
+    "rhythmic_fm": {
+        "synth": "rhythmic_fm_synth",
+        "knobs": "rhythmic_fm_synth_knobs",
+    },
+    "high_sines": {
+        "synth": "intro_high_sines",
+        "knobs": "high_sines_theremin_knobs",
+    },
+    "high_sines_pinch": {
+        "synth": "intro_high_sines",
+        "knobs": "high_sines_pinch_theremin_knobs",
+    },
+    "high_sines_openness": {
+        "synth": "intro_high_sines",
+        "knobs": "high_sines_openness_theremin_knobs",
+    },
+    "two_voice_and_hands": {
+        "synth": "two_voice_synth_func",
+        "knobs": "two_voice_knobs",
+    },
+    # "natural_sounding_synth": {
+    #     "synth": "natural_sounding_synth",
+    #     "knobs": "two_hand_freq_and_volume_knobs",  # TODO: Needs a knobs that works
+    # },
+    "natural_sounding_synth_lr": {
+        "synth": "natural_sounding_synth_lr",
+        "knobs": "two_hand_freq_and_volume_knobs",
+    },
+    "sine_two_hands": {
+        "synth": "sine_synth",
+        "knobs": "simple_two_hands_knobs",
+    },
+    "phase_distortion_synth": {
+        "synth": "phase_distortion_synth",
+        "knobs": "simple_two_hands_knobs",
+    },
+    "supersaw_two_hands": {
+        "synth": "supersaw_synth",
+        "knobs": "two_hand_freq_and_volume_knobs",
+    },
+    "square_two_hands": {
+        "synth": "square_synth",
+        "knobs": "simple_two_hands_knobs",
+    },
+    "noise_two_hands": {
+        "synth": "noise_synth",
+        "knobs": "simple_two_hands_knobs",
+    },
+    "ringmod_two_hands": {  # Note: No sound
+        "synth": "ringmod_synth",
+        "knobs": "two_hand_freq_and_volume_knobs",
+    },
+    "chorused_two_hands": {
+        "synth": "chorused_sine_synth",
+        "knobs": "simple_two_hands_knobs",
+    },
+}
+
+_pipelines["default"] = _pipelines[DFLT_PIPELINE]
+
+
+def audio_pipe(*, knobs, synth):
+    return {
+        "knobs": knobs,
+        "synth": synth,
+    }
+
+
+def audio_pipe_call_string(*, knobs, synth):
+    return f"audio_pipe(knobs='{knobs}', synth='{synth}')"
+
+
+pipelines = {k: partial(audio_pipe, **v) for k, v in _pipelines.items()}

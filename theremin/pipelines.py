@@ -6,7 +6,8 @@ video features to audio parameters to synthesized sound.
 """
 
 from dataclasses import dataclass
-from typing import Callable, Union, Dict, Any, Set, List
+from typing import Union, Dict, Any, Set, List
+from collections.abc import Callable
 import inspect
 from functools import partial
 
@@ -40,6 +41,7 @@ from theremin.dag_audio_features import (
     enhanced_theremin_dag_knobs,
     two_voice_dag_knobs,
 )
+from theremin.util import ensure_plain_types
 
 
 @dataclass
@@ -47,11 +49,11 @@ class AudioPipeline:
     """Complete specification of video->audio->synth pipeline"""
 
     name: str
-    audio_features: Union[AudioFeatureBuilder, Callable]
+    audio_features: AudioFeatureBuilder | Callable
     synth: Callable
     video_features: Callable = None  # For future extension
 
-    def validate(self) -> List[str]:
+    def validate(self) -> list[str]:
         """
         Validate that audio features match synth parameters.
 
@@ -107,7 +109,7 @@ class AudioPipeline:
 
         return issues
 
-    def _create_mock_video_features(self) -> Dict[str, Any]:
+    def _create_mock_video_features(self) -> dict[str, Any]:
         """Create mock video features for testing"""
         return {
             'l_wrist_position': [0.5, 0.5],
@@ -118,9 +120,10 @@ class AudioPipeline:
             'r_thumb_index_distance': 0.1,
         }
 
-    def __call__(self, video_features: Dict) -> Any:
+    def __call__(self, video_features: dict) -> Any:
         """Execute the full pipeline: video_features -> audio_features -> synth"""
         audio_features = self.audio_features(video_features)
+        audio_features = ensure_plain_types(audio_features)
 
         # Filter to only parameters the synth accepts
         synth_sig = Sig(self.synth)
@@ -152,9 +155,7 @@ ENHANCED_THEREMIN_PIPELINE = AudioPipeline(
 # Simple sine wave with basic controls
 SIMPLE_SINE_PIPELINE = AudioPipeline(
     name="simple_sine",
-    audio_features=create_theremin_builder(
-        freq_transform=lambda x: x
-    ),  # No quantization
+    audio_features=create_theremin_builder(freq_trans=lambda x: x),  # No quantization
     synth=sine_synth,
 )
 
@@ -205,7 +206,7 @@ ALL_PIPELINES = {
 ALL_PIPELINES["default"] = ALL_PIPELINES["theremin"]
 
 
-def validate_all_pipelines() -> Dict[str, List[str]]:
+def validate_all_pipelines() -> dict[str, list[str]]:
     """Validate all defined pipelines"""
     results = {}
     for name, pipeline in ALL_PIPELINES.items():
@@ -213,7 +214,7 @@ def validate_all_pipelines() -> Dict[str, List[str]]:
     return results
 
 
-def get_working_pipelines() -> Dict[str, AudioPipeline]:
+def get_working_pipelines() -> dict[str, AudioPipeline]:
     """Get only pipelines that pass validation"""
     working = {}
     for name, pipeline in ALL_PIPELINES.items():
@@ -223,7 +224,7 @@ def get_working_pipelines() -> Dict[str, AudioPipeline]:
     return working
 
 
-def list_pipeline_capabilities() -> Dict[str, Dict[str, Any]]:
+def list_pipeline_capabilities() -> dict[str, dict[str, Any]]:
     """Get summary of what each pipeline can do"""
     capabilities = {}
 
@@ -260,12 +261,12 @@ def list_pipeline_capabilities() -> Dict[str, Dict[str, Any]]:
 # --------------------------------------------------------------------------------------
 
 
-def pipeline_to_knobs_and_synth(pipeline: AudioPipeline) -> Dict[str, Callable]:
+def pipeline_to_knobs_and_synth(pipeline: AudioPipeline) -> dict[str, Callable]:
     """Convert new pipeline to old format for backward compatibility"""
     return {'knobs': pipeline.audio_features, 'synth': pipeline.synth}
 
 
-def create_legacy_pipelines() -> Dict[str, Dict[str, Callable]]:
+def create_legacy_pipelines() -> dict[str, dict[str, Callable]]:
     """Create legacy pipeline format for backward compatibility"""
     legacy = {}
     for name, pipeline in ALL_PIPELINES.items():
@@ -283,8 +284,8 @@ legacy_pipelines = create_legacy_pipelines()
 
 
 def test_pipeline_with_video_features(
-    pipeline_name: str, video_features: Dict
-) -> Dict[str, Any]:
+    pipeline_name: str, video_features: dict
+) -> dict[str, Any]:
     """Test a pipeline with specific video features"""
     if pipeline_name not in ALL_PIPELINES:
         raise ValueError(f"Unknown pipeline: {pipeline_name}")

@@ -1,61 +1,22 @@
-"""Utility functions for running the theremin scripts."""
+"""Utility functions for running the theremin scripts.
 
-import cv2
+This module focuses on fast CLI startup by deferring all heavy imports (cv2, mediapipe,
+pyo, theremin.audio, etc.) until they are actually needed (lazy import pattern).
+Only lightweight stdlib / small packages are imported at module import time so
+`theremin -h` remains responsive.
+"""
+
+# Only light imports at module import time
 import time
 import argh
-from typing import Union, Callable, Dict, Optional, Any
+from typing import Union, Dict, Optional, Any
+from collections.abc import Callable
 from functools import partial
 import json
-
 from i2 import Sig
-from theremin.video_features import HandGestureRecognizer, hand_feature_funcs
-from theremin.audio import synths, knobs, pipelines
-from theremin.display import draw_on_screen as DFLT_DRAW_ON_SCREEN
-from hum.pyo_util import Synth
 
-# -------------------------------------------------------------------------------
-# Object resolution
-# -------------------------------------------------------------------------------
-
-from typing import TypeVar, Dict, Union, Any
-
-
-# Create partially applied resolution functions for each type of object
-from cw import resolve_to_function
-from cw.resolution import parse_ast_spec
-
-
-resolve_video_features = partial(resolve_to_function, get_func=hand_feature_funcs)
-
-resolve_pipeline = partial(resolve_to_function, get_func=pipelines)
-resolve_knobs = partial(resolve_to_function, get_func=knobs)
-resolve_synth_func = partial(resolve_to_function, get_func=synths)
-
-# resolve_pipeline_func = partial(
-#     resolve_to_function,
-#     get_func={'audio_pipe': audio_pipe},
-# )
-
-
-# from theremin.audio import audio_pipe
-# def resolve_pipeline(pipeline_key):
-#     func_spec = pipelines.get(pipeline_key)
-#     if func_spec is None:
-#         raise ValueError(f"Audio pipeline {pipeline_key} not found in pipelines")
-#     func_name, func_kwargs = parse_ast_spec(func_spec)
-#     if func_name != "audio_pipe":
-#         raise ValueError(f"Should be 'audio_pipe', was {func_name}: In {func_spec}")
-#     if not set(func_kwargs.keys()).issubset({'synth', 'knobs'}):
-#         raise ValueError(
-#             f"Function {func_name} should have only keys in {{'synth', 'knobs'}}: In {func_spec}"
-#         )
-#     return audio_pipe(**func_kwargs)
-
-
-# resolve_pipeline = partial(
-#     resolve_to_function, get_func=lambda x: resolve_pipeline_func
-# )
-
+# Heavy modules (cv2, mediapipe, pyo, etc.) and theremin.audio are intentionally NOT imported at top-level
+# to make `theremin -h` fast. They will be imported lazily inside runtime functions.
 
 # -------------------------------------------------------------------------------
 # Logging utilities
@@ -63,161 +24,223 @@ resolve_synth_func = partial(resolve_to_function, get_func=synths)
 
 
 def print_plus_newline(x):
-    """Prints the input and adds a newline."""
+    """Print value plus an extra blank line (simple pretty printing helper)."""
     print(x)
     print()
 
 
 def print_json_if_possible(x):
-    """Prints the input and adds a newline."""
+    """Print object as JSON if serializable; fall back to raw `repr`; add blank line."""
     try:
         x = json.dumps(x)
-    except:
+    except Exception:
         pass
     print(x)
     print()
 
 
 # -------------------------------------------------------------------------------
-# Keyboard handling functions
+# Keyboard handling functions (cv2 imported lazily when first used)
 # -------------------------------------------------------------------------------
 
 
 class KeyboardBreakSignal(Exception):
-    """Exception raised when a break key is pressed."""
+    """Raised internally to break the main loop when a designated key is pressed."""
 
     pass
 
 
+def _ensure_cv2():
+    """Dynamically import and cache OpenCV (`cv2`) the first time it is needed."""
+    global cv2
+    if 'cv2' not in globals():  # pragma: no cover - trivial
+        import cv2  # type: ignore
+
+        globals()['cv2'] = cv2
+    return cv2
+
+
 def read_keyboard(wait_time: int = 5) -> int:
-    """
-    Read keyboard input with the specified wait time.
-
-    Args:
-        wait_time: Time to wait for keyboard input in milliseconds
-
-    Returns:
-        The key code or 0 if no key was pressed
-    """
+    """Return last key code (or -1) using cv2.waitKey, importing cv2 lazily."""
+    _ensure_cv2()
     return cv2.waitKey(wait_time) & 0xFF
 
 
-def keyboard_feature_vector(key_code: int) -> Dict[str, Any]:
-    """
-    Convert a key code into a feature vector with keyboard information.
-
-    Args:
-        key_code: The key code from cv2.waitKey
-
-    Returns:
-        Dictionary containing keyboard features
-
-    Raises:
-        KeyboardBreakSignal: If a key that signals program termination is pressed
-    """
+def keyboard_feature_vector(key_code: int) -> dict[str, Any]:
+    """Convert a raw key code into a small feature dict; raise if it's a break key."""
     keyboard_fv = {
         'key_code': key_code,
         'key_pressed': key_code > 0,
         'is_escape': key_code == ESCAPE_KEY_ASCII,
         'timestamp': time.time(),
     }
-
-    # Check if this is a break key and raise the exception if so
     if keyboard_fv['key_code'] in BREAK_KEYS:
         raise KeyboardBreakSignal(f"Break key pressed: {key_code}")
-
     return keyboard_fv
 
 
 # -------------------------------------------------------------------------------
-# Camera handling functions
+# Camera handling (cv2 imported lazily)
 # -------------------------------------------------------------------------------
 
 
 class CameraReadError(Exception):
-    """Exception raised when camera read fails."""
+    """Raised when a frame cannot be read from the camera."""
 
     pass
 
 
-def read_camera(cap: cv2.VideoCapture) -> Any:
-    """
-    Read a frame from the camera and flip it horizontally.
-
-    Args:
-        cap: OpenCV video capture object
-
-    Returns:
-        The flipped image if successful
-
-    Raises:
-        CameraReadError: If the camera read operation fails
-    """
+def read_camera(cap):
+    """Read and horizontally flip a camera frame; raise on failure."""
+    _ensure_cv2()
     success, img = cap.read()
     if not success:
         raise CameraReadError("Failed to read from camera")
-
-    # Flip image horizontally for a more natural interaction
     return cv2.flip(img, 1)
 
 
 # -------------------------------------------------------------------------------
-# Main run function
+# Defaults & constants (lightweight)
 # -------------------------------------------------------------------------------
+from hum.util import scale_snapper, scale_frequencies, return_none as do_nothing
 
-# Default settings
-from theremin.audio import (
-    KNOBS,
-    DFLT_SYNTH,
-    DFLT_PIPELINE,
-)
+# NOTE: We purposely avoid importing theremin.audio here. All audio imports happen lazily.
 
 DFLT_VIDEO_FEATURES = "many_video_features"
-
-
 ESCAPE_KEY_ASCII = 27
-BREAK_KEYS = set([ESCAPE_KEY_ASCII])
-
-
-from hum.util import scale_snapper, scale_frequencies, return_none as do_nothing
-from theremin.audio import DFLT_MIN_FREQ, DFLT_MAX_FREQ, filter_unchanged_frequencies
+BREAK_KEYS = {ESCAPE_KEY_ASCII}
 
 scale = (0, 2, 4, 5, 7, 9, 11)
 freq_trans = scale_snapper(scale=scale)
-_scale_frequencies = [
-    freq for freq in scale_frequencies() if DFLT_MIN_FREQ <= freq <= DFLT_MAX_FREQ
-]
 
-_DFLT_DRAW_ON_SCREEN = partial(DFLT_DRAW_ON_SCREEN, draw_frequencies=_scale_frequencies)
+# Lazy cache for scale frequencies once audio constants are known
+_scale_frequencies_cache = None
 
 
-# TODO: Rename audio_features to knobs and synth_func to synth
+def _get_scale_frequencies():
+    """Compute & cache frequencies within DFLT_MIN/MAX using hum.util + audio limits.
+
+    Does a lazy import of `theremin.audio` to access min/max constants only on first use.
+    """
+    global _scale_frequencies_cache
+    if _scale_frequencies_cache is None:
+        from theremin.audio import DFLT_MIN_FREQ, DFLT_MAX_FREQ  # lazy
+
+        _scale_frequencies_cache = [
+            freq
+            for freq in scale_frequencies()
+            if DFLT_MIN_FREQ <= freq <= DFLT_MAX_FREQ
+        ]
+    return _scale_frequencies_cache
+
+
+# Lazy default drawing function wrapper
+
+
+def _get_default_draw_on_screen_for_scale(scale: str | None):
+    """Return draw_on_screen partial with scale-dependent frequencies.
+
+    If scale is None: use default cached scale frequencies; if set to disables snapping
+    (e.g., 'none'), return no draw_frequencies so existing draw code can handle empty.
+    """
+    from theremin.display import draw_on_screen as DFLT_DRAW_ON_SCREEN  # lazy
+    from theremin.audio import (
+        DFLT_MIN_FREQ,
+        DFLT_MAX_FREQ,
+        DFLT_SCALE as AUDIO_DFLT_SCALE,
+        scale_frequencies_for_range,
+        resolve_scale_to_freq_trans,
+    )
+
+    # Interpret the CLI-provided scale string similar to freq_trans_override
+    freq_trans_marker = resolve_scale_to_freq_trans(scale)
+
+    if freq_trans_marker is None:
+        draw_freqs = []  # snapping disabled -> no scale guides
+    else:
+        # Decide which scale string to use for guides
+        scale_name = (
+            AUDIO_DFLT_SCALE if freq_trans_marker == "__USE_DEFAULT__" else scale
+        )
+        draw_freqs = scale_frequencies_for_range(
+            scale_name, DFLT_MIN_FREQ, DFLT_MAX_FREQ
+        )
+    return partial(DFLT_DRAW_ON_SCREEN, draw_frequencies=draw_freqs)
+
+
+# Existing generic factory kept for backward-compat
+
+
+def _get_default_draw_on_screen():
+    from theremin.display import draw_on_screen as DFLT_DRAW_ON_SCREEN  # lazy
+
+    return partial(DFLT_DRAW_ON_SCREEN, draw_frequencies=_get_scale_frequencies())
+
+
+# -------------------------------------------------------------------------------
+# Main run function (heavy imports are done inside)
+# -------------------------------------------------------------------------------
+
+
 def run_theremin(
     *,
-    video_features: Union[str, Callable] = DFLT_VIDEO_FEATURES,
-    pipeline: Union[str, Callable] = DFLT_PIPELINE,  # DFLT_PIPELINE,
-    knobs: Optional[Union[str, Callable]] = None,  # DFLT_AUDIO_FEATURES,
-    synth: Optional[Union[str, Callable]] = None,  # DFLT_SYNTH_FUNC_NAME,
-    log_video_features: Optional[Callable] = None,
-    log_knobs: Optional[Callable] = None,
-    record_to_file: Union[str, bool] = 'theremin_recording.wav',
+    video_features: str | Callable = DFLT_VIDEO_FEATURES,
+    pipeline: str | Callable | None = None,
+    knobs: str | Callable | None = None,
+    synth: str | Callable | None = None,
+    log_video_features: Callable | None = None,
+    log_knobs: Callable | None = None,
+    record_to_file: str | bool = 'theremin_recording.wav',
     window_name: str = 'Hand Gesture Recognition with Theremin',
-    draw_on_screen: Optional[Callable] = _DFLT_DRAW_ON_SCREEN,
+    draw_on_screen: Callable | None = None,
     only_keep_new_freqs: bool = True,
+    freq_trans_override: str | Callable | None = "__USE_DEFAULT__",
 ):
-    """
-    Run the hand gesture theremin application.
+    """Run the realtime theremin loop.
 
-    Args:
-        video_features: Hand feature extraction function or name
-        audio_features: Audio feature mapping function or name
-        synth_func: Synthesizer function or name
-        log_video_features: Function to log video features (or None to disable)
-        log_knobs: Function to log audio features (or None to disable)
-        record_to_file: Filename to save recording, True for default name, or False to disable
-        window_name: Title for the display window
+    Lazy-loads heavy dependencies (cv2, mediapipe, pyo, pipelines) only if actually
+    executing the loop (i.e. not when just requesting CLI help). Handles:
+      - Resolving named registry entries (video features, knobs/pipelines, synth)
+      - Video capture + hand feature extraction
+      - Mapping features to audio parameters (knobs)
+      - Optional logging & drawing
+      - Synth control & (optionally) recording, filtering unchanged freqs
     """
-    # Resolve functions from names if needed
+    # Heavy imports here
+    _ensure_cv2()
+    from theremin.video_features import HandGestureRecognizer, hand_feature_funcs
+    from theremin.audio import (
+        synths,
+        knobs as KNOBS_DICT,
+        pipelines,
+        filter_unchanged_frequencies,
+    )
+    from theremin.audio import (
+        KNOBS as DFLT_KNOBS,
+        DFLT_SYNTH as DFLT_SYNTH_FUNC,
+        DFLT_PIPELINE as DFLT_PIPELINE_NAME,
+    )
+    from theremin.util import ensure_plain_types
+    from hum.pyo_util import Synth
+    from cw import resolve_to_function
+
+    if draw_on_screen is None:
+        draw_on_screen = _get_default_draw_on_screen()
+
+    # Resolution helpers (now that we have the dicts)
+    resolve_video_features = partial(resolve_to_function, get_func=hand_feature_funcs)
+    resolve_pipeline = partial(resolve_to_function, get_func=pipelines)
+    resolve_knobs = partial(resolve_to_function, get_func=KNOBS_DICT)
+    resolve_synth_func = partial(resolve_to_function, get_func=synths)
+
+    # Apply defaults aligned with previous behavior
+    if pipeline is None:
+        pipeline = DFLT_PIPELINE_NAME
+    if knobs is None:
+        knobs = DFLT_KNOBS
+    if synth is None:
+        synth = DFLT_SYNTH_FUNC
+
     video_features = resolve_video_features(video_features)
     if not pipeline:
         knobs = resolve_knobs(knobs)
@@ -225,21 +248,37 @@ def run_theremin(
     else:
         pipeline_getter = resolve_pipeline(pipeline)
         pipeline_components = pipeline_getter()
-        knobs = pipeline_components.get("knobs", knobs or KNOBS)
-        synth = pipeline_components.get("synth", synth or DFLT_SYNTH)
+        knobs = pipeline_components.get("knobs", knobs or DFLT_KNOBS)
+        synth = pipeline_components.get("synth", synth or DFLT_SYNTH_FUNC)
         knobs = resolve_knobs(knobs)
         synth = resolve_synth_func(synth)
+
+    # If requested, override freq_trans by wrapping the knobs function
+    if freq_trans_override != "__USE_DEFAULT__":
+        try:
+            from inspect import signature
+
+            if 'freq_trans' in signature(knobs).parameters:
+                base_knobs = knobs
+
+                def _knobs_with_override(vf):
+                    return base_knobs(vf, freq_trans=freq_trans_override)
+
+                knobs = _knobs_with_override
+        except Exception:
+            pass
 
     print(f"{knobs=}, {synth=}")
 
     log_video_features = log_video_features or do_nothing
     log_knobs = log_knobs or do_nothing
 
-    # Initialize video capture
     cap = cv2.VideoCapture(0)
     recognizer = HandGestureRecognizer()
 
-    # Initialize the pyo synth
+    if draw_on_screen is None:
+        draw_on_screen = _get_default_draw_on_screen()
+
     if not isinstance(synth, Synth):
         synth_obj = Synth(synth, nchnls=2)
         synth_obj.__name__ = synth.__name__
@@ -257,93 +296,57 @@ def run_theremin(
         last_r_freq=None,
     )
 
-    with synth_obj:
-        try:
+    try:
+        with synth_obj:
             while cap.isOpened():
                 try:
-
                     keyboard_data = read_keyboard()
-
-                    # Note: Not using keyboard_fv (yet), but keyboard_feature_vector is still called because handles breaking key conditioning
-                    keyboard_fv = keyboard_feature_vector(keyboard_data)
-
+                    keyboard_feature_vector(keyboard_data)
                     img = read_camera(cap)
-
-                    # Get hand detection without modifying the image
                     hand_detection = recognizer.find_hands(img)
-
-                    # Compute the hand features
                     _video_features = video_features(hand_detection)
                     log_video_features(_video_features)
-
-                    # Compute sound features from hand landmarks
                     _audio_features = knobs(_video_features)
-
-                    # Update synth_obj parameters if we have features
+                    _audio_features = ensure_plain_types(_audio_features)
                     if _audio_features:
-
-                        # TODO: Pack into tool:
                         if only_keep_new_freqs:
                             _audio_features, previous_data = (
                                 filter_unchanged_frequencies(
                                     _audio_features, previous_data
                                 )
                             )
-
                         synth_obj(**_audio_features)
-
                     log_knobs(_audio_features)
-
-                    # Draw visualization
                     if draw_on_screen:
                         img = draw_on_screen(
                             recognizer, img, hand_detection, _audio_features
                         )
-
-                    # Display the result
                     cv2.imshow(window_name, img)
-
                 except (CameraReadError, KeyboardBreakSignal):
                     break
-
-        finally:
-            # Save the recording
-            synth_obj.stop_recording()
-
-            recording = synth_obj.get_recording()
-
-            # Print recording statistics
-            print(f"\n---> Recorded {len(recording)} control events\n")
-
-            # Render the recording to a WAV file?
-            if record_to_file:
-                try:
-                    if isinstance(record_to_file, str):
-                        output_path = record_to_file
-                    else:
-                        output_path = "theremin_recording.wav"
-                    synth_obj.render_events(output_filepath=output_path)
-                    print(f"Saved audio recording to {output_path}")
-                except Exception as e:
-                    print(f"Warning: Failed to render events: {e}")
-
-            # Clean up resources
-            cap.release()
-            cv2.destroyAllWindows()
+    finally:
+        synth_obj.stop_recording()
+        recording = synth_obj.get_recording()
+        print(f"\n---> Recorded {len(recording)} control events\n")
+        if record_to_file:
+            try:
+                output_path = (
+                    record_to_file
+                    if isinstance(record_to_file, str)
+                    else 'theremin_recording.wav'
+                )
+                synth_obj.render_events(output_filepath=output_path)
+                print(f"Saved audio recording to {output_path}")
+            except Exception as e:  # pragma: no cover - safety
+                print(f"Warning: Failed to render events: {e}")
+        cap.release()
+        cv2.destroyAllWindows()
 
 
 def list_components(param_value, components_dict, description, component_describer=Sig):
-    """
-    List available components of a specific type if the parameter value is 'list'.
+    """If the user passed the literal string 'list', print available component names.
 
-    Args:
-        param_value: The value of the parameter to check
-        components_dict: Dictionary of available components
-        description: Description of the components being listed
-
-    Returns:
-        bool: True if components were listed (and calling function should return),
-             False if no listing was performed
+    Returns True if listing was performed so caller can early-return.
     """
     if isinstance(param_value, str) and param_value == 'list':
         print(f"Available {description}:")
@@ -354,7 +357,6 @@ def list_components(param_value, components_dict, description, component_describ
     return False
 
 
-# TODO: get rid of the need of both record_to_file and no_recording
 @argh.arg(
     '--pipeline',
     '-p',
@@ -383,71 +385,159 @@ def list_components(param_value, components_dict, description, component_describ
     const='list',
     help='Video features function name (use without argument to list available video features)',
 )
+@argh.arg('--log-video-features', help='Log hand features', default=False)
+@argh.arg('--log-knobs', help='Log audio features', default=False)
+@argh.arg(
+    '-r',
+    '--record-to-file',
+    help='Filename to save recording',
+    default='theremin_recording.wav',
+)
+@argh.arg('-n', '--no-recording', help='Disable recording', default=False)
+@argh.arg(
+    '-w', '--window-name', help='Window title', default='Theremin with Hand Tracking'
+)
+@argh.arg(
+    '--scale',
+    nargs='?',
+    const='list',
+    help='Scale for snapping. Use flag without value to list scales; use none/null/off to disable. Default uses audio.DFLT_SCALE.',
+    default=None,
+)
 def theremin_cli(
-    # Core components
-    pipeline: Optional[str] = "theremin",
-    video_features: Optional[str] = "many_video_features",
-    knobs: Optional[str] = "theremin_knobs",
-    synth: Optional[str] = "theremin_synth",
-    # Logging options
+    pipeline: str | None = 'theremin',
+    video_features: str | None = 'many_video_features',
+    knobs: str | None = 'theremin_knobs',
+    synth: str | None = 'theremin_synth',
     log_video_features: bool = False,
     log_knobs: bool = False,
-    # Recording options
-    record_to_file: str = "theremin_recording.wav",
+    record_to_file: str = 'theremin_recording.wav',
     no_recording: bool = False,
-    # Display options
-    window_name: str = "Theremin with Hand Tracking",
+    window_name: str = 'Theremin with Hand Tracking',
+    scale: str | None = None,
 ):
-    """
-    Run the theremin application with the specified parameters.
+    """Run the theremin: map video/keyboard input to synthesized audio.
 
-    Args:
-        pipeline: Name of the audio pipeline (use flag without argument to list available options)
-        video_features: Name of the hand feature extraction function (use flag without argument to list available options)
-        knobs: Name of the audio feature mapping function (use flag without argument to list available options)
-        synth: Name of the synthesizer function (use flag without argument to list available options)
+    Architecture Overview:
 
-        log_video_features: Whether to log hand features
-        log_knobs: Whether to log audio features
-        record_to_file: Filename to save recording (if no_recording is False)
-        no_recording: Disable recording
-        window_name: Title for the display window
+    Input: Video/Keyboard
+             |
+             v
+    +----------------------------------------------------------+
+    | 1. Sensor Reading (cv2.VideoCapture, cv2.waitKey)       |
+    +----------------------------------------------------------+
+             |
+             v
+    +----------------------------------------------------------+
+    | 2. Feature Extraction: --video-features                 |
+    |    (e.g. many_video_features)                            |
+    |    Extracts: hand positions, gestures, openness, etc.    |
+    +----------------------------------------------------------+
+             |
+             v
+    +----------------------------------------------------------+
+    | 3. Feature Mapping: --knobs (e.g. theremin_knobs)       |
+    |    Maps video features → audio params (freq, volume...) |
+    +----------------------------------------------------------+
+             |
+             v
+    +----------------------------------------------------------+
+    | 4. Synthesis: --synth (e.g. theremin_synth)             |
+    |    Generates audio from parameters                       |
+    +----------------------------------------------------------+
+             |
+             v
+       [Audio Output + Recording]
+
+    Note: --pipeline combines steps 2-4 in pre-configured packages
+          (e.g. "theremin", "two_voice", "simple_sine")
+
+    Parameters:
+        pipeline: Pre-configured pipeline name or 'list' to show available
+        video_features: Feature extraction function or 'list' to show available
+        knobs: Audio parameter mapping function or 'list' to show available
+        synth: Synthesizer function or 'list' to show available
+        log_video_features: Enable logging of extracted video features
+        log_knobs: Enable logging of audio parameters
+        record_to_file: Filename for audio recording (default: theremin_recording.wav)
+        no_recording: Disable audio recording
+        window_name: Title for the video display window
+        scale: Musical scale for frequency snapping or 'list' to show available scales
     """
-    # Import here to avoid loading everything if just listing components
-    from theremin.audio import synths, knobs as knobs_dict
+    # Lazy import of component registries ONLY if listing or running
+    from theremin.audio import (
+        synths,
+        knobs as knobs_dict,
+        pipelines,
+        resolve_scale_to_freq_trans,
+        DFLT_SCALE,
+    )
     from theremin.video_features import hand_feature_funcs
 
-    # Handle listing available components
-    if list_components(pipeline, pipelines, "pipelines"):
+    # Handle listing of components
+    if list_components(pipeline, pipelines, 'pipelines'):
         return
-
-    if list_components(synth, synths, "synthesizer functions"):
+    if list_components(synth, synths, 'synthesizer functions'):
         return
-
-    if list_components(knobs, knobs_dict, "audio feature mapping functions"):
+    if list_components(knobs, knobs_dict, 'audio feature mapping functions'):
         return
-
     if list_components(
-        video_features, hand_feature_funcs, "hand feature extraction functions"
+        video_features, hand_feature_funcs, 'hand feature extraction functions'
     ):
         return
 
-    # Handle recording options
+    # Handle scale listing/help when flag provided without value
+    if scale == 'list':
+        try:
+            from tonal.notes import list_scales_string
+
+            print(list_scales_string())
+        except Exception as e:
+            print(f"Could not list scales ({e.__class__.__name__}: {e})")
+        return
+
     if no_recording:
         record_to_file = False
 
-    # Set up logging callbacks
-    log_video_features_callback = print_json_if_possible if log_video_features else None
-    log_knobs_callback = print_json_if_possible if log_knobs else None
+    # Validate scale if provided and not a disable marker
+    scale_disable_markers = {"none", "null", "off", "false", "no", "0", ""}
+    if isinstance(scale, str) and scale.strip().lower() not in scale_disable_markers:
+        try:
+            from tonal.notes import scale_params, IncorrectScaleSpecification
 
-    # Run the theremin application
+            # Will raise IncorrectScaleSpecification on failure
+            scale_params(scale)
+        except IncorrectScaleSpecification as e:
+            print(f"{e.__class__.__name__}: {e}")
+            return
+        except Exception as e:
+            # Non-fatal: fall back to runtime behavior, but inform the user
+            print(
+                "Warning: unexpected issue while validating scale; proceeding anyway. "
+                f"{e.__class__.__name__}: {e}"
+            )
+
+    # Resolve scale argument to freq transformation override
+    freq_trans_override = resolve_scale_to_freq_trans(scale)
+
+    log_video_features_cb = print_json_if_possible if log_video_features else None
+    log_knobs_cb = print_json_if_possible if log_knobs else None
+
+    # Pick a draw_on_screen that reflects the chosen scale guides
+    draw_on_screen = _get_default_draw_on_screen_for_scale(scale)
+
+    # No wrapping here; let run_theremin handle freq_trans override injection
+    knobs_arg = knobs
+
     run_theremin(
         pipeline=pipeline,
         video_features=video_features,
-        knobs=knobs,
+        knobs=knobs_arg,
         synth=synth,
-        log_video_features=log_video_features_callback,
-        log_knobs=log_knobs_callback,
+        log_video_features=log_video_features_cb,
+        log_knobs=log_knobs_cb,
         record_to_file=record_to_file,
         window_name=window_name,
+        freq_trans_override=freq_trans_override,
+        draw_on_screen=draw_on_screen,
     )
