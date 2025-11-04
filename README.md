@@ -41,7 +41,7 @@ The first one I even heard:
 [Samuel Hoffman playing "over the rainbox"](https://www.youtube.com/watch?v=K6KbEnGnymk). 
 Someone might complain if I don't mention Led's Zepplin's Jimmy Page... [playing around](https://www.youtube.com/watch?v=KPhXm-UPfEU) with a theremin -- but personally, though I appreciate the exploration, I don't consider it as being "playing the theremin". 
 
-<img width="1024" height="1024" alt="theremin_processing_pipeline" src="https://github.com/user-attachments/assets/2b3e7874-9ca6-456d-ad70-89234f9d6e4a" />
+<img width="700" height="700" alt="theremin_processing_pipeline" src="https://github.com/user-attachments/assets/2b3e7874-9ca6-456d-ad70-89234f9d6e4a" />
 
 # Old "about"
 
