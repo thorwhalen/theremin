@@ -1,10 +1,72 @@
-# Restructured Theremin Architecture - Usage Guide
+# Theremin Architecture
 
 ## Overview
 
-The theremin system has been restructured to provide cleaner, more composable audio feature extraction. The new architecture separates concerns and makes it easier to create, test, and validate video-to-audio mappings.
+The **theremin** project is a modular framework for mapping sensor data streams to generated audio streams. While the ultimate vision is to support any sensor-to-audio mapping, the current implementation focuses on video (hand gestures) and keyboard inputs mapped to synthesized audio.
+
+### The Big Picture
+
+At its heart, theremin implements a pipeline architecture with distinct, composable layers:
+
+1. **Sensor Reading**: Capture raw input from sensors (currently: video via MediaPipe, keyboard via OpenCV)
+2. **Feature Extraction**: Transform raw sensor data into meaningful features (hand positions, gestures, openness, etc.)
+3. **Feature Mapping** ("Knobs"): Map extracted features to audio synthesis parameters
+4. **Synthesis**: Generate audio using the mapped parameters
+
+This layered approach provides modularity: you can swap out components at any layer independently. Want a different synthesizer? Change the synth function. Want different gesture-to-sound mappings? Modify the feature mapping. The pipeline composition ties these components together.
+
+### Current Implementation: Synth-Based Architecture
+
+The current "synth-based" implementation follows this flow:
+
+```
+Input: Video/Keyboard
+         |
+         v
++----------------------------------------------------------+
+| 1. Sensor Reading (cv2.VideoCapture, cv2.waitKey)       |
++----------------------------------------------------------+
+         |
+         v
++----------------------------------------------------------+
+| 2. Feature Extraction: --video-features                 |
+|    (e.g. many_video_features)                            |
+|    Extracts: hand positions, gestures, openness, etc.    |
++----------------------------------------------------------+
+         |
+         v
++----------------------------------------------------------+
+| 3. Feature Mapping: --knobs (e.g. theremin_knobs)       |
+|    Maps video features → audio params (freq, volume...) |
++----------------------------------------------------------+
+         |
+         v
++----------------------------------------------------------+
+| 4. Synthesis: --synth (e.g. theremin_synth)             |
+|    Generates audio from parameters                       |
++----------------------------------------------------------+
+         |
+         v
+   [Audio Output + Recording]
+
+Note: --pipeline combines steps 2-4 in pre-configured packages
+(e.g. "theremin", "two_voice", "simple_sine")
+```
+
+**Sensor Readers** capture frames from a camera or key presses. The **video_features** module (using MediaPipe) extracts hand landmarks, positions, gestures, and derived features like "openness" (how spread the fingers are) or pinch detection.
+
+These video features feed into **audio feature builders** (also called "knobs functions" historically), which map specific video features to audio synthesis parameters. For example:
+- Right wrist X position → frequency
+- Left wrist Y position → volume  
+- Hand openness → vibrato depth
+
+Finally, the **synthesizer** receives these audio parameters and generates sound in real-time. The `audio.py` module provides various synth functions (sine wave, theremin with vibrato, FM synthesis, etc.).
+
+A **pipeline** is simply the composition of these components: a selector for which features to extract, which mappings to use, and which synth to employ. The `pipelines.py` module defines several pre-built pipelines (e.g., "theremin", "two_voice", "simple_sine") that you can use or extend.
 
 ## Core Components
+
+The architecture is implemented through three primary abstractions that make the system flexible and testable:
 
 ### 1. FeatureMapping
 Defines how a single video feature maps to an audio parameter:

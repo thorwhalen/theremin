@@ -116,11 +116,11 @@ def load_test_video_features():
         if features is None:
             return None
 
-    with open(TEST_FEATURES_PATH, 'r') as f:
+    with open(TEST_FEATURES_PATH) as f:
         return json.load(f)
 
 
-def get_sample_video_features() -> Dict[str, Any]:
+def get_sample_video_features() -> dict[str, Any]:
     """Get a representative sample of video features for testing"""
     all_features = load_test_video_features()
     if all_features:

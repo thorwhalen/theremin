@@ -22,7 +22,7 @@ from __future__ import annotations
 import argparse
 import sys
 import time
-from typing import Iterable, Sequence
+from collections.abc import Iterable, Sequence
 
 try:
     from pythonosc import osc_message_builder

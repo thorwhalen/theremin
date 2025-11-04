@@ -16,7 +16,8 @@ Inspired by:
 - theremin/dag_audio_features.py
 """
 
-from typing import Dict, Any, Callable, Optional
+from typing import Dict, Any, Optional
+from collections.abc import Callable
 
 import cv2
 
@@ -48,7 +49,7 @@ from theremin.util import ensure_plain_types
 
 def _make_audio_knobs_func(
     variant: str,
-) -> Callable[[Dict[str, Any]], Dict[str, float]]:
+) -> Callable[[dict[str, Any]], dict[str, float]]:
     """Return a DAG-backed knobs function according to variant.
 
     Variants:
@@ -75,7 +76,7 @@ def _make_audio_knobs_func(
         # Fallback: allow all, the DAG will sort itself out
         allowed_params = None
 
-    def knobs_function(video_features: Dict[str, Any]) -> Dict[str, float]:
+    def knobs_function(video_features: dict[str, Any]) -> dict[str, float]:
         # If nothing, provide reasonable defaults
         if not video_features:
             if hasattr(dag, "_get_defaults"):
@@ -120,7 +121,7 @@ def create_theremin_slabs(cap: cv2.VideoCapture, *, variant: str = "theremin") -
     synth_func = _select_synth(variant)
 
     # Manage Synth lifecycle outside component calls (we'll pass the instance via closure)
-    synth_instance: Optional[Synth] = None
+    synth_instance: Synth | None = None
 
     # -------------------------- Components (by slab key name) -------------------------
 
@@ -142,7 +143,7 @@ def create_theremin_slabs(cap: cv2.VideoCapture, *, variant: str = "theremin") -
         """Extract left/right-prefixed features from hand detection."""
         return many_video_features(hand_detection)
 
-    def audio_features(video_features: Dict[str, Any]):
+    def audio_features(video_features: dict[str, Any]):
         """Compute audio knobs from video features using a DAG-backed function."""
         if not video_features:
             return {}

@@ -208,11 +208,12 @@ def annotate_with(annotation_type):
 
 
 import json
-from typing import Union, Iterator, Dict, Any
+from typing import Union, Dict, Any
+from collections.abc import Iterator
 from pathlib import Path
 
 
-def json_lines(string_or_path_to_string: Union[str, Path]) -> Iterator[Dict[str, Any]]:
+def json_lines(string_or_path_to_string: str | Path) -> Iterator[dict[str, Any]]:
     """
     Parse a file or string containing JSON-like dictionaries on each line.
     Yields only the lines that can be deserialized to dictionaries.

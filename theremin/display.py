@@ -2,13 +2,14 @@
 
 import cv2
 import numpy as np
-from typing import Union, Tuple, Dict, Optional, Callable, Iterable
+from typing import Union, Tuple, Dict, Optional
+from collections.abc import Callable, Iterable
 
 # -------------------------------------------------------------------------------
 # Types
 # -------------------------------------------------------------------------------
 
-Color = Union[Tuple[int, int, int], Tuple[int, int, int, int]]  # BGR or BGRA
+Color = Union[tuple[int, int, int], tuple[int, int, int, int]]  # BGR or BGRA
 
 # -------------------------------------------------------------------------------
 # Screen drawing functions
@@ -161,11 +162,11 @@ def draw_on_screen(
     recognizer,
     img: np.ndarray,
     hand_detection,
-    sound_features: Optional[dict] = None,
+    sound_features: dict | None = None,
     *,
     draw_landmarks: bool = True,
-    draw_sound_features: Optional[Callable] = display_sound_features_on_image,
-    draw_frequencies: Optional[Iterable] = None,
+    draw_sound_features: Callable | None = display_sound_features_on_image,
+    draw_frequencies: Iterable | None = None,
 ):
     """
     Draw hand landmarks, wrist lines, and sound features on the image.

@@ -5,7 +5,8 @@ This module provides a cleaner, more composable way to map video features to aud
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, Callable, Any, Union, List, Tuple, Optional
+from typing import Dict, Any, Union, List, Tuple, Optional
+from collections.abc import Callable
 import numpy as np
 from functools import partial
 
@@ -42,8 +43,8 @@ class FeatureMapping:
 
 
 def range_transformer(
-    input_range: Tuple[float, float] = (0, 1),
-    output_range: Tuple[float, float] = (220, 1760),
+    input_range: tuple[float, float] = (0, 1),
+    output_range: tuple[float, float] = (220, 1760),
     pre_transform: Callable = identity,
     post_transform: Callable = identity,
     clip: bool = True,
@@ -93,7 +94,7 @@ def range_transformer(
     return transformer
 
 
-def extract_nested_value(data: Dict, path: str) -> Any:
+def extract_nested_value(data: dict, path: str) -> Any:
     """
     Extract nested values from a dictionary using dot notation.
 
@@ -118,10 +119,10 @@ def extract_nested_value(data: Dict, path: str) -> Any:
 class AudioFeatureBuilder:
     """Builds audio features from video features using mappings and transformations"""
 
-    def __init__(self, mappings: List[FeatureMapping]):
+    def __init__(self, mappings: list[FeatureMapping]):
         self.mappings = mappings
 
-    def __call__(self, video_features: Dict) -> Dict[str, float]:
+    def __call__(self, video_features: dict) -> dict[str, float]:
         """Extract audio features from video features"""
         audio_features = {}
 
@@ -135,7 +136,7 @@ class AudioFeatureBuilder:
         return ensure_plain_types(audio_features)
 
     @property
-    def output_params(self) -> List[str]:
+    def output_params(self) -> list[str]:
         """Get list of audio parameters this builder produces"""
         return [mapping.audio_param for mapping in self.mappings]
 
@@ -290,13 +291,13 @@ class FallbackAudioFeatureBuilder(AudioFeatureBuilder):
 
     def __init__(
         self,
-        mappings: List[FeatureMapping],
-        fallback_mappings: List[FeatureMapping] = None,
+        mappings: list[FeatureMapping],
+        fallback_mappings: list[FeatureMapping] = None,
     ):
         super().__init__(mappings)
         self.fallback_mappings = fallback_mappings or []
 
-    def __call__(self, video_features: Dict) -> Dict[str, float]:
+    def __call__(self, video_features: dict) -> dict[str, float]:
         # Try primary mappings first
         audio_features = super().__call__(video_features)
 

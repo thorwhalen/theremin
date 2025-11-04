@@ -5,7 +5,8 @@ This module provides a way to express audio feature computation as a DAG of func
 making it easy to compose and test complex video-to-audio mappings.
 """
 
-from typing import Dict, Any, Callable, Union
+from typing import Dict, Any, Union
+from collections.abc import Callable
 import numpy as np
 from functools import partial
 
@@ -170,11 +171,11 @@ def create_two_voice_dag():
 class FallbackDAG:
     """Wrapper around DAG that provides fallback logic for single-hand operation"""
 
-    def __init__(self, primary_dag, fallback_functions: Dict[str, Callable] = None):
+    def __init__(self, primary_dag, fallback_functions: dict[str, Callable] = None):
         self.primary_dag = primary_dag
         self.fallback_functions = fallback_functions or {}
 
-    def __call__(self, **kwargs) -> Dict[str, Any]:
+    def __call__(self, **kwargs) -> dict[str, Any]:
         """Execute DAG with fallback logic"""
         # Try primary DAG first
         try:
@@ -211,7 +212,7 @@ class FallbackDAG:
 
         return result
 
-    def _get_defaults(self) -> Dict[str, Any]:
+    def _get_defaults(self) -> dict[str, Any]:
         """Get default values when no hands detected"""
         return {
             'freq': (DFLT_MIN_FREQ + DFLT_MAX_FREQ) / 2,
@@ -267,7 +268,7 @@ def ensure_dag_output_is_dict(dag, out):
 def dag_to_knobs_function(dag) -> Callable:
     """Convert a DAG to a function that matches the old knobs function signature"""
 
-    def knobs_function(video_features: Dict) -> Dict[str, float]:
+    def knobs_function(video_features: dict) -> dict[str, float]:
         """Extract audio features from video features using DAG"""
         if not video_features:
             if hasattr(dag, '_get_defaults'):
@@ -294,7 +295,7 @@ if DAG is not None:
     two_voice_dag_knobs = dag_to_knobs_function(create_two_voice_dag())
 else:
     # Fallback implementations without DAG
-    def theremin_dag_knobs(video_features: Dict) -> Dict[str, float]:
+    def theremin_dag_knobs(video_features: dict) -> dict[str, float]:
         """Fallback theremin knobs without DAG"""
         result = {}
         result['freq'] = wrist_x_to_freq(video_features.get('r_wrist_position'))
@@ -314,7 +315,7 @@ else:
 
         return result
 
-    def enhanced_theremin_dag_knobs(video_features: Dict) -> Dict[str, float]:
+    def enhanced_theremin_dag_knobs(video_features: dict) -> dict[str, float]:
         """Fallback enhanced theremin knobs without DAG"""
         result = theremin_dag_knobs(video_features)
         result['vibrato_rate'] = openness_to_vibrato_rate(
@@ -327,7 +328,7 @@ else:
         result['release'] = 0.1
         return result
 
-    def two_voice_dag_knobs(video_features: Dict) -> Dict[str, float]:
+    def two_voice_dag_knobs(video_features: dict) -> dict[str, float]:
         """Fallback two-voice knobs without DAG"""
         return {
             'l_freq': left_wrist_to_freq(video_features.get('l_wrist_position')),

@@ -9,7 +9,8 @@ Only lightweight stdlib / small packages are imported at module import time so
 # Only light imports at module import time
 import time
 import argh
-from typing import Union, Callable, Dict, Optional, Any
+from typing import Union, Dict, Optional, Any
+from collections.abc import Callable
 from functools import partial
 import json
 from i2 import Sig
@@ -65,7 +66,7 @@ def read_keyboard(wait_time: int = 5) -> int:
     return cv2.waitKey(wait_time) & 0xFF
 
 
-def keyboard_feature_vector(key_code: int) -> Dict[str, Any]:
+def keyboard_feature_vector(key_code: int) -> dict[str, Any]:
     """Convert a raw key code into a small feature dict; raise if it's a break key."""
     keyboard_fv = {
         'key_code': key_code,
@@ -136,7 +137,7 @@ def _get_scale_frequencies():
 # Lazy default drawing function wrapper
 
 
-def _get_default_draw_on_screen_for_scale(scale: Optional[str]):
+def _get_default_draw_on_screen_for_scale(scale: str | None):
     """Return draw_on_screen partial with scale-dependent frequencies.
 
     If scale is None: use default cached scale frequencies; if set to disables snapping
@@ -183,17 +184,17 @@ def _get_default_draw_on_screen():
 
 def run_theremin(
     *,
-    video_features: Union[str, Callable] = DFLT_VIDEO_FEATURES,
-    pipeline: Optional[Union[str, Callable]] = None,
-    knobs: Optional[Union[str, Callable]] = None,
-    synth: Optional[Union[str, Callable]] = None,
-    log_video_features: Optional[Callable] = None,
-    log_knobs: Optional[Callable] = None,
-    record_to_file: Union[str, bool] = 'theremin_recording.wav',
+    video_features: str | Callable = DFLT_VIDEO_FEATURES,
+    pipeline: str | Callable | None = None,
+    knobs: str | Callable | None = None,
+    synth: str | Callable | None = None,
+    log_video_features: Callable | None = None,
+    log_knobs: Callable | None = None,
+    record_to_file: str | bool = 'theremin_recording.wav',
     window_name: str = 'Hand Gesture Recognition with Theremin',
-    draw_on_screen: Optional[Callable] = None,
+    draw_on_screen: Callable | None = None,
     only_keep_new_freqs: bool = True,
-    freq_trans_override: Optional[Union[str, Callable]] = "__USE_DEFAULT__",
+    freq_trans_override: str | Callable | None = "__USE_DEFAULT__",
 ):
     """Run the realtime theremin loop.
 
@@ -404,20 +405,64 @@ def list_components(param_value, components_dict, description, component_describ
     default=None,
 )
 def theremin_cli(
-    pipeline: Optional[str] = 'theremin',
-    video_features: Optional[str] = 'many_video_features',
-    knobs: Optional[str] = 'theremin_knobs',
-    synth: Optional[str] = 'theremin_synth',
+    pipeline: str | None = 'theremin',
+    video_features: str | None = 'many_video_features',
+    knobs: str | None = 'theremin_knobs',
+    synth: str | None = 'theremin_synth',
     log_video_features: bool = False,
     log_knobs: bool = False,
     record_to_file: str = 'theremin_recording.wav',
     no_recording: bool = False,
     window_name: str = 'Theremin with Hand Tracking',
-    scale: Optional[str] = None,
+    scale: str | None = None,
 ):
-    """CLI entry: list components (when argument value is 'list') or run theremin.
+    """Run the theremin: map video/keyboard input to synthesized audio.
 
-    Heavy imports are still deferred until a run is actually initiated.
+    Architecture Overview:
+
+    Input: Video/Keyboard
+             |
+             v
+    +----------------------------------------------------------+
+    | 1. Sensor Reading (cv2.VideoCapture, cv2.waitKey)       |
+    +----------------------------------------------------------+
+             |
+             v
+    +----------------------------------------------------------+
+    | 2. Feature Extraction: --video-features                 |
+    |    (e.g. many_video_features)                            |
+    |    Extracts: hand positions, gestures, openness, etc.    |
+    +----------------------------------------------------------+
+             |
+             v
+    +----------------------------------------------------------+
+    | 3. Feature Mapping: --knobs (e.g. theremin_knobs)       |
+    |    Maps video features → audio params (freq, volume...) |
+    +----------------------------------------------------------+
+             |
+             v
+    +----------------------------------------------------------+
+    | 4. Synthesis: --synth (e.g. theremin_synth)             |
+    |    Generates audio from parameters                       |
+    +----------------------------------------------------------+
+             |
+             v
+       [Audio Output + Recording]
+
+    Note: --pipeline combines steps 2-4 in pre-configured packages
+          (e.g. "theremin", "two_voice", "simple_sine")
+
+    Parameters:
+        pipeline: Pre-configured pipeline name or 'list' to show available
+        video_features: Feature extraction function or 'list' to show available
+        knobs: Audio parameter mapping function or 'list' to show available
+        synth: Synthesizer function or 'list' to show available
+        log_video_features: Enable logging of extracted video features
+        log_knobs: Enable logging of audio parameters
+        record_to_file: Filename for audio recording (default: theremin_recording.wav)
+        no_recording: Disable audio recording
+        window_name: Title for the video display window
+        scale: Musical scale for frequency snapping or 'list' to show available scales
     """
     # Lazy import of component registries ONLY if listing or running
     from theremin.audio import (
