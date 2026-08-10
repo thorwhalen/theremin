@@ -11,6 +11,12 @@ import pytest
 from pathlib import Path
 from typing import Dict, Any
 
+# These tests exercise the full audio + video feature stack, which needs pyo
+# (audio synthesis) and cv2/mediapipe (video feature extraction).
+pytest.importorskip('pyo', reason='theremin audio modules require pyo')
+pytest.importorskip('cv2', reason='video processing requires opencv')
+pytest.importorskip('mediapipe', reason='hand tracking requires mediapipe')
+
 # Import the new systems
 from theremin.audio_features import (
     AudioFeatureBuilder,

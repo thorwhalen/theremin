@@ -221,6 +221,7 @@ def run_theremin(
         DFLT_PIPELINE as DFLT_PIPELINE_NAME,
     )
     from theremin.util import ensure_plain_types
+    from theremin.control_events import renderable_events, synth_dials
     from hum.pyo_util import Synth
     from cw import resolve_to_function
 
@@ -335,7 +336,14 @@ def run_theremin(
                     if isinstance(record_to_file, str)
                     else 'theremin_recording.wav'
                 )
-                synth_obj.render_events(output_filepath=output_path)
+                # Only dial (live) parameters can be driven by the offline
+                # renderer; settings (e.g. a string waveform name) are baked
+                # into the synth function's defaults. Rendering the raw
+                # recording -- whose initial snapshot includes settings -- is
+                # what made rendering die with "unhashable type: 'SigTo'"
+                # (issue #4).
+                events = renderable_events(recording, dials=synth_dials(synth_obj))
+                synth_obj.render_events(events, output_filepath=output_path)
                 print(f"Saved audio recording to {output_path}")
             except Exception as e:  # pragma: no cover - safety
                 print(f"Warning: Failed to render events: {e}")
