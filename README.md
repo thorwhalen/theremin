@@ -4,6 +4,26 @@ A video-to-sound theremin.
 
 To install:	```pip install theremin```
 
+To also install the real-time audio engine (needed to actually *play*):
+
+```
+pip install theremin[audio]
+```
+
+The `audio` extra pulls in [`pyo`](http://ajaxsoundstudio.com/software/pyo/), which
+needs system libraries (portaudio, portmidi) and publishes no universal wheels --
+so it is deliberately **not** a hard dependency. Everything that does not make
+live sound (feature extraction, the recorded-event helpers, the CLI entry point)
+imports and tests fine without it; only `theremin.audio` and the modules built on
+it require `pyo`. On macOS/Linux you will typically want the system libraries
+first (`brew install portaudio portmidi` / `apt install portaudio19-dev
+libportmidi-dev`).
+
+> **Note:** This Python package is semi-dormant. Its browser-based successor is
+> [thoremin](https://github.com/thorwhalen/thoremin) -- a client-side hand
+> theremin (webcam gestures to live audio, all in the browser) that carries this
+> project's vision forward.
+
 
 # About this project
 

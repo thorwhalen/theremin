@@ -1,0 +1,270 @@
+[build-system]
+requires = [
+    "hatchling",
+]
+build-backend = "hatchling.build"
+
+[project]
+name = "theremin"
+version = "0.0.7"
+description = "A video-to-sound theremin"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+keywords = [
+    "audio",
+    "music",
+    "synthesizer",
+    "theremin",
+    "computer-vision",
+    "hand-tracking",
+    "gesture",
+]
+authors = [
+    { name = "Thor Whalen" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Multimedia :: Video",
+]
+dependencies = [
+    "dol",
+    "i2",
+    "cw",
+    "meshed",
+    "opencv-python",
+    "hum",
+    "mediapipe",
+]
+
+[project.urls]
+Homepage = "https://github.com/thorwhalen/theremin"
+Repository = "https://github.com/thorwhalen/theremin"
+Documentation = "https://thorwhalen.github.io/theremin"
+
+[project.scripts]
+theremin = "theremin.main:dispatched_theremin_cli"
+
+[project.optional-dependencies]
+# `pyo` (the real-time audio engine) needs system libraries (portaudio, portmidi)
+# and ships no universal wheels, so it is an opt-in extra: `pip install theremin[audio]`.
+# The package itself must stay importable without it -- only the live-synthesis
+# modules (theremin.audio and everything built on it) require pyo. See the
+# import-safety guard in theremin/tests/test_import_safety.py.
+audio = [
+    "hum[audio]",
+]
+dev = [
+    "pytest>=7.0",
+]
+
+[tool.hatch.build.targets.wheel]
+# Explicit, so the vendored mini-packages under related_packages/ (each with its
+# own setup.py) are never mistaken for distributable packages. Non-Python files
+# inside theremin/ (notably data/gesture_recognizer.task) ship with the wheel.
+packages = [
+    "theremin",
+]
+# `exclude` is load-bearing, not tidiness. setuptools shipped only the .py files
+# it could find as packages; hatchling ships *every* non-VCS-ignored file under
+# theremin/, which silently sweeps in the tracked test-fixture videos under
+# theremin/tests/testing_data/ (~52 MB) and the non-distributable scrap/ tree.
+# Without these lines the wheel goes from 51 KB to 56.5 MB and every
+# `pip install theremin` downloads the test videos. The ~8.4 MB that remains is
+# theremin/data/gesture_recognizer.task, which is deliberate: video_features.py
+# reads it from the package data dir and it was missing from earlier releases.
+# Guarded by theremin/tests/test_distribution.py.
+exclude = [
+    "theremin/tests",
+    "theremin/scrap",
+]
+
+[tool.hatch.build.targets.sdist]
+# Leading slashes anchor these to the project root. Hatchling reads them with
+# gitignore semantics, in which a bare `README.md` matches a file of that name at
+# *any* depth -- which is how the vendored related_packages/*/README.md files
+# were leaking into the sdist.
+include = [
+    "/theremin",
+    "/README.md",
+    "/LICENSE",
+]
+# Same reasoning as the wheel target above: the sdist grew to 56.5 MB too.
+exclude = [
+    "theremin/tests",
+    "theremin/scrap",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+exclude = [
+    "**/*.ipynb",
+    ".git",
+    ".venv",
+    "build",
+    "dist",
+    "tests",
+    "examples",
+    "scrap",
+    "related_packages",
+]
+
+[tool.ruff.lint]
+select = [
+    "D100",
+]
+ignore = [
+    "D203",
+    "E501",
+    "B905",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/*" = [
+    "D",
+]
+"**/examples/*" = [
+    "D",
+]
+"**/scrap/*" = [
+    "D",
+]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+# This list is load-bearing for CI, not merely a convenience.
+#
+# The wads test action always appends `--doctest-modules` and passes no explicit
+# path, so pytest falls back to `testpaths` -- which therefore decides exactly
+# which modules get IMPORTED at collection time. It is an allow-list of
+# import-safe paths:
+#
+#   - theremin/tests           the suite itself (its pyo/cv2/mediapipe-dependent
+#                              cases guard themselves with pytest.importorskip)
+#   - control_events.py,       pure modules whose doctests are worth running, and
+#     util.py                  which import without any optional dependency
+#   - script_utils.py,         no doctests, but listing them makes collection
+#     main.py                  itself assert that the CLI entry path stays
+#                              importable without pyo
+#
+# Deliberately absent: audio.py, audio_features.py, dag_audio_features.py and
+# pipelines.py (all reach `import pyo` transitively), display.py and
+# video_features.py (import cv2/mediapipe, which need system libraries that a
+# headless runner does not have), and framework/ (pre-existing illustrative
+# doctests that were never executable). Adding any of those here turns CI red.
+testpaths = [
+    "theremin/tests",
+    "theremin/control_events.py",
+    "theremin/util.py",
+    "theremin/script_utils.py",
+    "theremin/main.py",
+]
+doctest_optionflags = [
+    "NORMALIZE_WHITESPACE",
+    "ELLIPSIS",
+]
+
+[tool.wads.ci]
+project_name = ""
+
+[tool.wads.ci.commands]
+pre_test = []
+test = []
+post_test = []
+lint = []
+format = []
+
+[tool.wads.ci.env]
+required_envvars = []
+test_envvars = []
+extra_envvars = []
+
+[tool.wads.ci.env.defaults]
+
+[tool.wads.ci.quality.ruff]
+enabled = true
+
+[tool.wads.ci.quality.black]
+enabled = false
+
+[tool.wads.ci.quality.mypy]
+enabled = false
+
+[tool.wads.ci.testing]
+enabled = true
+python_versions = [
+    "3.10",
+    "3.12",
+]
+pytest_args = [
+    "-v",
+    "--tb=short",
+]
+coverage_enabled = true
+coverage_threshold = 0
+coverage_report_format = [
+    "term",
+    "xml",
+]
+# Rendered by the wads test action as `--ignore=<path>`. Belt-and-braces on top
+# of `testpaths`: it keeps an explicit-path pytest run (a developer typing
+# `pytest .`) away from the trees that cannot be imported here. The vendored
+# related_packages/ carry their own setup.py and import contexts;
+# theremin/examples/ is worse than merely unimportable -- keyboard_synth.py
+# calls sys.exit(1) at import time, which crashes pytest's collector outright.
+exclude_paths = [
+    "related_packages",
+    "examples",
+    "scrap",
+    "theremin/examples",
+    "theremin/scrap",
+]
+test_on_windows = false
+
+[tool.wads.ci.metrics]
+enabled = true
+config_path = ".github/umpyre-config.yml"
+storage_branch = "code-metrics"
+python_version = "3.10"
+force_run = false
+
+[tool.wads.ci.build]
+sdist = true
+wheel = true
+
+[tool.wads.ci.publish]
+# Disabled because this repo has NO PyPI credentials reachable at run time, and
+# a publish job that cannot authenticate fails the whole workflow on the default
+# branch — which would re-redden a repo that has just had its first green run.
+#
+# Why none are reachable: `thorwhalen` is a GitHub *User* account, not an org, so
+# there is no org-secret fallback (that is what covers the i2mint repos, whose
+# PYPI_PASSWORD is an org secret at visibility=all). This repo also has no
+# repository-level secrets of its own -- `gh api repos/thorwhalen/theremin/
+# actions/secrets` returns total_count 0. Sibling repos like hum and loopyng do
+# have repo-level PYPI_PASSWORD, which is why publishing works there.
+#
+# To re-enable: add PYPI_PASSWORD (and PYPI_USERNAME) as repository secrets, then
+# flip this to true. Nothing else here needs to change.
+enabled = false
+skip_ci_marker = "[skip ci]"
+publish_marker = "[publish]"
+
+[tool.wads.ci.docs]
+enabled = true
+builder = "epythet"
+ignore_paths = [
+    "tests/",
+    "scrap/",
+    "examples/",
+    "related_packages/",
+]

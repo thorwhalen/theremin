@@ -1,5 +1,11 @@
 import numbers
+
 import numpy as np
+import pytest
+
+# theremin.audio (and the modules below) require pyo, which needs an audio stack;
+# the pure sanitation helpers are tested in test_control_events.py instead.
+pytest.importorskip('pyo', reason='theremin.audio requires pyo')
 
 from theremin.audio import (
     two_hand_freq_and_volume_knobs,
@@ -13,7 +19,6 @@ from theremin.audio import (
 )
 from theremin.dag_audio_features import theremin_dag_knobs
 from theremin.audio_features import create_theremin_builder
-from theremin.util import ensure_plain_types
 
 
 def _assert_builtin_numbers(d):
@@ -86,18 +91,5 @@ def test_audio_feature_builder_returns_builtin_numbers():
     _assert_builtin_numbers(out)
 
 
-def test_ensure_plain_types_converts_numpy_scalars_and_arrays():
-    d = {
-        'a': np.float64(1.2),
-        'b': np.int64(3),
-        'c': np.array(4.5),  # 0-d array
-        'd': np.array([1.0, 2.0]),  # 1-d array
-        'e': {'f': np.float32(0.1)},
-    }
-    out = ensure_plain_types(d)
-    assert isinstance(out['a'], float)
-    assert isinstance(out['b'], int)
-    assert isinstance(out['c'], float)
-    assert isinstance(out['d'], list)
-    assert all(isinstance(x, float) for x in out['d'])
-    assert isinstance(out['e']['f'], float)
+# NOTE: test_ensure_plain_types_converts_numpy_scalars_and_arrays moved to
+# test_control_events.py so it keeps running in environments without pyo.
