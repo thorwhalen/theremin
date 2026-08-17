@@ -20,6 +20,11 @@ where the synth function expects, say, a waveform *name* -- and
 restrict the rendered event stream to dial parameters (settings are baked into
 the synth function's defaults) and guarantee every value is plain data.
 
+`render_recording` is the *only* place in the package allowed to call a synth's
+``render_events``: making it a named function is what lets the fix be tested at
+its call site instead of only in the helper it delegates to (see
+``theremin/tests/test_render_call_site.py``).
+
 Everything here is pure and pyo-free, so it is testable without an audio server.
 """
 
@@ -30,6 +35,10 @@ from theremin.util import ensure_plain_types
 
 # Attributes that define a pyo.SigTo-like control signal's plain-data form.
 SIGTO_ATTRS = ('value', 'time', 'mul', 'add')
+
+# Where a run's audio recording lands when the caller asked for one without
+# naming a file.
+DFLT_RECORDING_FILEPATH = 'theremin_recording.wav'
 
 ControlEvent = tuple[float, dict[str, Any]]
 
@@ -146,3 +155,37 @@ def renderable_events(
         }
         events.append((float(event_time), kept))
     return events
+
+
+def render_recording(
+    synth: Any,
+    control_events: Iterable[ControlEvent],
+    *,
+    output_filepath: str = DFLT_RECORDING_FILEPATH,
+) -> str:
+    """Render a run's recorded control events to an audio file. Dial keys only.
+
+    This is the fix site for issue #4, and the **only** place in the package
+    allowed to call a synth's ``render_events``: the offline renderer wraps
+    every key it is handed in a fresh live control signal, so letting a settings
+    key (e.g. ``waveform='sine'``) through delivers an unhashable ``SigTo``
+    where the synth function expects a name. Restricting the stream to the
+    synth's dials (`synth_dials`) and plainifying it (`renderable_events`) is
+    what prevents that.
+
+    Returns the path written to.
+
+    >>> class FakeSynth:
+    ...     _dials = {'freq', 'volume'}
+    ...     def render_events(self, events, output_filepath):
+    ...         self.rendered = events
+    >>> synth = FakeSynth()
+    >>> recording = [(0, {'freq': 440, 'waveform': 'sine'}), (1.0, {})]
+    >>> render_recording(synth, recording, output_filepath='out.wav')
+    'out.wav'
+    >>> synth.rendered
+    [(0.0, {'freq': 440}), (1.0, {})]
+    """
+    events = renderable_events(control_events, dials=synth_dials(synth))
+    synth.render_events(events, output_filepath=output_filepath)
+    return output_filepath

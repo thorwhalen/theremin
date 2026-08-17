@@ -7,6 +7,7 @@ Only lightweight stdlib / small packages are imported at module import time so
 """
 
 # Only light imports at module import time
+import logging
 import time
 import argh
 from typing import Union, Dict, Optional, Any
@@ -15,8 +16,14 @@ from functools import partial
 import json
 from i2 import Sig
 
+# theremin.control_events is pure data hygiene: no pyo, no cv2, no mediapipe, so
+# it is safe (and cheap) to import eagerly. See theremin/tests/test_import_safety.py.
+from theremin.control_events import DFLT_RECORDING_FILEPATH, render_recording
+
 # Heavy modules (cv2, mediapipe, pyo, etc.) and theremin.audio are intentionally NOT imported at top-level
 # to make `theremin -h` fast. They will be imported lazily inside runtime functions.
+
+_logger = logging.getLogger(__name__)
 
 # -------------------------------------------------------------------------------
 # Logging utilities
@@ -190,7 +197,7 @@ def run_theremin(
     synth: str | Callable | None = None,
     log_video_features: Callable | None = None,
     log_knobs: Callable | None = None,
-    record_to_file: str | bool = 'theremin_recording.wav',
+    record_to_file: str | bool = DFLT_RECORDING_FILEPATH,
     window_name: str = 'Hand Gesture Recognition with Theremin',
     draw_on_screen: Callable | None = None,
     only_keep_new_freqs: bool = True,
@@ -221,7 +228,6 @@ def run_theremin(
         DFLT_PIPELINE as DFLT_PIPELINE_NAME,
     )
     from theremin.util import ensure_plain_types
-    from theremin.control_events import renderable_events, synth_dials
     from hum.pyo_util import Synth
     from cw import resolve_to_function
 
@@ -330,23 +336,27 @@ def run_theremin(
         recording = synth_obj.get_recording()
         print(f"\n---> Recorded {len(recording)} control events\n")
         if record_to_file:
+            output_path = (
+                record_to_file
+                if isinstance(record_to_file, str)
+                else DFLT_RECORDING_FILEPATH
+            )
             try:
-                output_path = (
-                    record_to_file
-                    if isinstance(record_to_file, str)
-                    else 'theremin_recording.wav'
-                )
-                # Only dial (live) parameters can be driven by the offline
-                # renderer; settings (e.g. a string waveform name) are baked
-                # into the synth function's defaults. Rendering the raw
-                # recording -- whose initial snapshot includes settings -- is
-                # what made rendering die with "unhashable type: 'SigTo'"
-                # (issue #4).
-                events = renderable_events(recording, dials=synth_dials(synth_obj))
-                synth_obj.render_events(events, output_filepath=output_path)
+                # `render_recording` -- not `synth_obj.render_events` -- is the
+                # sanctioned way to write a recording: it drops non-dial
+                # settings, without which the render dies with "unhashable
+                # type: 'SigTo'" (issue #4). Calling render_events here instead
+                # reintroduces that bug; test_render_call_site.py fails if you do.
+                render_recording(synth_obj, recording, output_filepath=output_path)
                 print(f"Saved audio recording to {output_path}")
-            except Exception as e:  # pragma: no cover - safety
-                print(f"Warning: Failed to render events: {e}")
+            except Exception:
+                # Loud, not a print: a lost recording is exactly the symptom of
+                # issue #4, and it must not read like routine chatter. Logging
+                # at error level reaches stderr even with no handler configured,
+                # and stays routable for anyone who configures one.
+                _logger.error(
+                    "Failed to render the recording to %s", output_path, exc_info=True
+                )
         cap.release()
         cv2.destroyAllWindows()
 
@@ -399,7 +409,7 @@ def list_components(param_value, components_dict, description, component_describ
     '-r',
     '--record-to-file',
     help='Filename to save recording',
-    default='theremin_recording.wav',
+    default=DFLT_RECORDING_FILEPATH,
 )
 @argh.arg('-n', '--no-recording', help='Disable recording', default=False)
 @argh.arg(
@@ -419,7 +429,7 @@ def theremin_cli(
     synth: str | None = 'theremin_synth',
     log_video_features: bool = False,
     log_knobs: bool = False,
-    record_to_file: str = 'theremin_recording.wav',
+    record_to_file: str = DFLT_RECORDING_FILEPATH,
     no_recording: bool = False,
     window_name: str = 'Theremin with Hand Tracking',
     scale: str | None = None,

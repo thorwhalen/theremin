@@ -70,12 +70,34 @@ dev = [
 packages = [
     "theremin",
 ]
+# `exclude` is load-bearing, not tidiness. setuptools shipped only the .py files
+# it could find as packages; hatchling ships *every* non-VCS-ignored file under
+# theremin/, which silently sweeps in the tracked test-fixture videos under
+# theremin/tests/testing_data/ (~52 MB) and the non-distributable scrap/ tree.
+# Without these lines the wheel goes from 51 KB to 56.5 MB and every
+# `pip install theremin` downloads the test videos. The ~8.4 MB that remains is
+# theremin/data/gesture_recognizer.task, which is deliberate: video_features.py
+# reads it from the package data dir and it was missing from earlier releases.
+# Guarded by theremin/tests/test_distribution.py.
+exclude = [
+    "theremin/tests",
+    "theremin/scrap",
+]
 
 [tool.hatch.build.targets.sdist]
+# Leading slashes anchor these to the project root. Hatchling reads them with
+# gitignore semantics, in which a bare `README.md` matches a file of that name at
+# *any* depth -- which is how the vendored related_packages/*/README.md files
+# were leaking into the sdist.
 include = [
-    "theremin",
-    "README.md",
-    "LICENSE",
+    "/theremin",
+    "/README.md",
+    "/LICENSE",
+]
+# Same reasoning as the wheel target above: the sdist grew to 56.5 MB too.
+exclude = [
+    "theremin/tests",
+    "theremin/scrap",
 ]
 
 [tool.ruff]

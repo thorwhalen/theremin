@@ -13,10 +13,13 @@ marking the end of the recording.
 import json
 
 import numpy as np
+import pytest
 
 from theremin.control_events import (
+    DFLT_RECORDING_FILEPATH,
     looks_like_live_signal,
     plain_control_value,
+    render_recording,
     renderable_events,
     synth_dials,
 )
@@ -36,6 +39,50 @@ class FakeSigTo:
 
 
 THEREMIN_DIALS = frozenset({'freq', 'volume'})
+
+WAVEFORMS = {'sine': 'a sine table', 'saw': 'a saw table'}
+
+
+def theremin_like_synth_func(
+    freq=440,
+    volume=0.5,
+    *,
+    attack=0.01,
+    release=0.1,
+    vibrato_rate=5,
+    vibrato_depth=5,
+    waveform='sine',
+):
+    """Stands in for `theremin.audio.theremin_synth`, crash mechanism included.
+
+    Dials arrive as live signals and are simply used as signals; the `waveform`
+    *setting* is used as a **dict key**, which is the operation that dies with
+    "unhashable type: 'SigTo'" when a settings key is left in the rendered
+    stream (issue #4).
+    """
+    return WAVEFORMS[waveform]
+
+
+class FakeRenderingSynth:
+    """Models hum's ``Synth.render_events`` closely enough to reproduce issue #4.
+
+    The essential behaviour being modelled: the renderer wraps **every key
+    present anywhere in the event stream** in a fresh control signal and calls
+    the synth function with them. That is why a surviving settings key is fatal,
+    and why the fix has to happen before `render_events` is called.
+    """
+
+    _dials = THEREMIN_DIALS
+
+    def __init__(self):
+        self.rendered_events = None
+        self.output_filepath = None
+
+    def render_events(self, control_events, output_filepath):
+        self.rendered_events = control_events
+        self.output_filepath = output_filepath
+        driven_keys = {name for _, knobs in control_events for name in knobs}
+        return theremin_like_synth_func(**{k: FakeSigTo() for k in driven_keys})
 
 
 def issue_4_style_recording():
@@ -59,6 +106,64 @@ def issue_4_style_recording():
         (1.0, {'freq': 460.0}),
         (1.5, {}),  # stop_recording end marker: defines the render duration
     ]
+
+
+# --------------------------------------------------------------------------------------
+# render_recording -- the fix site itself
+#
+# `renderable_events` is a pure helper; these tests exercise the function that
+# `run_theremin` actually calls, against a synth fake that crashes the same way
+# hum's renderer did. Which call site invokes it is guarded separately, in
+# test_render_call_site.py.
+
+
+def test_the_synth_fake_really_does_reproduce_issue_4():
+    """Guards the guard: if the fake cannot crash, the test below proves nothing."""
+    synth = FakeRenderingSynth()
+    with pytest.raises(TypeError, match='unhashable'):
+        # The *unfiltered* recording -- i.e. what the pre-fix call site handed over.
+        synth.render_events(issue_4_style_recording(), output_filepath='out.wav')
+
+
+def test_render_recording_survives_an_issue_4_style_recording():
+    synth = FakeRenderingSynth()
+    written_to = render_recording(
+        synth, issue_4_style_recording(), output_filepath='out.wav'
+    )
+    assert written_to == 'out.wav'
+    assert synth.output_filepath == 'out.wav'
+
+
+def test_render_recording_hands_the_synth_dial_keys_only():
+    synth = FakeRenderingSynth()
+    render_recording(synth, issue_4_style_recording(), output_filepath='out.wav')
+    driven_keys = {name for _, knobs in synth.rendered_events for name in knobs}
+    # Every key here gets wrapped in a live control signal by the renderer, so
+    # settings -- `waveform` above all -- must not be among them.
+    assert driven_keys == THEREMIN_DIALS
+    assert 'waveform' not in driven_keys
+    json.dumps(synth.rendered_events)  # and the stream stays plain data
+
+
+def test_render_recording_defaults_to_the_shared_recording_filepath():
+    synth = FakeRenderingSynth()
+    assert render_recording(synth, issue_4_style_recording()) == (
+        DFLT_RECORDING_FILEPATH
+    )
+
+
+def test_render_recording_keeps_all_keys_when_dials_cannot_be_determined():
+    """No dial information is not a licence to invent one: pass the stream through."""
+
+    class DiallessSynth(FakeRenderingSynth):
+        _dials = None
+
+    synth = DiallessSynth()
+    with pytest.raises(TypeError, match='unhashable'):
+        # Faithful: with no dials to filter by, the settings survive and the
+        # renderer chokes exactly as before. Better a loud failure than silently
+        # guessing which parameters are live.
+        render_recording(synth, issue_4_style_recording(), output_filepath='out.wav')
 
 
 # --------------------------------------------------------------------------------------
