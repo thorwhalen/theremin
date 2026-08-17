@@ -118,3 +118,8 @@ venv.bak/
 
 # PyCharm
 .idea
+
+# Camera calibration state written next to the code by a local run. Runtime data
+# does not belong in the source tree. (Tracked sample media under misc/ is kept
+# deliberately, so this is scoped to the generated root-level dir only.)
+/data/

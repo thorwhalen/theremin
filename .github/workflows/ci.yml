@@ -1,102 +1,36 @@
+# wads CI - calls the reusable workflow hosted in i2mint/wads.
+#
+# All configuration comes from this repo's pyproject.toml [tool.wads.ci.*]:
+# python versions, pytest args, excluded paths, linting, build and publish.
+# To customize the workflow itself (rare), replace this file with the full
+# inline template `wads/data/github_ci_uv.yml` from i2mint/wads.
+#
+# Pinning: `@master` floats with wads. CI failure does not block a published
+# release - it blocks the publish step itself - so floating master is safe here.
+#
+# Permissions: GitHub validates that the caller grants AT LEAST the permissions
+# any job in the called workflow requests, at workflow-parse time (even for jobs
+# that would be skipped via `if:`). The reusable workflow needs:
+#   contents: write   for the publish job's version-bump push-back, and for the
+#                     github-pages job's gh-pages branch push
+#   pages: write      for the github-pages job's REST API Pages configuration
+# Both default to `write` on org-account GITHUB_TOKEN and must be granted
+# explicitly on personal-account callers, where the default is read-only.
 name: Continuous Integration
 on: [push, pull_request]
-env:
-  PROJECT_NAME: theremin
-
 jobs:
-  validation:
-    name: Validation
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.10"]
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install Dependencies
-        uses: i2mint/isee/actions/install-packages@master
-        with:
-          dependency-files: setup.cfg
-          # ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Uncomment this if you need to install private dependencies from source
-
-      - name: Format Source Code
-        uses: i2mint/isee/actions/format-source-code@master
-
-      - name: Pylint Validation
-        uses: i2mint/isee/actions/pylint-validation@master
-        with:
-          root-dir: ${{ env.PROJECT_NAME }}
-          enable: missing-module-docstring
-          ignore: tests,examples,scrap
-
-      - name: Pytest Validation
-        uses: i2mint/isee/actions/pytest-validation@master
-        with:
-          root-dir: ${{ env.PROJECT_NAME }}
-          paths-to-ignore: examples,scrap
-
-  publish:
-    name: Publish
-    if: "!contains(github.event.head_commit.message, '[skip ci]') && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')"
-    needs: validation
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.10"]
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Format Source Code
-        uses: i2mint/isee/actions/format-source-code@master
-
-      - name: Update Version Number
-        uses: i2mint/isee/actions/bump-version-number@master
-
-      - name: Package
-        uses: i2mint/isee/actions/package@master
-        # Uncomment this if you need to install private dependencies from source
-        # with:  
-          # ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  
-
-      - name: Publish
-        uses: i2mint/isee/actions/publish@master
-        with:
-          pypi-username: ${{ secrets.PYPI_USERNAME }}
-          pypi-password: ${{ secrets.PYPI_PASSWORD }}
-
-      - name: Check In
-        uses: i2mint/isee/actions/check-in@master
-        with:
-          commit-message: "**CI** Formatted code + Updated version number and documentation. [skip ci]"
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Tag Repository With New Version Number
-        uses: i2mint/isee/actions/tag-repository@master
-        with:
-          tag: $VERSION
-
-  github-pages:
-    name: Publish GitHub Pages
-    if: "!contains(github.event.head_commit.message, '[skip ci]') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)"
-    needs: publish
-    runs-on: ubuntu-latest
-    steps:
-      - uses: i2mint/epythet/actions/publish-github-pages@master
-        with:
-          # IMPORTANT Note: You don't need to specify GITHUB_TOKEN in your repo secrets.
-          # GITHUB_TOKEN is special & automatically provided to your workflow run.
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+  ci:
+    uses: i2mint/wads/.github/workflows/uv-ci.yml@master
+    permissions:
+      contents: write
+      pages: write
+    # Explicit pass-through rather than `secrets: inherit`, which does not
+    # reliably propagate a caller repo's secrets to a reusable workflow owned by
+    # a different account (personal-account caller + i2mint-org workflow).
+    #
+    # This repo needs no secrets to build or test; PYPI_PASSWORD is used only by
+    # the publish job, which runs on the default branch. Listing names one by one
+    # (rather than the WADS_CI_SECRETS_JSON blob transport, also supported by the
+    # reusable workflow) keeps the secret surface to exactly what is needed.
+    secrets:
+      PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
