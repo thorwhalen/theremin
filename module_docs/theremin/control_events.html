@@ -1,0 +1,271 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>theremin.control_events &mdash; theremin 0.0.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="theremin.dag_audio_features" href="dag_audio_features.html" />
+    <link rel="prev" title="theremin.audio_features" href="audio_features.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            theremin
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../theremin.html">theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio.html">theremin.audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio_features.html">theremin.audio_features</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">theremin.control_events</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.control_events.looks_like_live_signal"><code class="docutils literal notranslate"><span class="pre">looks_like_live_signal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.control_events.plain_control_value"><code class="docutils literal notranslate"><span class="pre">plain_control_value()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.control_events.render_recording"><code class="docutils literal notranslate"><span class="pre">render_recording()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.control_events.renderable_events"><code class="docutils literal notranslate"><span class="pre">renderable_events()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.control_events.synth_dials"><code class="docutils literal notranslate"><span class="pre">synth_dials()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dag_audio_features.html">theremin.dag_audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="display.html">theremin.display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">theremin.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/keyboard_synth.html">theremin.examples.keyboard_synth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/multimodal.html">theremin.examples.multimodal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/video_theremin.html">theremin.examples.video_theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework.html">theremin.framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework/base.html">theremin.framework.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework/storage.html">theremin.framework.storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework/testing.html">theremin.framework.testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">theremin.main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines.html">theremin.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="script_utils.html">theremin.script_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">theremin.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="video_features.html">theremin.video_features</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">theremin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">theremin.control_events</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/theremin/control_events.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-theremin.control_events">
+<span id="theremin-control-events"></span><h1>theremin.control_events<a class="headerlink" href="#module-theremin.control_events" title="Link to this heading"></a></h1>
+<p>Pure helpers for recorded synth control events (record-to-render data hygiene).</p>
+<p>A theremin run records what happened to the synth as <em>control events</em>: a list of
+<code class="docutils literal notranslate"><span class="pre">(relative_time_seconds,</span> <span class="pre">knobs_dict)</span></code> pairs, where each <code class="docutils literal notranslate"><span class="pre">knobs_dict</span></code> maps a
+parameter name to a number, a string, or a parameter-spec dict (e.g.
+<code class="docutils literal notranslate"><span class="pre">{'value':</span> <span class="pre">440,</span> <span class="pre">'time':</span> <span class="pre">0.025}</span></code>). Control events must always be <em>plain data</em>
+– hashable string keys, JSON-serializable values, never live pyo signal
+objects – so they can be saved, inspected, and re-rendered offline.</p>
+<p>This module owns that contract. It fixes the root cause of issue #4
+(“Failed to render events: unhashable type: ‘SigTo’”): the recording’s initial
+snapshot includes the synth’s <em>settings</em> (non-live parameters, such as the
+string <code class="docutils literal notranslate"><span class="pre">waveform='sine'</span></code>) alongside its <em>dials</em> (live parameters such as
+<code class="docutils literal notranslate"><span class="pre">freq</span></code> and <code class="docutils literal notranslate"><span class="pre">volume</span></code>). The offline renderer (<code class="docutils literal notranslate"><span class="pre">hum</span></code>’s
+<code class="docutils literal notranslate"><span class="pre">Synth.render_events</span></code>) drives <strong>every</strong> key present in the events with a
+fresh <code class="docutils literal notranslate"><span class="pre">pyo.SigTo</span></code> control signal, so a settings key makes it pass a <code class="docutils literal notranslate"><span class="pre">SigTo</span></code>
+where the synth function expects, say, a waveform <em>name</em> – and
+<code class="docutils literal notranslate"><span class="pre">theremin_synth</span></code> then uses that value as a dict key, which dies because
+<code class="docutils literal notranslate"><span class="pre">SigTo</span></code> is unhashable. The fix is data hygiene, not renderer patching:
+restrict the rendered event stream to dial parameters (settings are baked into
+the synth function’s defaults) and guarantee every value is plain data.</p>
+<p><cite>render_recording</cite> is the <em>only</em> place in the package allowed to call a synth’s
+<code class="docutils literal notranslate"><span class="pre">render_events</span></code>: making it a named function is what lets the fix be tested at
+its call site instead of only in the helper it delegates to (see
+<code class="docutils literal notranslate"><span class="pre">theremin/tests/test_render_call_site.py</span></code>).</p>
+<p>Everything here is pure and pyo-free, so it is testable without an audio server.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.control_events.looks_like_live_signal">
+<span class="sig-prename descclassname"><span class="pre">theremin.control_events.</span></span><span class="sig-name descname"><span class="pre">looks_like_live_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/theremin/control_events.html#looks_like_live_signal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.control_events.looks_like_live_signal" title="Link to this definition"></a></dt>
+<dd><p>True for pyo <code class="docutils literal notranslate"><span class="pre">SigTo</span></code>-like live signal objects (duck-typed, no pyo import).</p>
+<p>A live control signal exposes <code class="docutils literal notranslate"><span class="pre">value</span></code> and <code class="docutils literal notranslate"><span class="pre">time</span></code> attributes and is not a
+mapping. Numbers, strings, dicts and other plain data all return False.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">looks_like_live_signal</span><span class="p">(</span><span class="mf">440.0</span><span class="p">),</span> <span class="n">looks_like_live_signal</span><span class="p">(</span><span class="s1">'sine'</span><span class="p">)</span>
+<span class="go">(False, False)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">looks_like_live_signal</span><span class="p">({</span><span class="s1">'value'</span><span class="p">:</span> <span class="mi">440</span><span class="p">,</span> <span class="s1">'time'</span><span class="p">:</span> <span class="mf">0.025</span><span class="p">})</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">FakeSigTo</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">value</span><span class="p">,</span> <span class="n">time</span> <span class="o">=</span> <span class="mf">440.0</span><span class="p">,</span> <span class="mf">0.025</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">looks_like_live_signal</span><span class="p">(</span><span class="n">FakeSigTo</span><span class="p">())</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.control_events.plain_control_value">
+<span class="sig-prename descclassname"><span class="pre">theremin.control_events.</span></span><span class="sig-name descname"><span class="pre">plain_control_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../_modules/theremin/control_events.html#plain_control_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.control_events.plain_control_value" title="Link to this definition"></a></dt>
+<dd><p>Return a plain-data (JSON-serializable) representation of a knob value.</p>
+<ul class="simple">
+<li><p>numbers and strings: unchanged (numpy scalars converted to builtins)</p></li>
+<li><p>mappings: converted recursively</p></li>
+<li><p>SigTo-like live signals: converted to their parameter dict, keeping only
+numeric parameters (a nested live <code class="docutils literal notranslate"><span class="pre">value</span></code> has no plain representation)</p></li>
+</ul>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plain_control_value</span><span class="p">(</span><span class="mf">440.0</span><span class="p">)</span>
+<span class="go">440.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plain_control_value</span><span class="p">({</span><span class="s1">'value'</span><span class="p">:</span> <span class="mi">440</span><span class="p">,</span> <span class="s1">'time'</span><span class="p">:</span> <span class="mf">0.025</span><span class="p">})</span>
+<span class="go">{'value': 440, 'time': 0.025}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">FakeSigTo</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mul</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">add</span> <span class="o">=</span> <span class="mf">880.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plain_control_value</span><span class="p">(</span><span class="n">FakeSigTo</span><span class="p">())</span>
+<span class="go">{'value': 880.0, 'time': 0.1, 'mul': 1.0, 'add': 0.0}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.control_events.render_recording">
+<span class="sig-prename descclassname"><span class="pre">theremin.control_events.</span></span><span class="sig-name descname"><span class="pre">render_recording</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">synth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_events</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'theremin_recording.wav'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/theremin/control_events.html#render_recording"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.control_events.render_recording" title="Link to this definition"></a></dt>
+<dd><p>Render a run’s recorded control events to an audio file. Dial keys only.</p>
+<p>This is the fix site for issue #4, and the <strong>only</strong> place in the package
+allowed to call a synth’s <code class="docutils literal notranslate"><span class="pre">render_events</span></code>: the offline renderer wraps
+every key it is handed in a fresh live control signal, so letting a settings
+key (e.g. <code class="docutils literal notranslate"><span class="pre">waveform='sine'</span></code>) through delivers an unhashable <code class="docutils literal notranslate"><span class="pre">SigTo</span></code>
+where the synth function expects a name. Restricting the stream to the
+synth’s dials (<cite>synth_dials</cite>) and plainifying it (<cite>renderable_events</cite>) is
+what prevents that.</p>
+<p>Returns the path written to.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">FakeSynth</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">_dials</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'freq'</span><span class="p">,</span> <span class="s1">'volume'</span><span class="p">}</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">render_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">output_filepath</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">rendered</span> <span class="o">=</span> <span class="n">events</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">synth</span> <span class="o">=</span> <span class="n">FakeSynth</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recording</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="p">{</span><span class="s1">'freq'</span><span class="p">:</span> <span class="mi">440</span><span class="p">,</span> <span class="s1">'waveform'</span><span class="p">:</span> <span class="s1">'sine'</span><span class="p">}),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="p">{})]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">render_recording</span><span class="p">(</span><span class="n">synth</span><span class="p">,</span> <span class="n">recording</span><span class="p">,</span> <span class="n">output_filepath</span><span class="o">=</span><span class="s1">'out.wav'</span><span class="p">)</span>
+<span class="go">'out.wav'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">synth</span><span class="o">.</span><span class="n">rendered</span>
+<span class="go">[(0.0, {'freq': 440}), (1.0, {})]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.control_events.renderable_events">
+<span class="sig-prename descclassname"><span class="pre">theremin.control_events.</span></span><span class="sig-name descname"><span class="pre">renderable_events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control_events</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">dials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/theremin/control_events.html#renderable_events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.control_events.renderable_events" title="Link to this definition"></a></dt>
+<dd><p>Restrict recorded control events to plain-data dial updates, ready to render.</p>
+<p>Keeps only the keys in <code class="docutils literal notranslate"><span class="pre">dials</span></code> (when given): non-dial “settings” (e.g. a
+string waveform name) cannot be driven by a control signal in an offline
+render and are baked into the synth function’s defaults instead. Every kept
+value is converted to plain data via <cite>plain_control_value</cite>. Timestamps and
+event order are preserved – including trailing empty events, which define
+the total render duration.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">events</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">{</span><span class="s1">'freq'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'value'</span><span class="p">:</span> <span class="mi">440</span><span class="p">,</span> <span class="s1">'time'</span><span class="p">:</span> <span class="mf">0.025</span><span class="p">},</span> <span class="s1">'waveform'</span><span class="p">:</span> <span class="s1">'sine'</span><span class="p">}),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="p">{</span><span class="s1">'freq'</span><span class="p">:</span> <span class="mf">452.1</span><span class="p">}),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">renderable_events</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">dials</span><span class="o">=</span><span class="p">{</span><span class="s1">'freq'</span><span class="p">,</span> <span class="s1">'volume'</span><span class="p">})</span>
+<span class="go">[(0.0, {'freq': {'value': 440, 'time': 0.025}}), (0.5, {'freq': 452.1}), (1.0, {})]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.control_events.synth_dials">
+<span class="sig-prename descclassname"><span class="pre">theremin.control_events.</span></span><span class="sig-name descname"><span class="pre">synth_dials</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">synth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">frozenset</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/theremin/control_events.html#synth_dials"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.control_events.synth_dials" title="Link to this definition"></a></dt>
+<dd><p>Best-effort extraction of a synth’s dial (live parameter) names.</p>
+<p>Understands, in order: a <code class="docutils literal notranslate"><span class="pre">dials</span></code>/<code class="docutils literal notranslate"><span class="pre">_dials</span></code> attribute (e.g.
+<code class="docutils literal notranslate"><span class="pre">hum.pyo_util.Synth</span></code>), a <code class="docutils literal notranslate"><span class="pre">_default_dials</span></code> attribute (synth functions
+decorated with hum’s <code class="docutils literal notranslate"><span class="pre">add_default_dials</span></code> – either a collection of names
+or a space-separated string), and finally a wrapped <code class="docutils literal notranslate"><span class="pre">_synth_func</span></code>.
+Returns None when the dials cannot be determined.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">a_synth_func</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="mi">440</span><span class="p">,</span> <span class="n">volume</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_synth_func</span><span class="o">.</span><span class="n">_default_dials</span> <span class="o">=</span> <span class="s1">'freq volume'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">synth_dials</span><span class="p">(</span><span class="n">a_synth_func</span><span class="p">))</span>
+<span class="go">['freq', 'volume']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">synth_dials</span><span class="p">(</span><span class="nb">object</span><span class="p">())</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="audio_features.html" class="btn btn-neutral float-left" title="theremin.audio_features" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dag_audio_features.html" class="btn btn-neutral float-right" title="theremin.dag_audio_features" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

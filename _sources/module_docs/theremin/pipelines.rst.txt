@@ -1,0 +1,4 @@
+theremin.pipelines
+==================
+.. automodule:: theremin.pipelines
+   :members:

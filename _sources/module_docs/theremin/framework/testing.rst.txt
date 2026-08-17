@@ -1,0 +1,4 @@
+theremin.framework.testing
+==========================
+.. automodule:: theremin.framework.testing
+   :members:

@@ -1,0 +1,457 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>theremin.util &mdash; theremin 0.0.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            theremin
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin.html">theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/audio.html">theremin.audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/audio_features.html">theremin.audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/control_events.html">theremin.control_events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/dag_audio_features.html">theremin.dag_audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/display.html">theremin.display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/examples.html">theremin.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/examples/keyboard_synth.html">theremin.examples.keyboard_synth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/examples/multimodal.html">theremin.examples.multimodal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/examples/video_theremin.html">theremin.examples.video_theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/framework.html">theremin.framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/framework/base.html">theremin.framework.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/framework/storage.html">theremin.framework.storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/framework/testing.html">theremin.framework.testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/main.html">theremin.main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/pipelines.html">theremin.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/script_utils.html">theremin.script_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/util.html">theremin.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/video_features.html">theremin.video_features</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">theremin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">theremin.util</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for theremin.util</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Utils for theremin."""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib.resources</span><span class="w"> </span><span class="kn">import</span> <span class="n">files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numbers</span>
+
+<span class="k">try</span><span class="p">:</span>  <span class="c1"># optional numpy import for isinstance checks</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_np</span>  <span class="c1"># type: ignore</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pragma: no cover - numpy may not be present in some envs</span>
+    <span class="n">_np</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">pkg_name</span> <span class="o">=</span> <span class="s1">'theremin'</span>
+<span class="n">data_files</span> <span class="o">=</span> <span class="n">files</span><span class="p">(</span><span class="n">pkg_name</span><span class="p">)</span> <span class="o">/</span> <span class="s1">'data'</span>
+
+
+<span class="c1"># --------------------------------------------------------------------------------------</span>
+<span class="c1"># Placeholders</span>
+
+
+<div class="viewcode-block" id="return_none">
+<a class="viewcode-back" href="../../module_docs/theremin/util.html#theremin.util.return_none">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">return_none</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    An empty function that returns None no matter the arguments.</span>
+<span class="sd">    Often used as a "do nothing" general callback function.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="AllZerosDict">
+<a class="viewcode-back" href="../../module_docs/theremin/util.html#theremin.util.AllZerosDict">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AllZerosDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A dict that only returns 0.0 for all keys.</span>
+
+<span class="sd">    &gt;&gt;&gt; all_zeros_dict = AllZerosDict()</span>
+<span class="sd">    &gt;&gt;&gt; all_zeros_dict['anything']</span>
+<span class="sd">    0.0</span>
+
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">args</span> <span class="o">==</span> <span class="p">()</span> <span class="ow">and</span> <span class="n">kwargs</span> <span class="o">==</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">0.0</span></div>
+
+
+
+<span class="n">all_zeros_dict</span> <span class="o">=</span> <span class="n">AllZerosDict</span><span class="p">()</span>
+
+<span class="c1"># --------------------------------------------------------------------------------------</span>
+<span class="c1"># Constants</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">HandLandmarkIndex</span><span class="p">:</span>
+    <span class="c1"># TODO: Take directly from mp.solutions.hands.HandLandmark</span>
+    <span class="n">WRIST</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">THUMB_CMC</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">THUMB_MCP</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">THUMB_IP</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">THUMB_TIP</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">INDEX_FINGER_MCP</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">INDEX_FINGER_PIP</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">INDEX_FINGER_DIP</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">INDEX_FINGER_TIP</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">MIDDLE_FINGER_MCP</span> <span class="o">=</span> <span class="mi">9</span>
+    <span class="n">MIDDLE_FINGER_PIP</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">MIDDLE_FINGER_DIP</span> <span class="o">=</span> <span class="mi">11</span>
+    <span class="n">MIDDLE_FINGER_TIP</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="n">RING_FINGER_MCP</span> <span class="o">=</span> <span class="mi">13</span>
+    <span class="n">RING_FINGER_PIP</span> <span class="o">=</span> <span class="mi">14</span>
+    <span class="n">RING_FINGER_DIP</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">RING_FINGER_TIP</span> <span class="o">=</span> <span class="mi">16</span>
+    <span class="n">PINKY_MCP</span> <span class="o">=</span> <span class="mi">17</span>
+    <span class="n">PINKY_PIP</span> <span class="o">=</span> <span class="mi">18</span>
+    <span class="n">PINKY_DIP</span> <span class="o">=</span> <span class="mi">19</span>
+    <span class="n">PINKY_TIP</span> <span class="o">=</span> <span class="mi">20</span>
+
+
+<span class="c1"># --------------------------------------------------------------------------------------</span>
+<span class="c1"># String utils</span>
+
+
+<div class="viewcode-block" id="format_dict_values">
+<a class="viewcode-back" href="../../module_docs/theremin/util.html#theremin.util.format_dict_values">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_dict_values</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="n">max_digits</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Formats all numerical values in a dictionary to strings with a specified number of significant digits.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_dict (dict): The dictionary whose numerical values will be formatted.</span>
+<span class="sd">        max_digits (int): The maximum number of significant digits to use in the formatting.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: A new dictionary with the same keys as input_dict, but with numerical values replaced by formatted strings.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; original_dict = {'a': 123456789, 'b': 1234.56789, 'c': 12.345789, 'd': 0.0012345789}</span>
+<span class="sd">        &gt;&gt;&gt; format_dict_values(original_dict, 5)</span>
+<span class="sd">        {'a': '1.2346e+08', 'b': '1234.6', 'c': '12.346', 'd': '0.0012346'}</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Non-numeric values are left unchanged.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">format_value</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">max_digits</span><span class="si">}</span><span class="s2">g</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="n">formatted_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">format_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">return</span> <span class="n">formatted_dict</span></div>
+
+
+
+<div class="viewcode-block" id="format_milliseconds_time">
+<a class="viewcode-back" href="../../module_docs/theremin/util.html#theremin.util.format_milliseconds_time">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_milliseconds_time</span><span class="p">(</span><span class="n">timestamp</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Format milliseconds as a string."""</span>
+    <span class="n">formatted_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'%H:%M:%S'</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">(</span><span class="n">timestamp</span><span class="p">))</span>
+    <span class="n">milliseconds</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">timestamp</span> <span class="o">%</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">formatted_time</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">milliseconds</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">"</span></div>
+
+
+
+<div class="viewcode-block" id="current_time_string_with_milliseconds">
+<a class="viewcode-back" href="../../module_docs/theremin/util.html#theremin.util.current_time_string_with_milliseconds">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">current_time_string_with_milliseconds</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Get the current time with milliseconds, as a string."""</span>
+    <span class="k">return</span> <span class="n">format_milliseconds_time</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">format_float</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ndigits</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">ndigits</span><span class="si">}</span><span class="s2">f</span><span class="si">}</span><span class="s2">"</span>
+
+
+<div class="viewcode-block" id="format_label_xyz">
+<a class="viewcode-back" href="../../module_docs/theremin/util.html#theremin.util.format_label_xyz">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_label_xyz</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">label_width</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">coord_width</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Format the label and coordinates with customizable widths.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        label (str): The label for the coordinates (e.g., "Right Wrist:").</span>
+<span class="sd">        x, y, z (float): The coordinates to format.</span>
+<span class="sd">        label_width (int): The width of the label field.</span>
+<span class="sd">        coord_width (int): The width of the coordinate fields.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The formatted string.</span>
+
+<span class="sd">    &gt;&gt;&gt; format_label_xyz('Right Wrist:', 1.2, 3.4, 5.6)</span>
+<span class="sd">    'Right Wrist:    x=     1.2 y=     3.4 z=     5.6'</span>
+<span class="sd">    &gt;&gt;&gt; format_label_xyz('Right Wrist:', 1.2, 3.4, 5.6, label_width=10, coord_width=4)</span>
+<span class="sd">    'Right Wrist: x= 1.2 y= 3.4 z= 5.6'</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">label_width</span><span class="si">}}</span><span class="s2"> x=</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">coord_width</span><span class="si">}}</span><span class="s2"> y=</span><span class="si">{</span><span class="n">y</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">coord_width</span><span class="si">}}</span><span class="s2"> z=</span><span class="si">{</span><span class="n">z</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">coord_width</span><span class="si">}}</span><span class="s2">"</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------------------</span>
+<span class="c1"># Misc</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">i2</span><span class="w"> </span><span class="kn">import</span> <span class="n">partialx</span><span class="p">,</span> <span class="n">Sig</span> <span class="k">as</span> <span class="n">Signature</span>
+
+
+<div class="viewcode-block" id="obfuscate_args">
+<a class="viewcode-back" href="../../module_docs/theremin/util.html#theremin.util.obfuscate_args">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">obfuscate_args</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">keep_args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Creates a new function with only the specified arguments,</span>
+<span class="sd">    with other arguments fixed to their defaults.</span>
+<span class="sd">    """</span>
+
+    <span class="n">func_sig</span> <span class="o">=</span> <span class="n">Signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">arg</span> <span class="ow">in</span> <span class="n">keep_args</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">func_sig</span><span class="o">.</span><span class="n">names</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">keep_args</span><span class="p">)]]):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"keep_args must be in the beginning of Sig(foo).names"</span><span class="p">)</span>
+    <span class="n">defaults_of_other_args</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">func_sig</span><span class="o">.</span><span class="n">defaults</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keep_args</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">partialx</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">defaults_of_other_args</span><span class="p">,</span> <span class="n">_rm_partialize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+
+
+<div class="viewcode-block" id="annotate_with">
+<a class="viewcode-back" href="../../module_docs/theremin/util.html#theremin.util.annotate_with">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">annotate_with</span><span class="p">(</span><span class="n">annotation_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Decorator to annotate a function with a specified type and store the annotation</span>
+<span class="sd">    in the correct scope's `__annotations__` dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        annotation_type (Any): The type to annotate the function with.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        function: The original function with the annotation added.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; @annotate_with('int')</span>
+<span class="sd">        ... def global_func():</span>
+<span class="sd">        ...     pass</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; global_func()</span>
+<span class="sd">        &gt;&gt;&gt; __annotations__['global_func']</span>
+<span class="sd">        'int'</span>
+
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Get the frame of the caller</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_back</span>
+            <span class="c1"># Access the correct scope's `__annotations__`</span>
+            <span class="n">annotations</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_globals</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">'__annotations__'</span><span class="p">,</span> <span class="p">{})</span>
+
+            <span class="c1"># Store the annotation</span>
+            <span class="n">annotations</span><span class="p">[</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">annotation_type</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># Ignore this -- don't have annotations be in the way!</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Ignoring Error (but not annotating): </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span>
+
+    <span class="k">return</span> <span class="n">decorator</span></div>
+
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+
+<div class="viewcode-block" id="json_lines">
+<a class="viewcode-back" href="../../module_docs/theremin/util.html#theremin.util.json_lines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">json_lines</span><span class="p">(</span><span class="n">string_or_path_to_string</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Parse a file or string containing JSON-like dictionaries on each line.</span>
+<span class="sd">    Yields only the lines that can be deserialized to dictionaries.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        string_or_path_to_string: A file path or the content as a string</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        dict: Each successfully parsed dictionary</span>
+
+<span class="sd">    """</span>
+    <span class="c1"># Determine if we're dealing with a file path or string content</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">string_or_path_to_string</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">string_or_path_to_string</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">string_or_path_to_string</span>
+
+    <span class="c1"># Process line by line</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">content</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Try to parse as JSON</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="c1"># Only yield if it's a dictionary</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">data</span>
+        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+            <span class="c1"># Skip non-JSON lines</span>
+            <span class="k">continue</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------------------</span>
+<span class="c1"># Type sanitation helpers</span>
+<span class="c1"># --------------------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="to_builtin_number">
+<a class="viewcode-back" href="../../module_docs/theremin/util.html#theremin.util.to_builtin_number">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_builtin_number</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Convert numpy numeric scalars to builtin numbers; leave others unchanged.</span>
+
+<span class="sd">    - numpy floating -&gt; float</span>
+<span class="sd">    - numpy integer -&gt; int</span>
+<span class="sd">    - python numbers.Number -&gt; unchanged</span>
+<span class="sd">    - numpy arrays -&gt; x.tolist() if 0-d array then recurse to scalar</span>
+<span class="sd">    - other types -&gt; unchanged</span>
+<span class="sd">    """</span>
+    <span class="c1"># Handle numpy scalar types when numpy is available</span>
+    <span class="k">if</span> <span class="n">_np</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">floating</span><span class="p">,)):</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">integer</span><span class="p">,)):</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="c1"># 0-dim arrays: treat as scalars</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">_np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">to_builtin_number</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+            <span class="c1"># For non-scalar arrays, convert to list (non-audio inputs)</span>
+            <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="c1"># For plain python numeric types, return as-is</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+
+
+<div class="viewcode-block" id="ensure_plain_types">
+<a class="viewcode-back" href="../../module_docs/theremin/util.html#theremin.util.ensure_plain_types">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_plain_types</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Recursively convert numpy numbers/arrays in common containers to builtin types.</span>
+
+<span class="sd">    Supports dicts, lists, tuples, sets; leaves other types unchanged.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">ensure_plain_types</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">ensure_plain_types</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ensure_plain_types</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">ensure_plain_types</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">to_builtin_number</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

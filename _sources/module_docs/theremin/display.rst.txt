@@ -1,0 +1,4 @@
+theremin.display
+================
+.. automodule:: theremin.display
+   :members:

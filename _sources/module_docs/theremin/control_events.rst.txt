@@ -1,0 +1,4 @@
+theremin.control_events
+=======================
+.. automodule:: theremin.control_events
+   :members:

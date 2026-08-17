@@ -1,0 +1,4 @@
+theremin.examples.keyboard_synth
+================================
+.. automodule:: theremin.examples.keyboard_synth
+   :members:

@@ -1,0 +1,4 @@
+theremin.examples
+=================
+.. automodule:: theremin.examples
+   :members:

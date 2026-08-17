@@ -1,0 +1,330 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>theremin.control_events &mdash; theremin 0.0.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            theremin
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin.html">theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/audio.html">theremin.audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/audio_features.html">theremin.audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/control_events.html">theremin.control_events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/dag_audio_features.html">theremin.dag_audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/display.html">theremin.display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/examples.html">theremin.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/examples/keyboard_synth.html">theremin.examples.keyboard_synth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/examples/multimodal.html">theremin.examples.multimodal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/examples/video_theremin.html">theremin.examples.video_theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/framework.html">theremin.framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/framework/base.html">theremin.framework.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/framework/storage.html">theremin.framework.storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/framework/testing.html">theremin.framework.testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/main.html">theremin.main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/pipelines.html">theremin.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/script_utils.html">theremin.script_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/util.html">theremin.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/video_features.html">theremin.video_features</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">theremin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">theremin.control_events</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for theremin.control_events</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Pure helpers for recorded synth control events (record-to-render data hygiene).</span>
+
+<span class="sd">A theremin run records what happened to the synth as *control events*: a list of</span>
+<span class="sd">``(relative_time_seconds, knobs_dict)`` pairs, where each ``knobs_dict`` maps a</span>
+<span class="sd">parameter name to a number, a string, or a parameter-spec dict (e.g.</span>
+<span class="sd">``{'value': 440, 'time': 0.025}``). Control events must always be *plain data*</span>
+<span class="sd">-- hashable string keys, JSON-serializable values, never live pyo signal</span>
+<span class="sd">objects -- so they can be saved, inspected, and re-rendered offline.</span>
+
+<span class="sd">This module owns that contract. It fixes the root cause of issue #4</span>
+<span class="sd">("Failed to render events: unhashable type: 'SigTo'"): the recording's initial</span>
+<span class="sd">snapshot includes the synth's *settings* (non-live parameters, such as the</span>
+<span class="sd">string ``waveform='sine'``) alongside its *dials* (live parameters such as</span>
+<span class="sd">``freq`` and ``volume``). The offline renderer (``hum``'s</span>
+<span class="sd">``Synth.render_events``) drives **every** key present in the events with a</span>
+<span class="sd">fresh ``pyo.SigTo`` control signal, so a settings key makes it pass a ``SigTo``</span>
+<span class="sd">where the synth function expects, say, a waveform *name* -- and</span>
+<span class="sd">``theremin_synth`` then uses that value as a dict key, which dies because</span>
+<span class="sd">``SigTo`` is unhashable. The fix is data hygiene, not renderer patching:</span>
+<span class="sd">restrict the rendered event stream to dial parameters (settings are baked into</span>
+<span class="sd">the synth function's defaults) and guarantee every value is plain data.</span>
+
+<span class="sd">`render_recording` is the *only* place in the package allowed to call a synth's</span>
+<span class="sd">``render_events``: making it a named function is what lets the fix be tested at</span>
+<span class="sd">its call site instead of only in the helper it delegates to (see</span>
+<span class="sd">``theremin/tests/test_render_call_site.py``).</span>
+
+<span class="sd">Everything here is pure and pyo-free, so it is testable without an audio server.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Mapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">theremin.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_plain_types</span>
+
+<span class="c1"># Attributes that define a pyo.SigTo-like control signal's plain-data form.</span>
+<span class="n">SIGTO_ATTRS</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'value'</span><span class="p">,</span> <span class="s1">'time'</span><span class="p">,</span> <span class="s1">'mul'</span><span class="p">,</span> <span class="s1">'add'</span><span class="p">)</span>
+
+<span class="c1"># Where a run's audio recording lands when the caller asked for one without</span>
+<span class="c1"># naming a file.</span>
+<span class="n">DFLT_RECORDING_FILEPATH</span> <span class="o">=</span> <span class="s1">'theremin_recording.wav'</span>
+
+<span class="n">ControlEvent</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+
+
+<div class="viewcode-block" id="looks_like_live_signal">
+<a class="viewcode-back" href="../../module_docs/theremin/control_events.html#theremin.control_events.looks_like_live_signal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">looks_like_live_signal</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""True for pyo ``SigTo``-like live signal objects (duck-typed, no pyo import).</span>
+
+<span class="sd">    A live control signal exposes ``value`` and ``time`` attributes and is not a</span>
+<span class="sd">    mapping. Numbers, strings, dicts and other plain data all return False.</span>
+
+<span class="sd">    &gt;&gt;&gt; looks_like_live_signal(440.0), looks_like_live_signal('sine')</span>
+<span class="sd">    (False, False)</span>
+<span class="sd">    &gt;&gt;&gt; looks_like_live_signal({'value': 440, 'time': 0.025})</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; class FakeSigTo:</span>
+<span class="sd">    ...     value, time = 440.0, 0.025</span>
+<span class="sd">    &gt;&gt;&gt; looks_like_live_signal(FakeSigTo())</span>
+<span class="sd">    True</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">'value'</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">'time'</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plain_control_value">
+<a class="viewcode-back" href="../../module_docs/theremin/control_events.html#theremin.control_events.plain_control_value">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plain_control_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return a plain-data (JSON-serializable) representation of a knob value.</span>
+
+<span class="sd">    - numbers and strings: unchanged (numpy scalars converted to builtins)</span>
+<span class="sd">    - mappings: converted recursively</span>
+<span class="sd">    - SigTo-like live signals: converted to their parameter dict, keeping only</span>
+<span class="sd">      numeric parameters (a nested live ``value`` has no plain representation)</span>
+
+<span class="sd">    &gt;&gt;&gt; plain_control_value(440.0)</span>
+<span class="sd">    440.0</span>
+<span class="sd">    &gt;&gt;&gt; plain_control_value({'value': 440, 'time': 0.025})</span>
+<span class="sd">    {'value': 440, 'time': 0.025}</span>
+<span class="sd">    &gt;&gt;&gt; class FakeSigTo:</span>
+<span class="sd">    ...     def __init__(self):</span>
+<span class="sd">    ...         self.value, self.time, self.mul, self.add = 880.0, 0.1, 1.0, 0.0</span>
+<span class="sd">    &gt;&gt;&gt; plain_control_value(FakeSigTo())</span>
+<span class="sd">    {'value': 880.0, 'time': 0.1, 'mul': 1.0, 'add': 0.0}</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">looks_like_live_signal</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="n">plain</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">SIGTO_ATTRS</span><span class="p">:</span>
+            <span class="n">attr_value</span> <span class="o">=</span> <span class="n">ensure_plain_types</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">attr_value</span><span class="p">,</span> <span class="nb">bool</span>
+            <span class="p">):</span>
+                <span class="n">plain</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr_value</span>
+        <span class="k">return</span> <span class="n">plain</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">plain_control_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">return</span> <span class="n">ensure_plain_types</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="synth_dials">
+<a class="viewcode-back" href="../../module_docs/theremin/control_events.html#theremin.control_events.synth_dials">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">synth_dials</span><span class="p">(</span><span class="n">synth</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Best-effort extraction of a synth's dial (live parameter) names.</span>
+
+<span class="sd">    Understands, in order: a ``dials``/``_dials`` attribute (e.g.</span>
+<span class="sd">    ``hum.pyo_util.Synth``), a ``_default_dials`` attribute (synth functions</span>
+<span class="sd">    decorated with hum's ``add_default_dials`` -- either a collection of names</span>
+<span class="sd">    or a space-separated string), and finally a wrapped ``_synth_func``.</span>
+<span class="sd">    Returns None when the dials cannot be determined.</span>
+
+<span class="sd">    &gt;&gt;&gt; def a_synth_func(freq=440, volume=0.5):</span>
+<span class="sd">    ...     pass</span>
+<span class="sd">    &gt;&gt;&gt; a_synth_func._default_dials = 'freq volume'</span>
+<span class="sd">    &gt;&gt;&gt; sorted(synth_dials(a_synth_func))</span>
+<span class="sd">    ['freq', 'volume']</span>
+<span class="sd">    &gt;&gt;&gt; synth_dials(object()) is None</span>
+<span class="sd">    True</span>
+<span class="sd">    """</span>
+    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'dials'</span><span class="p">,</span> <span class="s1">'_dials'</span><span class="p">,</span> <span class="s1">'_default_dials'</span><span class="p">):</span>
+        <span class="n">dials</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">synth</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dials</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dials</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">dials</span> <span class="o">=</span> <span class="n">dials</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">dials</span><span class="p">)</span>
+    <span class="n">wrapped</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">synth</span><span class="p">,</span> <span class="s1">'_synth_func'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">wrapped</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">synth_dials</span><span class="p">(</span><span class="n">wrapped</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="renderable_events">
+<a class="viewcode-back" href="../../module_docs/theremin/control_events.html#theremin.control_events.renderable_events">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">renderable_events</span><span class="p">(</span>
+    <span class="n">control_events</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ControlEvent</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">dials</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ControlEvent</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Restrict recorded control events to plain-data dial updates, ready to render.</span>
+
+<span class="sd">    Keeps only the keys in ``dials`` (when given): non-dial "settings" (e.g. a</span>
+<span class="sd">    string waveform name) cannot be driven by a control signal in an offline</span>
+<span class="sd">    render and are baked into the synth function's defaults instead. Every kept</span>
+<span class="sd">    value is converted to plain data via `plain_control_value`. Timestamps and</span>
+<span class="sd">    event order are preserved -- including trailing empty events, which define</span>
+<span class="sd">    the total render duration.</span>
+
+<span class="sd">    &gt;&gt;&gt; events = [</span>
+<span class="sd">    ...     (0, {'freq': {'value': 440, 'time': 0.025}, 'waveform': 'sine'}),</span>
+<span class="sd">    ...     (0.5, {'freq': 452.1}),</span>
+<span class="sd">    ...     (1.0, {}),</span>
+<span class="sd">    ... ]</span>
+<span class="sd">    &gt;&gt;&gt; renderable_events(events, dials={'freq', 'volume'})</span>
+<span class="sd">    [(0.0, {'freq': {'value': 440, 'time': 0.025}}), (0.5, {'freq': 452.1}), (1.0, {})]</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">dials</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dials</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">dials</span><span class="p">)</span>
+    <span class="n">events</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">event_time</span><span class="p">,</span> <span class="n">knobs</span> <span class="ow">in</span> <span class="n">control_events</span><span class="p">:</span>
+        <span class="n">kept</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">:</span> <span class="n">plain_control_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">dict</span><span class="p">(</span><span class="n">knobs</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">dials</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dials</span>
+        <span class="p">}</span>
+        <span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">event_time</span><span class="p">),</span> <span class="n">kept</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">events</span></div>
+
+
+
+<div class="viewcode-block" id="render_recording">
+<a class="viewcode-back" href="../../module_docs/theremin/control_events.html#theremin.control_events.render_recording">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">render_recording</span><span class="p">(</span>
+    <span class="n">synth</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">control_events</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ControlEvent</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">output_filepath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_RECORDING_FILEPATH</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Render a run's recorded control events to an audio file. Dial keys only.</span>
+
+<span class="sd">    This is the fix site for issue #4, and the **only** place in the package</span>
+<span class="sd">    allowed to call a synth's ``render_events``: the offline renderer wraps</span>
+<span class="sd">    every key it is handed in a fresh live control signal, so letting a settings</span>
+<span class="sd">    key (e.g. ``waveform='sine'``) through delivers an unhashable ``SigTo``</span>
+<span class="sd">    where the synth function expects a name. Restricting the stream to the</span>
+<span class="sd">    synth's dials (`synth_dials`) and plainifying it (`renderable_events`) is</span>
+<span class="sd">    what prevents that.</span>
+
+<span class="sd">    Returns the path written to.</span>
+
+<span class="sd">    &gt;&gt;&gt; class FakeSynth:</span>
+<span class="sd">    ...     _dials = {'freq', 'volume'}</span>
+<span class="sd">    ...     def render_events(self, events, output_filepath):</span>
+<span class="sd">    ...         self.rendered = events</span>
+<span class="sd">    &gt;&gt;&gt; synth = FakeSynth()</span>
+<span class="sd">    &gt;&gt;&gt; recording = [(0, {'freq': 440, 'waveform': 'sine'}), (1.0, {})]</span>
+<span class="sd">    &gt;&gt;&gt; render_recording(synth, recording, output_filepath='out.wav')</span>
+<span class="sd">    'out.wav'</span>
+<span class="sd">    &gt;&gt;&gt; synth.rendered</span>
+<span class="sd">    [(0.0, {'freq': 440}), (1.0, {})]</span>
+<span class="sd">    """</span>
+    <span class="n">events</span> <span class="o">=</span> <span class="n">renderable_events</span><span class="p">(</span><span class="n">control_events</span><span class="p">,</span> <span class="n">dials</span><span class="o">=</span><span class="n">synth_dials</span><span class="p">(</span><span class="n">synth</span><span class="p">))</span>
+    <span class="n">synth</span><span class="o">.</span><span class="n">render_events</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">output_filepath</span><span class="o">=</span><span class="n">output_filepath</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output_filepath</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

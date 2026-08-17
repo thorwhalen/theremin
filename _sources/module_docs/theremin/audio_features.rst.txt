@@ -1,0 +1,4 @@
+theremin.audio_features
+=======================
+.. automodule:: theremin.audio_features
+   :members:

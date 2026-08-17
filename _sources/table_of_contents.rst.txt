@@ -1,0 +1,23 @@
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   module_docs/theremin
+   module_docs/theremin/audio
+   module_docs/theremin/audio_features
+   module_docs/theremin/control_events
+   module_docs/theremin/dag_audio_features
+   module_docs/theremin/display
+   module_docs/theremin/examples
+   module_docs/theremin/examples/keyboard_synth
+   module_docs/theremin/examples/multimodal
+   module_docs/theremin/examples/video_theremin
+   module_docs/theremin/framework
+   module_docs/theremin/framework/base
+   module_docs/theremin/framework/storage
+   module_docs/theremin/framework/testing
+   module_docs/theremin/main
+   module_docs/theremin/pipelines
+   module_docs/theremin/script_utils
+   module_docs/theremin/util
+   module_docs/theremin/video_features

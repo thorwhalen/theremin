@@ -1,0 +1,4 @@
+theremin.examples.video_theremin
+================================
+.. automodule:: theremin.examples.video_theremin
+   :members:

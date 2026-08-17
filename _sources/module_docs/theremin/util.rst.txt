@@ -1,0 +1,4 @@
+theremin.util
+=============
+.. automodule:: theremin.util
+   :members:

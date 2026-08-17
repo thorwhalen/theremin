@@ -1,0 +1,386 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>theremin.display &mdash; theremin 0.0.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            theremin
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin.html">theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/audio.html">theremin.audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/audio_features.html">theremin.audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/control_events.html">theremin.control_events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/dag_audio_features.html">theremin.dag_audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/display.html">theremin.display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/examples.html">theremin.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/examples/keyboard_synth.html">theremin.examples.keyboard_synth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/examples/multimodal.html">theremin.examples.multimodal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/examples/video_theremin.html">theremin.examples.video_theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/framework.html">theremin.framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/framework/base.html">theremin.framework.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/framework/storage.html">theremin.framework.storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/framework/testing.html">theremin.framework.testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/main.html">theremin.main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/pipelines.html">theremin.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/script_utils.html">theremin.script_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/util.html">theremin.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/video_features.html">theremin.video_features</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">theremin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">theremin.display</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for theremin.display</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Display utilities for theremin visualization."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span>
+
+<span class="c1"># -------------------------------------------------------------------------------</span>
+<span class="c1"># Types</span>
+<span class="c1"># -------------------------------------------------------------------------------</span>
+
+<span class="n">Color</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>  <span class="c1"># BGR or BGRA</span>
+
+<span class="c1"># -------------------------------------------------------------------------------</span>
+<span class="c1"># Screen drawing functions</span>
+<span class="c1"># -------------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="display_sound_features_on_image">
+<a class="viewcode-back" href="../../module_docs/theremin/display.html#theremin.display.display_sound_features_on_image">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">display_sound_features_on_image</span><span class="p">(</span>
+    <span class="n">img</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">sound_features</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">font</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span>
+    <span class="n">font_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="n">thickness</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">float_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">".2f"</span><span class="p">,</span>
+    <span class="n">x_pos</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">y_pos</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">y_increment</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">bg_color</span><span class="p">:</span> <span class="n">Color</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="mi">150</span><span class="p">,</span>
+        <span class="mi">150</span><span class="p">,</span>
+        <span class="mi">150</span><span class="p">,</span>
+        <span class="mi">128</span><span class="p">,</span>
+    <span class="p">),</span>  <span class="c1"># Light grey, semi-transparent (BGR + alpha)</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Display sound features on the image with a semi-transparent background.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        img: The image to draw on</span>
+<span class="sd">        sound_features: Dictionary of sound features</span>
+<span class="sd">        font: Font type to use</span>
+<span class="sd">        font_scale: Size of the font</span>
+<span class="sd">        color: Text color in BGR format</span>
+<span class="sd">        thickness: Line thickness of text</span>
+<span class="sd">        float_format: Format string for float values</span>
+<span class="sd">        x_pos: Starting x position for text</span>
+<span class="sd">        y_pos: Starting y position for text</span>
+<span class="sd">        y_increment: Vertical space between lines</span>
+<span class="sd">        bg_color: Background color (BGR + alpha) where alpha is 0-255</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sound_features</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">img</span>
+
+    <span class="c1"># Create an overlay for the background</span>
+    <span class="n">overlay</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Process bg_color to separate BGR and alpha</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bg_color</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">bg_rgb</span> <span class="o">=</span> <span class="n">bg_color</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">bg_color</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">/</span> <span class="mf">255.0</span>  <span class="c1"># Convert to 0-1 range</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">bg_rgb</span> <span class="o">=</span> <span class="n">bg_color</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># Default alpha</span>
+
+    <span class="c1"># Draw background rectangles and text</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sound_features</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+        <span class="c1"># Format the value based on its type</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="n">formatted_value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">value</span><span class="si">:{</span><span class="n">float_format</span><span class="si">}}</span><span class="s2">"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">formatted_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">formatted_value</span><span class="si">}</span><span class="s2">"</span>
+
+        <span class="c1"># Get text size for background rectangle</span>
+        <span class="p">(</span><span class="n">text_width</span><span class="p">,</span> <span class="n">text_height</span><span class="p">),</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">getTextSize</span><span class="p">(</span>
+            <span class="n">text</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">font_scale</span><span class="p">,</span> <span class="n">thickness</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Draw filled rectangle on the overlay</span>
+        <span class="n">padding</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Padding around the text</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span>
+            <span class="n">overlay</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">x_pos</span> <span class="o">-</span> <span class="n">padding</span><span class="p">,</span> <span class="n">y_pos</span> <span class="o">+</span> <span class="n">idx</span> <span class="o">*</span> <span class="n">y_increment</span> <span class="o">-</span> <span class="n">text_height</span> <span class="o">-</span> <span class="n">padding</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">x_pos</span> <span class="o">+</span> <span class="n">text_width</span> <span class="o">+</span> <span class="n">padding</span><span class="p">,</span> <span class="n">y_pos</span> <span class="o">+</span> <span class="n">idx</span> <span class="o">*</span> <span class="n">y_increment</span> <span class="o">+</span> <span class="n">padding</span><span class="p">),</span>
+            <span class="n">bg_rgb</span><span class="p">,</span>
+            <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># Filled rectangle</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Apply the overlay with transparency</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">addWeighted</span><span class="p">(</span><span class="n">overlay</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="p">)</span>
+
+    <span class="c1"># Draw text on top</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sound_features</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="n">formatted_value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">value</span><span class="si">:{</span><span class="n">float_format</span><span class="si">}}</span><span class="s2">"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">formatted_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">formatted_value</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span>
+            <span class="n">img</span><span class="p">,</span>
+            <span class="n">text</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">x_pos</span><span class="p">,</span> <span class="n">y_pos</span> <span class="o">+</span> <span class="n">idx</span> <span class="o">*</span> <span class="n">y_increment</span><span class="p">),</span>
+            <span class="n">font</span><span class="p">,</span>
+            <span class="n">font_scale</span><span class="p">,</span>
+            <span class="n">color</span><span class="p">,</span>
+            <span class="n">thickness</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">img</span></div>
+
+
+
+<div class="viewcode-block" id="draw_hand_landmarks">
+<a class="viewcode-back" href="../../module_docs/theremin/display.html#theremin.display.draw_hand_landmarks">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">draw_hand_landmarks</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">hand_detection</span><span class="p">,</span> <span class="n">mp_hands</span><span class="p">,</span> <span class="n">mp_draw</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Draw hand landmarks on the image.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        img: The image to draw on</span>
+<span class="sd">        hand_detection: MediaPipe hand detection results</span>
+<span class="sd">        mp_hands: MediaPipe hands module</span>
+<span class="sd">        mp_draw: MediaPipe drawing utilities</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        img: The image with landmarks drawn</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">hand_detection</span><span class="o">.</span><span class="n">multi_hand_landmarks</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">hand_landmarks</span> <span class="ow">in</span> <span class="n">hand_detection</span><span class="o">.</span><span class="n">multi_hand_landmarks</span><span class="p">:</span>
+            <span class="n">mp_draw</span><span class="o">.</span><span class="n">draw_landmarks</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">hand_landmarks</span><span class="p">,</span> <span class="n">mp_hands</span><span class="o">.</span><span class="n">HAND_CONNECTIONS</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">img</span></div>
+
+
+
+<div class="viewcode-block" id="draw_wrist_lines">
+<a class="viewcode-back" href="../../module_docs/theremin/display.html#theremin.display.draw_wrist_lines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">draw_wrist_lines</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">hand_detection</span><span class="p">,</span> <span class="n">mp_hands</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Draws vertical and horizontal lines from the edges of the image to the wrist position.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        img: The input image.</span>
+<span class="sd">        hand_detection: The hand detection results.</span>
+<span class="sd">        mp_hands: MediaPipe hands module</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        img: The image with lines drawn.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">hand_detection</span><span class="o">.</span><span class="n">multi_hand_landmarks</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">hand_landmarks</span> <span class="ow">in</span> <span class="n">hand_detection</span><span class="o">.</span><span class="n">multi_hand_landmarks</span><span class="p">:</span>
+            <span class="n">wrist</span> <span class="o">=</span> <span class="n">hand_landmarks</span><span class="o">.</span><span class="n">landmark</span><span class="p">[</span><span class="n">mp_hands</span><span class="o">.</span><span class="n">HandLandmark</span><span class="o">.</span><span class="n">WRIST</span><span class="p">]</span>
+            <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span>
+            <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">wrist</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">w</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">wrist</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">h</span><span class="p">)</span>
+
+            <span class="c1"># Draw vertical line</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">h</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="c1"># Draw horizontal line</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cy</span><span class="p">),</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">cy</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">img</span></div>
+
+
+
+<div class="viewcode-block" id="draw_on_screen">
+<a class="viewcode-back" href="../../module_docs/theremin/display.html#theremin.display.draw_on_screen">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">draw_on_screen</span><span class="p">(</span>
+    <span class="n">recognizer</span><span class="p">,</span>
+    <span class="n">img</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">hand_detection</span><span class="p">,</span>
+    <span class="n">sound_features</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">draw_landmarks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">draw_sound_features</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">display_sound_features_on_image</span><span class="p">,</span>
+    <span class="n">draw_frequencies</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Draw hand landmarks, wrist lines, and sound features on the image.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        recognizer: HandGestureRecognizer instance</span>
+<span class="sd">        img: The input image</span>
+<span class="sd">        hand_detection: Hand detection results</span>
+<span class="sd">        sound_features: Sound parameter values to display</span>
+<span class="sd">        draw_landmarks: Whether to draw hand landmarks</span>
+<span class="sd">        draw_sound_features: Function to draw sound features (or None to skip)</span>
+<span class="sd">        draw_frequencies: Iterable of frequencies to display as scale points on screen</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        img: The image with visualizations added</span>
+<span class="sd">    """</span>
+    <span class="c1"># Draw hand landmarks if requested</span>
+    <span class="k">if</span> <span class="n">draw_landmarks</span> <span class="ow">and</span> <span class="n">hand_detection</span><span class="o">.</span><span class="n">multi_hand_landmarks</span><span class="p">:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">draw_hand_landmarks</span><span class="p">(</span>
+            <span class="n">img</span><span class="p">,</span> <span class="n">hand_detection</span><span class="p">,</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">mp_hands</span><span class="p">,</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">mp_draw</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Draw wrist lines</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">draw_wrist_lines</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">hand_detection</span><span class="p">,</span> <span class="n">recognizer</span><span class="o">.</span><span class="n">mp_hands</span><span class="p">)</span>
+
+    <span class="c1"># Display sound features</span>
+    <span class="k">if</span> <span class="n">draw_sound_features</span> <span class="ow">and</span> <span class="n">sound_features</span><span class="p">:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">draw_sound_features</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">sound_features</span><span class="p">)</span>
+
+    <span class="c1"># Draw frequency scale points</span>
+    <span class="k">if</span> <span class="n">draw_frequencies</span><span class="p">:</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">vertical_center</span> <span class="o">=</span> <span class="n">h</span> <span class="o">//</span> <span class="mi">2</span>
+
+        <span class="c1"># Calculate the range for mapping frequencies</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">theremin.audio</span><span class="w"> </span><span class="kn">import</span> <span class="n">DFLT_MIN_FREQ</span><span class="p">,</span> <span class="n">DFLT_MAX_FREQ</span>
+
+        <span class="n">min_freq</span> <span class="o">=</span> <span class="n">DFLT_MIN_FREQ</span>
+        <span class="n">max_freq</span> <span class="o">=</span> <span class="n">DFLT_MAX_FREQ</span>
+
+        <span class="c1"># Draw each frequency as a point</span>
+        <span class="k">for</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">draw_frequencies</span><span class="p">:</span>
+            <span class="c1"># Map frequency to x-coordinate (0 to 1, then scaled to image width)</span>
+            <span class="c1"># Use the same mapping logic as in the audio functions</span>
+            <span class="n">norm_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">freq</span> <span class="o">-</span> <span class="n">min_freq</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_freq</span> <span class="o">-</span> <span class="n">min_freq</span><span class="p">)</span>
+            <span class="n">x_pos</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">norm_x</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span>
+
+            <span class="c1"># Skip if outside the image bounds</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">x_pos</span> <span class="o">&lt;</span> <span class="n">w</span><span class="p">:</span>
+                <span class="c1"># Draw a visible point</span>
+                <span class="n">point_size</span> <span class="o">=</span> <span class="mi">5</span>
+                <span class="n">point_color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>  <span class="c1"># Red in BGR</span>
+                <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="n">x_pos</span><span class="p">,</span> <span class="n">vertical_center</span><span class="p">),</span> <span class="n">point_size</span><span class="p">,</span> <span class="n">point_color</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="c1"># Add small frequency label below the point</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+                <span class="n">font</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span>
+                <span class="n">font_scale</span> <span class="o">=</span> <span class="mf">0.4</span>
+                <span class="n">text_color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>  <span class="c1"># Yellow-green in BGR</span>
+                <span class="n">thickness</span> <span class="o">=</span> <span class="mi">1</span>
+
+                <span class="c1"># Get text size for better positioning</span>
+                <span class="p">(</span><span class="n">text_width</span><span class="p">,</span> <span class="n">text_height</span><span class="p">),</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">getTextSize</span><span class="p">(</span>
+                    <span class="n">label</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">font_scale</span><span class="p">,</span> <span class="n">thickness</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Position text centered below the point</span>
+                <span class="n">text_x</span> <span class="o">=</span> <span class="n">x_pos</span> <span class="o">-</span> <span class="n">text_width</span> <span class="o">//</span> <span class="mi">2</span>
+                <span class="n">text_y</span> <span class="o">=</span> <span class="n">vertical_center</span> <span class="o">+</span> <span class="mi">20</span>
+
+                <span class="n">cv2</span><span class="o">.</span><span class="n">putText</span><span class="p">(</span>
+                    <span class="n">img</span><span class="p">,</span>
+                    <span class="n">label</span><span class="p">,</span>
+                    <span class="p">(</span><span class="n">text_x</span><span class="p">,</span> <span class="n">text_y</span><span class="p">),</span>
+                    <span class="n">font</span><span class="p">,</span>
+                    <span class="n">font_scale</span><span class="p">,</span>
+                    <span class="n">text_color</span><span class="p">,</span>
+                    <span class="n">thickness</span><span class="p">,</span>
+                <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">img</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

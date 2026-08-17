@@ -1,0 +1,4 @@
+theremin.examples.multimodal
+============================
+.. automodule:: theremin.examples.multimodal
+   :members:

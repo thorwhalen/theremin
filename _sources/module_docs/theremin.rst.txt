@@ -1,0 +1,4 @@
+theremin
+========
+.. automodule:: theremin
+   :members:

@@ -1,0 +1,265 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>theremin.video_features &mdash; theremin 0.0.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="theremin.util" href="util.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            theremin
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../theremin.html">theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio.html">theremin.audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio_features.html">theremin.audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="control_events.html">theremin.control_events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dag_audio_features.html">theremin.dag_audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="display.html">theremin.display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">theremin.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/keyboard_synth.html">theremin.examples.keyboard_synth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/multimodal.html">theremin.examples.multimodal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/video_theremin.html">theremin.examples.video_theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework.html">theremin.framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework/base.html">theremin.framework.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework/storage.html">theremin.framework.storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework/testing.html">theremin.framework.testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">theremin.main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines.html">theremin.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="script_utils.html">theremin.script_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">theremin.util</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">theremin.video_features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.video_features.HandGestureRecognizer"><code class="docutils literal notranslate"><span class="pre">HandGestureRecognizer</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#theremin.video_features.HandGestureRecognizer.mode"><code class="docutils literal notranslate"><span class="pre">HandGestureRecognizer.mode</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#theremin.video_features.HandGestureRecognizer.max_hands"><code class="docutils literal notranslate"><span class="pre">HandGestureRecognizer.max_hands</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#theremin.video_features.HandGestureRecognizer.detection_con"><code class="docutils literal notranslate"><span class="pre">HandGestureRecognizer.detection_con</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#theremin.video_features.HandGestureRecognizer.track_con"><code class="docutils literal notranslate"><span class="pre">HandGestureRecognizer.track_con</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#theremin.video_features.HandGestureRecognizer.find_hands"><code class="docutils literal notranslate"><span class="pre">HandGestureRecognizer.find_hands()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.video_features.calculate_angle"><code class="docutils literal notranslate"><span class="pre">calculate_angle()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.video_features.calculate_euclidean_distance"><code class="docutils literal notranslate"><span class="pre">calculate_euclidean_distance()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.video_features.many_single_hand_features"><code class="docutils literal notranslate"><span class="pre">many_single_hand_features()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.video_features.many_video_features"><code class="docutils literal notranslate"><span class="pre">many_video_features()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">theremin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">theremin.video_features</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/theremin/video_features.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-theremin.video_features">
+<span id="theremin-video-features"></span><h1>theremin.video_features<a class="headerlink" href="#module-theremin.video_features" title="Link to this heading"></a></h1>
+<p>Hand gesture recognition and feature extraction for theremin.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="theremin.video_features.HandGestureRecognizer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">theremin.video_features.</span></span><span class="sig-name descname"><span class="pre">HandGestureRecognizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_hands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detection_con</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_con</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gesture_recognizer_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/home/runner/work/theremin/theremin/theremin/data/gesture_recognizer.task'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/video_features.html#HandGestureRecognizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.video_features.HandGestureRecognizer" title="Link to this definition"></a></dt>
+<dd><p>A class to detect hand gestures using MediaPipe’s GestureRecognizer.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="theremin.video_features.HandGestureRecognizer.mode">
+<span class="sig-name descname"><span class="pre">mode</span></span><a class="headerlink" href="#theremin.video_features.HandGestureRecognizer.mode" title="Link to this definition"></a></dt>
+<dd><p>Mode for the hand detection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="theremin.video_features.HandGestureRecognizer.max_hands">
+<span class="sig-name descname"><span class="pre">max_hands</span></span><a class="headerlink" href="#theremin.video_features.HandGestureRecognizer.max_hands" title="Link to this definition"></a></dt>
+<dd><p>Maximum number of hands to detect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="theremin.video_features.HandGestureRecognizer.detection_con">
+<span class="sig-name descname"><span class="pre">detection_con</span></span><a class="headerlink" href="#theremin.video_features.HandGestureRecognizer.detection_con" title="Link to this definition"></a></dt>
+<dd><p>Minimum detection confidence threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="theremin.video_features.HandGestureRecognizer.track_con">
+<span class="sig-name descname"><span class="pre">track_con</span></span><a class="headerlink" href="#theremin.video_features.HandGestureRecognizer.track_con" title="Link to this definition"></a></dt>
+<dd><p>Minimum tracking confidence threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="theremin.video_features.HandGestureRecognizer.find_hands">
+<span class="sig-name descname"><span class="pre">find_hands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/video_features.html#HandGestureRecognizer.find_hands"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.video_features.HandGestureRecognizer.find_hands" title="Link to this definition"></a></dt>
+<dd><p>Detects hands in the provided image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>img</strong> – The input image.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The hand detection results</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.video_features.calculate_angle">
+<span class="sig-prename descclassname"><span class="pre">theremin.video_features.</span></span><span class="sig-name descname"><span class="pre">calculate_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/video_features.html#calculate_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.video_features.calculate_angle" title="Link to this definition"></a></dt>
+<dd><p>Calculate the angle between three points (p2 is the vertex).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.video_features.calculate_euclidean_distance">
+<span class="sig-prename descclassname"><span class="pre">theremin.video_features.</span></span><span class="sig-name descname"><span class="pre">calculate_euclidean_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/video_features.html#calculate_euclidean_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.video_features.calculate_euclidean_distance" title="Link to this definition"></a></dt>
+<dd><p>Calculate the Euclidean distance between two 3D points.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.video_features.many_single_hand_features">
+<span class="sig-prename descclassname"><span class="pre">theremin.video_features.</span></span><span class="sig-name descname"><span class="pre">many_single_hand_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hand_landmarks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">frozenset({'finger_directions',</span> <span class="pre">'gesture',</span> <span class="pre">'gesture_score',</span> <span class="pre">'handedness',</span> <span class="pre">'index_finger_extension_angle1',</span> <span class="pre">'index_finger_extension_angle2',</span> <span class="pre">'is_pinching',</span> <span class="pre">'openness',</span> <span class="pre">'palm_center',</span> <span class="pre">'palm_normal',</span> <span class="pre">'thumb_index_distance',</span> <span class="pre">'wrist_position'})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/video_features.html#many_single_hand_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.video_features.many_single_hand_features" title="Link to this definition"></a></dt>
+<dd><p>Extracts multiple hand features from a MediaPipe hand_landmarks object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hand_landmarks</strong> – MediaPipe hand landmarks</p></li>
+<li><p><strong>include</strong> – Set of features to include</p></li>
+<li><p><strong>exclude</strong> – Set of features to exclude</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of extracted features</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.video_features.many_video_features">
+<span class="sig-prename descclassname"><span class="pre">theremin.video_features.</span></span><span class="sig-name descname"><span class="pre">many_video_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hand_detection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">frozenset({'finger_directions',</span> <span class="pre">'gesture',</span> <span class="pre">'gesture_score',</span> <span class="pre">'handedness',</span> <span class="pre">'index_finger_extension_angle1',</span> <span class="pre">'index_finger_extension_angle2',</span> <span class="pre">'is_pinching',</span> <span class="pre">'openness',</span> <span class="pre">'palm_center',</span> <span class="pre">'palm_normal',</span> <span class="pre">'thumb_index_distance',</span> <span class="pre">'wrist_position'})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/video_features.html#many_video_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.video_features.many_video_features" title="Link to this definition"></a></dt>
+<dd><p>Calls many_single_hand_features for each hand in the detection.
+Returns a dictionary corresponding to the many_single_hand_features output,
+but with <cite>l_</cite> and <cite>r_</cite> prefixes for left and right hands.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hand_detection</strong> – MediaPipe hand detection results</p></li>
+<li><p><strong>include</strong> – Set of features to include</p></li>
+<li><p><strong>exclude</strong> – Set of features to exclude</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of extracted features with hand prefixes</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="util.html" class="btn btn-neutral float-left" title="theremin.util" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

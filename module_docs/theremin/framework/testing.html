@@ -1,0 +1,259 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>theremin.framework.testing &mdash; theremin 0.0.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="theremin.main" href="../main.html" />
+    <link rel="prev" title="theremin.framework.storage" href="storage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            theremin
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../theremin.html">theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../audio.html">theremin.audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../audio_features.html">theremin.audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../control_events.html">theremin.control_events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dag_audio_features.html">theremin.dag_audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../display.html">theremin.display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">theremin.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/keyboard_synth.html">theremin.examples.keyboard_synth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/multimodal.html">theremin.examples.multimodal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/video_theremin.html">theremin.examples.video_theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../framework.html">theremin.framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html">theremin.framework.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="storage.html">theremin.framework.storage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">theremin.framework.testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.framework.testing.AudioVerifier"><code class="docutils literal notranslate"><span class="pre">AudioVerifier</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#theremin.framework.testing.AudioVerifier.has_no_nan_or_inf"><code class="docutils literal notranslate"><span class="pre">AudioVerifier.has_no_nan_or_inf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#theremin.framework.testing.AudioVerifier.measure_rms"><code class="docutils literal notranslate"><span class="pre">AudioVerifier.measure_rms()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#theremin.framework.testing.AudioVerifier.verify_amplitude_range"><code class="docutils literal notranslate"><span class="pre">AudioVerifier.verify_amplitude_range()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#theremin.framework.testing.AudioVerifier.verify_frequency_content"><code class="docutils literal notranslate"><span class="pre">AudioVerifier.verify_frequency_content()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#theremin.framework.testing.AudioVerifier.verify_not_silent"><code class="docutils literal notranslate"><span class="pre">AudioVerifier.verify_not_silent()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.framework.testing.StreamPlayer"><code class="docutils literal notranslate"><span class="pre">StreamPlayer</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">theremin.main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pipelines.html">theremin.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../script_utils.html">theremin.script_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../util.html">theremin.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../video_features.html">theremin.video_features</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">theremin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">theremin.framework.testing</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/module_docs/theremin/framework/testing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-theremin.framework.testing">
+<span id="theremin-framework-testing"></span><h1>theremin.framework.testing<a class="headerlink" href="#module-theremin.framework.testing" title="Link to this heading"></a></h1>
+<p>Testing utilities for pipeline validation.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="theremin.framework.testing.AudioVerifier">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">theremin.framework.testing.</span></span><span class="sig-name descname"><span class="pre">AudioVerifier</span></span><a class="reference internal" href="../../../_modules/theremin/framework/testing.html#AudioVerifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.framework.testing.AudioVerifier" title="Link to this definition"></a></dt>
+<dd><p>Verify audio output quality and correctness.</p>
+<p>Provides utilities for testing audio generation:
+- Frequency content verification
+- Silence detection
+- Amplitude checks
+- Spectral analysis</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">verifier</span> <span class="o">=</span> <span class="n">AudioVerifier</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">audio</span> <span class="o">=</span> <span class="n">generate_audio</span><span class="p">(</span><span class="n">frequency</span><span class="o">=</span><span class="mi">440</span><span class="p">,</span> <span class="n">amplitude</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">verifier</span><span class="o">.</span><span class="n">verify_frequency_content</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="mi">44100</span><span class="p">,</span> <span class="mi">440</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">verifier</span><span class="o">.</span><span class="n">verify_not_silent</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="theremin.framework.testing.AudioVerifier.has_no_nan_or_inf">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">has_no_nan_or_inf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/theremin/framework/testing.html#AudioVerifier.has_no_nan_or_inf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.framework.testing.AudioVerifier.has_no_nan_or_inf" title="Link to this definition"></a></dt>
+<dd><p>Check that audio has no NaN or infinite values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>audio</strong> – Audio samples</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if audio is valid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="theremin.framework.testing.AudioVerifier.measure_rms">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">measure_rms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/theremin/framework/testing.html#AudioVerifier.measure_rms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.framework.testing.AudioVerifier.measure_rms" title="Link to this definition"></a></dt>
+<dd><p>Measure RMS amplitude of audio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>audio</strong> – Audio samples</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>RMS amplitude</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="theremin.framework.testing.AudioVerifier.verify_amplitude_range">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">verify_amplitude_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_amp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_amp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/theremin/framework/testing.html#AudioVerifier.verify_amplitude_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.framework.testing.AudioVerifier.verify_amplitude_range" title="Link to this definition"></a></dt>
+<dd><p>Verify audio amplitude is within expected range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>audio</strong> – Audio samples</p></li>
+<li><p><strong>min_amp</strong> – Minimum expected amplitude</p></li>
+<li><p><strong>max_amp</strong> – Maximum expected amplitude</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if amplitude is within range</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="theremin.framework.testing.AudioVerifier.verify_frequency_content">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">verify_frequency_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/theremin/framework/testing.html#AudioVerifier.verify_frequency_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.framework.testing.AudioVerifier.verify_frequency_content" title="Link to this definition"></a></dt>
+<dd><p>Check if expected frequency is present in audio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>audio</strong> – Audio samples (NumPy array)</p></li>
+<li><p><strong>sample_rate</strong> – Sample rate in Hz</p></li>
+<li><p><strong>expected_freq</strong> – Expected frequency in Hz</p></li>
+<li><p><strong>tolerance</strong> – Tolerance in Hz</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if expected frequency is present</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="theremin.framework.testing.AudioVerifier.verify_not_silent">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">verify_not_silent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_std</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/theremin/framework/testing.html#AudioVerifier.verify_not_silent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.framework.testing.AudioVerifier.verify_not_silent" title="Link to this definition"></a></dt>
+<dd><p>Ensure audio has variation (not silent).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>audio</strong> – Audio samples</p></li>
+<li><p><strong>min_std</strong> – Minimum standard deviation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if audio has variation</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="theremin.framework.testing.StreamPlayer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">theremin.framework.testing.</span></span><span class="sig-name descname"><span class="pre">StreamPlayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/theremin/framework/testing.html#StreamPlayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.framework.testing.StreamPlayer" title="Link to this definition"></a></dt>
+<dd><p>Replay feature streams from JSON for deterministic testing.</p>
+<p>This enables testing audio synthesis without camera/video hardware
+by using pre-recorded feature streams.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">player</span> <span class="o">=</span> <span class="n">StreamPlayer</span><span class="p">(</span><span class="s1">'test_features.json'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">features</span> <span class="ow">in</span> <span class="n">player</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">audio_params</span> <span class="o">=</span> <span class="n">map_features_to_audio</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">audio</span> <span class="o">=</span> <span class="n">synthesize</span><span class="p">(</span><span class="n">audio_params</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="storage.html" class="btn btn-neutral float-left" title="theremin.framework.storage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../main.html" class="btn btn-neutral float-right" title="theremin.main" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,306 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>theremin.util &mdash; theremin 0.0.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="theremin.video_features" href="video_features.html" />
+    <link rel="prev" title="theremin.script_utils" href="script_utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            theremin
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../theremin.html">theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio.html">theremin.audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio_features.html">theremin.audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="control_events.html">theremin.control_events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dag_audio_features.html">theremin.dag_audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="display.html">theremin.display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">theremin.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/keyboard_synth.html">theremin.examples.keyboard_synth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/multimodal.html">theremin.examples.multimodal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/video_theremin.html">theremin.examples.video_theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework.html">theremin.framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework/base.html">theremin.framework.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework/storage.html">theremin.framework.storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework/testing.html">theremin.framework.testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">theremin.main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines.html">theremin.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="script_utils.html">theremin.script_utils</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">theremin.util</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.util.AllZerosDict"><code class="docutils literal notranslate"><span class="pre">AllZerosDict</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.util.annotate_with"><code class="docutils literal notranslate"><span class="pre">annotate_with()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.util.current_time_string_with_milliseconds"><code class="docutils literal notranslate"><span class="pre">current_time_string_with_milliseconds()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.util.ensure_plain_types"><code class="docutils literal notranslate"><span class="pre">ensure_plain_types()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.util.format_dict_values"><code class="docutils literal notranslate"><span class="pre">format_dict_values()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.util.format_label_xyz"><code class="docutils literal notranslate"><span class="pre">format_label_xyz()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.util.format_milliseconds_time"><code class="docutils literal notranslate"><span class="pre">format_milliseconds_time()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.util.json_lines"><code class="docutils literal notranslate"><span class="pre">json_lines()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.util.obfuscate_args"><code class="docutils literal notranslate"><span class="pre">obfuscate_args()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.util.return_none"><code class="docutils literal notranslate"><span class="pre">return_none()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.util.to_builtin_number"><code class="docutils literal notranslate"><span class="pre">to_builtin_number()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="video_features.html">theremin.video_features</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">theremin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">theremin.util</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/theremin/util.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-theremin.util">
+<span id="theremin-util"></span><h1>theremin.util<a class="headerlink" href="#module-theremin.util" title="Link to this heading"></a></h1>
+<p>Utils for theremin.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="theremin.util.AllZerosDict">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">theremin.util.</span></span><span class="sig-name descname"><span class="pre">AllZerosDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/util.html#AllZerosDict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.util.AllZerosDict" title="Link to this definition"></a></dt>
+<dd><p>A dict that only returns 0.0 for all keys.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">all_zeros_dict</span> <span class="o">=</span> <span class="n">AllZerosDict</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">all_zeros_dict</span><span class="p">[</span><span class="s1">'anything'</span><span class="p">]</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.util.annotate_with">
+<span class="sig-prename descclassname"><span class="pre">theremin.util.</span></span><span class="sig-name descname"><span class="pre">annotate_with</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/util.html#annotate_with"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.util.annotate_with" title="Link to this definition"></a></dt>
+<dd><p>Decorator to annotate a function with a specified type and store the annotation
+in the correct scope’s <cite>__annotations__</cite> dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>annotation_type</strong> (<em>Any</em>) – The type to annotate the function with.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The original function with the annotation added.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>function</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@annotate_with</span><span class="p">(</span><span class="s1">'int'</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">global_func</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">global_func</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="vm">__annotations__</span><span class="p">[</span><span class="s1">'global_func'</span><span class="p">]</span>
+<span class="go">'int'</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.util.current_time_string_with_milliseconds">
+<span class="sig-prename descclassname"><span class="pre">theremin.util.</span></span><span class="sig-name descname"><span class="pre">current_time_string_with_milliseconds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/util.html#current_time_string_with_milliseconds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.util.current_time_string_with_milliseconds" title="Link to this definition"></a></dt>
+<dd><p>Get the current time with milliseconds, as a string.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.util.ensure_plain_types">
+<span class="sig-prename descclassname"><span class="pre">theremin.util.</span></span><span class="sig-name descname"><span class="pre">ensure_plain_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../_modules/theremin/util.html#ensure_plain_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.util.ensure_plain_types" title="Link to this definition"></a></dt>
+<dd><p>Recursively convert numpy numbers/arrays in common containers to builtin types.</p>
+<p>Supports dicts, lists, tuples, sets; leaves other types unchanged.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.util.format_dict_values">
+<span class="sig-prename descclassname"><span class="pre">theremin.util.</span></span><span class="sig-name descname"><span class="pre">format_dict_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/util.html#format_dict_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.util.format_dict_values" title="Link to this definition"></a></dt>
+<dd><p>Formats all numerical values in a dictionary to strings with a specified number of significant digits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dict</strong> (<em>dict</em>) – The dictionary whose numerical values will be formatted.</p></li>
+<li><p><strong>max_digits</strong> (<em>int</em>) – The maximum number of significant digits to use in the formatting.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new dictionary with the same keys as input_dict, but with numerical values replaced by formatted strings.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">original_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'a'</span><span class="p">:</span> <span class="mi">123456789</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">:</span> <span class="mf">1234.56789</span><span class="p">,</span> <span class="s1">'c'</span><span class="p">:</span> <span class="mf">12.345789</span><span class="p">,</span> <span class="s1">'d'</span><span class="p">:</span> <span class="mf">0.0012345789</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">format_dict_values</span><span class="p">(</span><span class="n">original_dict</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="go">{'a': '1.2346e+08', 'b': '1234.6', 'c': '12.346', 'd': '0.0012346'}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Non-numeric values are left unchanged.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.util.format_label_xyz">
+<span class="sig-prename descclassname"><span class="pre">theremin.util.</span></span><span class="sig-name descname"><span class="pre">format_label_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/util.html#format_label_xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.util.format_label_xyz" title="Link to this definition"></a></dt>
+<dd><p>Format the label and coordinates with customizable widths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> (<em>str</em>) – The label for the coordinates (e.g., “Right Wrist:”).</p></li>
+<li><p><strong>x</strong> (<em>float</em>) – The coordinates to format.</p></li>
+<li><p><strong>y</strong> (<em>float</em>) – The coordinates to format.</p></li>
+<li><p><strong>z</strong> (<em>float</em>) – The coordinates to format.</p></li>
+<li><p><strong>label_width</strong> (<em>int</em>) – The width of the label field.</p></li>
+<li><p><strong>coord_width</strong> (<em>int</em>) – The width of the coordinate fields.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The formatted string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">format_label_xyz</span><span class="p">(</span><span class="s1">'Right Wrist:'</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">,</span> <span class="mf">5.6</span><span class="p">)</span>
+<span class="go">'Right Wrist:    x=     1.2 y=     3.4 z=     5.6'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">format_label_xyz</span><span class="p">(</span><span class="s1">'Right Wrist:'</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">,</span> <span class="mf">5.6</span><span class="p">,</span> <span class="n">label_width</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">coord_width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">'Right Wrist: x= 1.2 y= 3.4 z= 5.6'</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.util.format_milliseconds_time">
+<span class="sig-prename descclassname"><span class="pre">theremin.util.</span></span><span class="sig-name descname"><span class="pre">format_milliseconds_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timestamp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/util.html#format_milliseconds_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.util.format_milliseconds_time" title="Link to this definition"></a></dt>
+<dd><p>Format milliseconds as a string.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.util.json_lines">
+<span class="sig-prename descclassname"><span class="pre">theremin.util.</span></span><span class="sig-name descname"><span class="pre">json_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string_or_path_to_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/theremin/util.html#json_lines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.util.json_lines" title="Link to this definition"></a></dt>
+<dd><p>Parse a file or string containing JSON-like dictionaries on each line.
+Yields only the lines that can be deserialized to dictionaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>string_or_path_to_string</strong> – A file path or the content as a string</p>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – Each successfully parsed dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.util.obfuscate_args">
+<span class="sig-prename descclassname"><span class="pre">theremin.util.</span></span><span class="sig-name descname"><span class="pre">obfuscate_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/util.html#obfuscate_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.util.obfuscate_args" title="Link to this definition"></a></dt>
+<dd><p>Creates a new function with only the specified arguments,
+with other arguments fixed to their defaults.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.util.return_none">
+<span class="sig-prename descclassname"><span class="pre">theremin.util.</span></span><span class="sig-name descname"><span class="pre">return_none</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/util.html#return_none"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.util.return_none" title="Link to this definition"></a></dt>
+<dd><p>An empty function that returns None no matter the arguments.
+Often used as a “do nothing” general callback function.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.util.to_builtin_number">
+<span class="sig-prename descclassname"><span class="pre">theremin.util.</span></span><span class="sig-name descname"><span class="pre">to_builtin_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../_modules/theremin/util.html#to_builtin_number"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.util.to_builtin_number" title="Link to this definition"></a></dt>
+<dd><p>Convert numpy numeric scalars to builtin numbers; leave others unchanged.</p>
+<ul class="simple">
+<li><p>numpy floating -&gt; float</p></li>
+<li><p>numpy integer -&gt; int</p></li>
+<li><p>python numbers.Number -&gt; unchanged</p></li>
+<li><p>numpy arrays -&gt; x.tolist() if 0-d array then recurse to scalar</p></li>
+<li><p>other types -&gt; unchanged</p></li>
+</ul>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="script_utils.html" class="btn btn-neutral float-left" title="theremin.script_utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="video_features.html" class="btn btn-neutral float-right" title="theremin.video_features" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

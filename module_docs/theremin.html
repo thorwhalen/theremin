@@ -1,0 +1,181 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>theremin &mdash; theremin 0.0.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="theremin.audio" href="theremin/audio.html" />
+    <link rel="prev" title="Welcome to theremin’s documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            theremin
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/audio.html">theremin.audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/audio_features.html">theremin.audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/control_events.html">theremin.control_events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/dag_audio_features.html">theremin.dag_audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/display.html">theremin.display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/examples.html">theremin.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/examples/keyboard_synth.html">theremin.examples.keyboard_synth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/examples/multimodal.html">theremin.examples.multimodal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/examples/video_theremin.html">theremin.examples.video_theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/framework.html">theremin.framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/framework/base.html">theremin.framework.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/framework/storage.html">theremin.framework.storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/framework/testing.html">theremin.framework.testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/main.html">theremin.main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/pipelines.html">theremin.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/script_utils.html">theremin.script_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/util.html">theremin.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theremin/video_features.html">theremin.video_features</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">theremin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">theremin</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/module_docs/theremin.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-theremin">
+<span id="theremin"></span><h1>theremin<a class="headerlink" href="#module-theremin" title="Link to this heading"></a></h1>
+<p>The objective of this project is to make “instruments” that work like a theremin,
+that is, whereby the features of the sounds produced are controlled by the position of
+the left and right hand.</p>
+<p>That, but generalized.
+A theremin is an analog device that whose sound is parametrized by two features only:
+Pitch and volume, respectively controlled by the left and right hand; the
+distance from the device’s sensor determines the pitch and volume of the sound produced.</p>
+<p>Here, though, we’ll use video as our sensor, so we can not only detect the positions
+of the hands, but also the positions of the fingers, and the angles between them,
+detect gestures, and so on. Further, we can use the facial expressions to add to
+the parametrization of the sound produced.</p>
+<p>What the project wants to grow up to be is a platform for creating musical instruments
+that are controlled by the body, enabling the user to determine the mapping between
+the video stream and the sound produced.
+We hope this will enable the creation of new musical instruments that are more
+intuitive and expressive than the traditional theremin.</p>
+<p>Right now, the project is very much in its infancy, and we’re just trying to get the
+basics working.</p>
+<p>Here’s a bit about what exists so far:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>_03_hand_gesture_recognition_with_video_feedback.py: Detects hand gestures and overlays</dt><dd><p>the detected landmarks and categories on the video stream in real-time.</p>
+</dd>
+</dl>
+</li>
+<li><p>_06_hand_gesture_w_slabs.py: The same, but using slabs, for a better framework setup</p></li>
+<li><dl class="simple">
+<dt>_05_a_wrist_lines.py: Draws lines showing the wrist position on the video stream</dt><dd><p>in real-time.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>_07_wrist_lines_w_sound.py: Draws lines showing the wrist position on the video stream</dt><dd><p>and produces sound based on the wrist position. The resulting sound is horrible though,
+due to the lack of a proper real-time setup (I believe). The sound produced is
+produced in realtime, but only a small waveform chunk is produced.
+It’s choppy.
+<strong>We need to buffer the stream of sound features and have an independent process that
+reads from the buffer and produces the sound, taking more than one chunk of
+information to determine the sound produced.</strong></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>_08_keyboard_theremin.py: To reduce the complexity of the sound produced, this script</dt><dd><p>uses a keyboard to produce sound, with the pitch and volume controlled by the
+left and right hand, respectively. This doesn’t work well at all. More work is needed.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to theremin’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="theremin/audio.html" class="btn btn-neutral float-right" title="theremin.audio" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

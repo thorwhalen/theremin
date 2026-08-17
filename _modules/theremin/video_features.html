@@ -1,0 +1,552 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>theremin.video_features &mdash; theremin 0.0.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            theremin
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin.html">theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/audio.html">theremin.audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/audio_features.html">theremin.audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/control_events.html">theremin.control_events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/dag_audio_features.html">theremin.dag_audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/display.html">theremin.display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/examples.html">theremin.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/examples/keyboard_synth.html">theremin.examples.keyboard_synth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/examples/multimodal.html">theremin.examples.multimodal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/examples/video_theremin.html">theremin.examples.video_theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/framework.html">theremin.framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/framework/base.html">theremin.framework.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/framework/storage.html">theremin.framework.storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/framework/testing.html">theremin.framework.testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/main.html">theremin.main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/pipelines.html">theremin.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/script_utils.html">theremin.script_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/util.html">theremin.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/theremin/video_features.html">theremin.video_features</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">theremin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">theremin.video_features</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for theremin.video_features</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Hand gesture recognition and feature extraction for theremin."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">mediapipe</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">MappingProxyType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">theremin.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">data_files</span>
+
+<span class="c1"># Path to the gesture recognizer model</span>
+<span class="n">gesture_recognizer_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data_files</span> <span class="o">/</span> <span class="s1">'gesture_recognizer.task'</span><span class="p">)</span>
+
+<span class="c1"># -------------------------------------------------------------------------------</span>
+<span class="c1"># Hand Gesture Recognizer</span>
+<span class="c1"># -------------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="HandGestureRecognizer">
+<a class="viewcode-back" href="../../module_docs/theremin/video_features.html#theremin.video_features.HandGestureRecognizer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">HandGestureRecognizer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    A class to detect hand gestures using MediaPipe's GestureRecognizer.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        mode (bool): Mode for the hand detection.</span>
+<span class="sd">        max_hands (int): Maximum number of hands to detect.</span>
+<span class="sd">        detection_con (float): Minimum detection confidence threshold.</span>
+<span class="sd">        track_con (float): Minimum tracking confidence threshold.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">max_hands</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">detection_con</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">track_con</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">gesture_recognizer_path</span><span class="o">=</span><span class="n">gesture_recognizer_path</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_hands</span> <span class="o">=</span> <span class="n">max_hands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">detection_con</span> <span class="o">=</span> <span class="n">detection_con</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_con</span> <span class="o">=</span> <span class="n">track_con</span>
+
+        <span class="c1"># Initialize MediaPipe Hands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mp_hands</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">solutions</span><span class="o">.</span><span class="n">hands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hands</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mp_hands</span><span class="o">.</span><span class="n">Hands</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_hands</span><span class="p">,</span>
+            <span class="n">min_detection_confidence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">detection_con</span><span class="p">,</span>
+            <span class="n">min_tracking_confidence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_con</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mp_draw</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">solutions</span><span class="o">.</span><span class="n">drawing_utils</span>
+
+        <span class="c1"># Initialize Gesture Recognizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_options</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">BaseOptions</span><span class="p">(</span>
+            <span class="n">model_asset_path</span><span class="o">=</span><span class="n">gesture_recognizer_path</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vision_running_mode</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">RunningMode</span>
+
+        <span class="c1"># Set up Gesture Recognizer options</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">GestureRecognizerOptions</span><span class="p">(</span>
+            <span class="n">base_options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">base_options</span><span class="p">,</span> <span class="n">running_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vision_running_mode</span><span class="o">.</span><span class="n">VIDEO</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gesture_recognizer</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">GestureRecognizer</span><span class="o">.</span><span class="n">create_from_options</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">options</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="HandGestureRecognizer.find_hands">
+<a class="viewcode-back" href="../../module_docs/theremin/video_features.html#theremin.video_features.HandGestureRecognizer.find_hands">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_hands</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Detects hands in the provided image.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            img: The input image.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The hand detection results</span>
+<span class="sd">        """</span>
+        <span class="n">img_rgb</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
+        <span class="n">hand_detection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hands</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">img_rgb</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">hand_detection</span></div>
+</div>
+
+
+
+<span class="c1"># -------------------------------------------------------------------------------</span>
+<span class="c1"># Hand feature extraction helpers</span>
+<span class="c1"># -------------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="calculate_euclidean_distance">
+<a class="viewcode-back" href="../../module_docs/theremin/video_features.html#theremin.video_features.calculate_euclidean_distance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_euclidean_distance</span><span class="p">(</span><span class="n">point1</span><span class="p">,</span> <span class="n">point2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Calculate the Euclidean distance between two 3D points."""</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">point1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">point2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="o">+</span> <span class="p">(</span><span class="n">point1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">point2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="o">+</span> <span class="p">(</span><span class="n">point1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">point2</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="calculate_angle">
+<a class="viewcode-back" href="../../module_docs/theremin/video_features.html#theremin.video_features.calculate_angle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_angle</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">p3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Calculate the angle between three points (p2 is the vertex)."""</span>
+    <span class="n">v1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">p2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">p2</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+    <span class="n">v2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p3</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p3</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">p2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p3</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">p2</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+
+    <span class="c1"># Calculate the dot product of v1 and v2</span>
+    <span class="n">dot_product</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
+
+    <span class="c1"># Calculate the magnitudes (lengths) of v1 and v2</span>
+    <span class="n">magnitude_v1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span>
+    <span class="n">magnitude_v2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span>
+
+    <span class="c1"># Calculate the cosine of the angle</span>
+    <span class="n">cos_angle</span> <span class="o">=</span> <span class="n">dot_product</span> <span class="o">/</span> <span class="p">(</span><span class="n">magnitude_v1</span> <span class="o">*</span> <span class="n">magnitude_v2</span><span class="p">)</span>
+
+    <span class="c1"># Ensure cos_angle is within the valid range [-1, 1] to avoid errors from arccos</span>
+    <span class="n">cos_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cos_angle</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># Calculate the angle in radians using arccos</span>
+    <span class="n">angle_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">cos_angle</span><span class="p">)</span>
+
+    <span class="c1"># Convert the angle to degrees</span>
+    <span class="n">angle_deg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">angle_rad</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">angle_deg</span></div>
+
+
+
+<span class="c1"># -------------------------------------------------------------------------------</span>
+<span class="c1"># Hand feature extraction</span>
+<span class="c1"># -------------------------------------------------------------------------------</span>
+
+<span class="n">ALL_HAND_FEATURES</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"handedness"</span><span class="p">,</span>
+        <span class="s2">"gesture"</span><span class="p">,</span>
+        <span class="s2">"gesture_score"</span><span class="p">,</span>
+        <span class="s2">"wrist_position"</span><span class="p">,</span>
+        <span class="s2">"palm_center"</span><span class="p">,</span>
+        <span class="s2">"finger_directions"</span><span class="p">,</span>
+        <span class="s2">"palm_normal"</span><span class="p">,</span>
+        <span class="s2">"landmarks"</span><span class="p">,</span>
+        <span class="s2">"openness"</span><span class="p">,</span>
+        <span class="s2">"index_finger_extension_angle1"</span><span class="p">,</span>
+        <span class="s2">"index_finger_extension_angle2"</span><span class="p">,</span>
+        <span class="s2">"thumb_index_distance"</span><span class="p">,</span>
+        <span class="s2">"is_pinching"</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Full list of available feature keys (sorted alphabetically)</span>
+<span class="n">HAND_FEATURES_KEYS</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ALL_HAND_FEATURES</span><span class="p">)</span>
+
+<span class="c1"># Default: all features except raw landmarks</span>
+<span class="n">DFLT_HAND_FEATURES_INCLUDE</span> <span class="o">=</span> <span class="n">ALL_HAND_FEATURES</span> <span class="o">-</span> <span class="p">{</span><span class="s2">"landmarks"</span><span class="p">}</span>
+
+
+<span class="n">hand_feature_ranges</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"gesture_score"</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>  <span class="c1"># Confidence scores in MediaPipe are typically [0, 1]</span>
+    <span class="s2">"wrist_position"</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)),</span>  <span class="c1"># (x, y, z) coordinates</span>
+    <span class="s2">"wrist_position_x"</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>  <span class="c1"># x coordinate of wrist</span>
+    <span class="s2">"wrist_position_y"</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>  <span class="c1"># y coordinate of wrist</span>
+    <span class="s2">"wrist_position_z"</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>  <span class="c1"># z coordinate of wrist</span>
+    <span class="s2">"palm_center"</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)),</span>  <span class="c1"># Average of palm landmarks</span>
+    <span class="s2">"finger_directions"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># Each finger has (dx, dy, dz) vectors. Since x,y ∈ [0,1], dx,dy ∈ [-1,1]</span>
+        <span class="c1"># Since z ∈ [-0.1, 0.1], dz ∈ [-0.2, 0.2]</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="p">((</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)),</span>  <span class="c1"># thumb</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="p">((</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)),</span>  <span class="c1"># index</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">((</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)),</span>  <span class="c1"># middle</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="p">((</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)),</span>  <span class="c1"># ring</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="p">((</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)),</span>  <span class="c1"># pinky</span>
+    <span class="p">},</span>
+    <span class="s2">"palm_normal"</span><span class="p">:</span> <span class="p">((</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)),</span>  <span class="c1"># Cross product of vectors</span>
+    <span class="s2">"landmarks"</span><span class="p">:</span> <span class="p">[</span>  <span class="c1"># List of 21 landmarks, each a (x, y, z) tuple</span>
+        <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)),</span>  <span class="c1"># Wrist</span>
+        <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)),</span>  <span class="c1"># Thumb base</span>
+        <span class="c1"># ... 19 more landmarks, all with same range</span>
+    <span class="p">],</span>
+    <span class="s2">"openness"</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">),</span>  <span class="c1"># Average Euclidean distance from palm to fingertips</span>
+    <span class="s2">"index_finger_extension_angle1"</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">180.0</span><span class="p">),</span>  <span class="c1"># Angle between wrist-MCP-PIP</span>
+    <span class="s2">"index_finger_extension_angle2"</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">180.0</span><span class="p">),</span>  <span class="c1"># Angle between MCP-PIP-DIP</span>
+    <span class="s2">"thumb_index_distance"</span><span class="p">:</span> <span class="p">(</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">1.5</span><span class="p">,</span>
+    <span class="p">),</span>  <span class="c1"># Euclidean distance between thumb tip and index tip</span>
+    <span class="s2">"is_pinching"</span><span class="p">:</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>  <span class="c1"># Boolean, thumb_index_distance &lt; 0.1</span>
+<span class="p">}</span>
+
+<span class="c1"># add the `l_` and `r_` prefixes to the keys in video_feature_ranges</span>
+<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">hand_feature_ranges</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+    <span class="n">hand_feature_ranges</span><span class="p">[</span><span class="s2">"l_"</span> <span class="o">+</span> <span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">hand_feature_ranges</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="n">hand_feature_ranges</span><span class="p">[</span><span class="s2">"r_"</span> <span class="o">+</span> <span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">hand_feature_ranges</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+<span class="n">video_feature_ranges</span> <span class="o">=</span> <span class="n">hand_feature_ranges</span>
+
+
+<div class="viewcode-block" id="many_single_hand_features">
+<a class="viewcode-back" href="../../module_docs/theremin/video_features.html#theremin.video_features.many_single_hand_features">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">many_single_hand_features</span><span class="p">(</span>
+    <span class="n">hand_landmarks</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="n">DFLT_HAND_FEATURES_INCLUDE</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">()</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Extracts multiple hand features from a MediaPipe hand_landmarks object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        hand_landmarks: MediaPipe hand landmarks</span>
+<span class="sd">        include: Set of features to include</span>
+<span class="sd">        exclude: Set of features to exclude</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Dictionary of extracted features</span>
+<span class="sd">    """</span>
+    <span class="c1"># Shortcuts</span>
+    <span class="n">landmark</span> <span class="o">=</span> <span class="n">hand_landmarks</span><span class="o">.</span><span class="n">landmark</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">coords</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
+        <span class="n">lm</span> <span class="o">=</span> <span class="n">landmark</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">lm</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">lm</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">lm</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="c1"># Landmark indices</span>
+    <span class="n">WRIST</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">solutions</span><span class="o">.</span><span class="n">hands</span><span class="o">.</span><span class="n">HandLandmark</span><span class="o">.</span><span class="n">WRIST</span>
+    <span class="n">THUMB_TIP</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">solutions</span><span class="o">.</span><span class="n">hands</span><span class="o">.</span><span class="n">HandLandmark</span><span class="o">.</span><span class="n">THUMB_TIP</span>
+    <span class="n">INDEX_FINGER_TIP</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">solutions</span><span class="o">.</span><span class="n">hands</span><span class="o">.</span><span class="n">HandLandmark</span><span class="o">.</span><span class="n">INDEX_FINGER_TIP</span>
+    <span class="n">MIDDLE_FINGER_TIP</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">solutions</span><span class="o">.</span><span class="n">hands</span><span class="o">.</span><span class="n">HandLandmark</span><span class="o">.</span><span class="n">MIDDLE_FINGER_TIP</span>
+    <span class="n">RING_FINGER_TIP</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">solutions</span><span class="o">.</span><span class="n">hands</span><span class="o">.</span><span class="n">HandLandmark</span><span class="o">.</span><span class="n">RING_FINGER_TIP</span>
+    <span class="n">PINKY_TIP</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">solutions</span><span class="o">.</span><span class="n">hands</span><span class="o">.</span><span class="n">HandLandmark</span><span class="o">.</span><span class="n">PINKY_TIP</span>
+    <span class="n">MIDDLE_FINGER_MCP</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">solutions</span><span class="o">.</span><span class="n">hands</span><span class="o">.</span><span class="n">HandLandmark</span><span class="o">.</span><span class="n">MIDDLE_FINGER_MCP</span>
+    <span class="n">THUMB_MCP</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">solutions</span><span class="o">.</span><span class="n">hands</span><span class="o">.</span><span class="n">HandLandmark</span><span class="o">.</span><span class="n">THUMB_MCP</span>
+    <span class="n">INDEX_FINGER_MCP</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">solutions</span><span class="o">.</span><span class="n">hands</span><span class="o">.</span><span class="n">HandLandmark</span><span class="o">.</span><span class="n">INDEX_FINGER_MCP</span>
+    <span class="n">INDEX_FINGER_PIP</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">solutions</span><span class="o">.</span><span class="n">hands</span><span class="o">.</span><span class="n">HandLandmark</span><span class="o">.</span><span class="n">INDEX_FINGER_PIP</span>
+    <span class="n">INDEX_FINGER_DIP</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">solutions</span><span class="o">.</span><span class="n">hands</span><span class="o">.</span><span class="n">HandLandmark</span><span class="o">.</span><span class="n">INDEX_FINGER_DIP</span>
+
+    <span class="c1"># Palm center calculation</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_palm_center</span><span class="p">(</span><span class="n">landmarks</span><span class="p">):</span>
+        <span class="n">palm_indices</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">17</span><span class="p">]</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">landmarks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">landmarks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">landmarks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">z</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">palm_indices</span>
+        <span class="p">]</span>
+        <span class="n">cx</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="n">cy</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="n">cz</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">cz</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_finger_directions</span><span class="p">(</span><span class="n">landmarks</span><span class="p">):</span>
+        <span class="n">FINGER_TIPS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">20</span><span class="p">]</span>
+        <span class="n">FINGER_BASES</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">17</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">finger</span><span class="p">:</span> <span class="p">(</span>
+                <span class="n">landmarks</span><span class="p">[</span><span class="n">tip</span><span class="p">]</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">landmarks</span><span class="p">[</span><span class="n">base</span><span class="p">]</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+                <span class="n">landmarks</span><span class="p">[</span><span class="n">tip</span><span class="p">]</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">landmarks</span><span class="p">[</span><span class="n">base</span><span class="p">]</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                <span class="n">landmarks</span><span class="p">[</span><span class="n">tip</span><span class="p">]</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">landmarks</span><span class="p">[</span><span class="n">base</span><span class="p">]</span><span class="o">.</span><span class="n">z</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">finger</span><span class="p">,</span> <span class="p">(</span><span class="n">tip</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">FINGER_TIPS</span><span class="p">,</span> <span class="n">FINGER_BASES</span><span class="p">))</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_palm_normal</span><span class="p">(</span><span class="n">landmarks</span><span class="p">):</span>
+        <span class="n">p0</span> <span class="o">=</span> <span class="n">landmarks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">p5</span> <span class="o">=</span> <span class="n">landmarks</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+        <span class="n">p17</span> <span class="o">=</span> <span class="n">landmarks</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span>
+        <span class="n">v1</span> <span class="o">=</span> <span class="p">(</span><span class="n">p5</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">p0</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">p5</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">p0</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">p5</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">p0</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="p">(</span><span class="n">p17</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">p0</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">p17</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">p0</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">p17</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">p0</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">normal</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">v1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">v2</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">v1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">v2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">v1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">v2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">v1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">v2</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">v1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">v2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">v1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">v2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">normal</span>
+
+    <span class="n">requested_features</span> <span class="o">=</span> <span class="n">include</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">exclude</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Precompute if needed</span>
+    <span class="n">lm_list</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">[(</span><span class="n">lm</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">lm</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">lm</span><span class="o">.</span><span class="n">z</span><span class="p">)</span> <span class="k">for</span> <span class="n">lm</span> <span class="ow">in</span> <span class="n">landmark</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">"landmarks"</span> <span class="ow">in</span> <span class="n">requested_features</span>
+            <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="n">f</span> <span class="ow">in</span> <span class="n">requested_features</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">(</span>
+                    <span class="s2">"wrist_position"</span><span class="p">,</span>
+                    <span class="s2">"palm_center"</span><span class="p">,</span>
+                    <span class="s2">"finger_directions"</span><span class="p">,</span>
+                    <span class="s2">"palm_normal"</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">"landmarks"</span> <span class="ow">in</span> <span class="n">requested_features</span><span class="p">:</span>
+        <span class="n">out</span><span class="p">[</span><span class="s2">"landmarks"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lm_list</span>
+
+    <span class="k">if</span> <span class="s2">"wrist_position"</span> <span class="ow">in</span> <span class="n">requested_features</span><span class="p">:</span>
+        <span class="n">out</span><span class="p">[</span><span class="s2">"wrist_position"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lm_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="s2">"palm_center"</span> <span class="ow">in</span> <span class="n">requested_features</span><span class="p">:</span>
+        <span class="n">out</span><span class="p">[</span><span class="s2">"palm_center"</span><span class="p">]</span> <span class="o">=</span> <span class="n">calculate_palm_center</span><span class="p">(</span><span class="n">landmark</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">"finger_directions"</span> <span class="ow">in</span> <span class="n">requested_features</span><span class="p">:</span>
+        <span class="n">out</span><span class="p">[</span><span class="s2">"finger_directions"</span><span class="p">]</span> <span class="o">=</span> <span class="n">calculate_finger_directions</span><span class="p">(</span><span class="n">landmark</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">"palm_normal"</span> <span class="ow">in</span> <span class="n">requested_features</span><span class="p">:</span>
+        <span class="n">out</span><span class="p">[</span><span class="s2">"palm_normal"</span><span class="p">]</span> <span class="o">=</span> <span class="n">calculate_palm_normal</span><span class="p">(</span><span class="n">landmark</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">"handedness"</span> <span class="ow">in</span> <span class="n">requested_features</span><span class="p">:</span>
+        <span class="n">out</span><span class="p">[</span><span class="s2">"handedness"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">hand_landmarks</span><span class="p">,</span> <span class="s2">"handedness"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">"gesture"</span> <span class="ow">in</span> <span class="n">requested_features</span><span class="p">:</span>
+        <span class="n">out</span><span class="p">[</span><span class="s2">"gesture"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">hand_landmarks</span><span class="p">,</span> <span class="s2">"gesture"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">"gesture_score"</span> <span class="ow">in</span> <span class="n">requested_features</span><span class="p">:</span>
+        <span class="n">out</span><span class="p">[</span><span class="s2">"gesture_score"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">hand_landmarks</span><span class="p">,</span> <span class="s2">"gesture_score"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># --------- EXTRA FEATURES ----------------------------------</span>
+
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">f</span> <span class="ow">in</span> <span class="n">requested_features</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="s2">"openness"</span><span class="p">,</span>
+            <span class="s2">"index_finger_extension_angle1"</span><span class="p">,</span>
+            <span class="s2">"index_finger_extension_angle2"</span><span class="p">,</span>
+            <span class="s2">"thumb_index_distance"</span><span class="p">,</span>
+            <span class="s2">"is_pinching"</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">):</span>
+        <span class="c1"># Recompute palm_center from wrist and middle_finger_mcp if needed</span>
+        <span class="n">palm_center</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">landmark</span><span class="p">[</span><span class="n">WRIST</span><span class="p">]</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">landmark</span><span class="p">[</span><span class="n">MIDDLE_FINGER_MCP</span><span class="p">]</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">landmark</span><span class="p">[</span><span class="n">WRIST</span><span class="p">]</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">landmark</span><span class="p">[</span><span class="n">MIDDLE_FINGER_MCP</span><span class="p">]</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">landmark</span><span class="p">[</span><span class="n">WRIST</span><span class="p">]</span><span class="o">.</span><span class="n">z</span> <span class="o">+</span> <span class="n">landmark</span><span class="p">[</span><span class="n">MIDDLE_FINGER_MCP</span><span class="p">]</span><span class="o">.</span><span class="n">z</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">"openness"</span> <span class="ow">in</span> <span class="n">requested_features</span><span class="p">:</span>
+        <span class="n">palm_to_index</span> <span class="o">=</span> <span class="n">calculate_euclidean_distance</span><span class="p">(</span>
+            <span class="n">palm_center</span><span class="p">,</span> <span class="n">coords</span><span class="p">(</span><span class="n">INDEX_FINGER_TIP</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">palm_to_middle</span> <span class="o">=</span> <span class="n">calculate_euclidean_distance</span><span class="p">(</span>
+            <span class="n">palm_center</span><span class="p">,</span> <span class="n">coords</span><span class="p">(</span><span class="n">MIDDLE_FINGER_TIP</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">palm_to_ring</span> <span class="o">=</span> <span class="n">calculate_euclidean_distance</span><span class="p">(</span>
+            <span class="n">palm_center</span><span class="p">,</span> <span class="n">coords</span><span class="p">(</span><span class="n">RING_FINGER_TIP</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">palm_to_pinky</span> <span class="o">=</span> <span class="n">calculate_euclidean_distance</span><span class="p">(</span><span class="n">palm_center</span><span class="p">,</span> <span class="n">coords</span><span class="p">(</span><span class="n">PINKY_TIP</span><span class="p">))</span>
+        <span class="n">out</span><span class="p">[</span><span class="s1">'openness'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">palm_to_index</span> <span class="o">+</span> <span class="n">palm_to_middle</span> <span class="o">+</span> <span class="n">palm_to_ring</span> <span class="o">+</span> <span class="n">palm_to_pinky</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>
+
+    <span class="k">if</span> <span class="s2">"index_finger_extension_angle1"</span> <span class="ow">in</span> <span class="n">requested_features</span><span class="p">:</span>
+        <span class="n">out</span><span class="p">[</span><span class="s1">'index_finger_extension_angle1'</span><span class="p">]</span> <span class="o">=</span> <span class="n">calculate_angle</span><span class="p">(</span>
+            <span class="n">coords</span><span class="p">(</span><span class="n">WRIST</span><span class="p">),</span> <span class="n">coords</span><span class="p">(</span><span class="n">INDEX_FINGER_MCP</span><span class="p">),</span> <span class="n">coords</span><span class="p">(</span><span class="n">INDEX_FINGER_PIP</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">"index_finger_extension_angle2"</span> <span class="ow">in</span> <span class="n">requested_features</span><span class="p">:</span>
+        <span class="n">out</span><span class="p">[</span><span class="s1">'index_finger_extension_angle2'</span><span class="p">]</span> <span class="o">=</span> <span class="n">calculate_angle</span><span class="p">(</span>
+            <span class="n">coords</span><span class="p">(</span><span class="n">INDEX_FINGER_MCP</span><span class="p">),</span> <span class="n">coords</span><span class="p">(</span><span class="n">INDEX_FINGER_PIP</span><span class="p">),</span> <span class="n">coords</span><span class="p">(</span><span class="n">INDEX_FINGER_DIP</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="s2">"thumb_index_distance"</span> <span class="ow">in</span> <span class="n">requested_features</span>
+        <span class="ow">or</span> <span class="s2">"is_pinching"</span> <span class="ow">in</span> <span class="n">requested_features</span>
+    <span class="p">):</span>
+        <span class="n">thumb_index_dist</span> <span class="o">=</span> <span class="n">calculate_euclidean_distance</span><span class="p">(</span>
+            <span class="n">coords</span><span class="p">(</span><span class="n">THUMB_TIP</span><span class="p">),</span> <span class="n">coords</span><span class="p">(</span><span class="n">INDEX_FINGER_TIP</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"thumb_index_distance"</span> <span class="ow">in</span> <span class="n">requested_features</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="s1">'thumb_index_distance'</span><span class="p">]</span> <span class="o">=</span> <span class="n">thumb_index_dist</span>
+        <span class="k">if</span> <span class="s2">"is_pinching"</span> <span class="ow">in</span> <span class="n">requested_features</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="s1">'is_pinching'</span><span class="p">]</span> <span class="o">=</span> <span class="n">thumb_index_dist</span> <span class="o">&lt;</span> <span class="mf">0.1</span>  <span class="c1"># Adjustable threshold</span>
+
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+
+<div class="viewcode-block" id="many_video_features">
+<a class="viewcode-back" href="../../module_docs/theremin/video_features.html#theremin.video_features.many_video_features">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">many_video_features</span><span class="p">(</span><span class="n">hand_detection</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="n">DFLT_HAND_FEATURES_INCLUDE</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">()):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Calls many_single_hand_features for each hand in the detection.</span>
+<span class="sd">    Returns a dictionary corresponding to the many_single_hand_features output,</span>
+<span class="sd">    but with `l_` and `r_` prefixes for left and right hands.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        hand_detection: MediaPipe hand detection results</span>
+<span class="sd">        include: Set of features to include</span>
+<span class="sd">        exclude: Set of features to exclude</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Dictionary of extracted features with hand prefixes</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">hand_detection</span><span class="o">.</span><span class="n">multi_hand_landmarks</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="n">hands</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">hand_landmarks</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">hand_detection</span><span class="o">.</span><span class="n">multi_hand_landmarks</span><span class="p">):</span>
+        <span class="n">handedness</span> <span class="o">=</span> <span class="n">hand_detection</span><span class="o">.</span><span class="n">multi_handedness</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">classification</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">label</span>
+        <span class="n">video_features</span> <span class="o">=</span> <span class="n">many_single_hand_features</span><span class="p">(</span>
+            <span class="n">hand_landmarks</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="n">include</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">handedness</span> <span class="o">==</span> <span class="s2">"Left"</span><span class="p">:</span>
+            <span class="n">hands</span><span class="p">[</span><span class="s2">"l_"</span><span class="p">]</span> <span class="o">=</span> <span class="n">video_features</span>
+        <span class="k">elif</span> <span class="n">handedness</span> <span class="o">==</span> <span class="s2">"Right"</span><span class="p">:</span>
+            <span class="n">hands</span><span class="p">[</span><span class="s2">"r_"</span><span class="p">]</span> <span class="o">=</span> <span class="n">video_features</span>
+
+    <span class="c1"># Merge the dictionaries and add prefixes</span>
+    <span class="n">merged_hands</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">features</span> <span class="ow">in</span> <span class="n">hands</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">features</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">merged_hands</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">key</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">merged_hands</span></div>
+
+
+
+<span class="c1"># Dictionary of available hand feature extractors</span>
+<span class="n">hand_feature_funcs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"many_video_features"</span><span class="p">:</span> <span class="n">many_video_features</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

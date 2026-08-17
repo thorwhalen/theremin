@@ -1,0 +1,4 @@
+theremin.framework
+==================
+.. automodule:: theremin.framework
+   :members:

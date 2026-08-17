@@ -1,0 +1,230 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>theremin.display &mdash; theremin 0.0.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="theremin.examples" href="examples.html" />
+    <link rel="prev" title="theremin.dag_audio_features" href="dag_audio_features.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            theremin
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../theremin.html">theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio.html">theremin.audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio_features.html">theremin.audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="control_events.html">theremin.control_events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dag_audio_features.html">theremin.dag_audio_features</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">theremin.display</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.display.display_sound_features_on_image"><code class="docutils literal notranslate"><span class="pre">display_sound_features_on_image()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.display.draw_hand_landmarks"><code class="docutils literal notranslate"><span class="pre">draw_hand_landmarks()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.display.draw_on_screen"><code class="docutils literal notranslate"><span class="pre">draw_on_screen()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.display.draw_wrist_lines"><code class="docutils literal notranslate"><span class="pre">draw_wrist_lines()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">theremin.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/keyboard_synth.html">theremin.examples.keyboard_synth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/multimodal.html">theremin.examples.multimodal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/video_theremin.html">theremin.examples.video_theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework.html">theremin.framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework/base.html">theremin.framework.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework/storage.html">theremin.framework.storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework/testing.html">theremin.framework.testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">theremin.main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines.html">theremin.pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="script_utils.html">theremin.script_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">theremin.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="video_features.html">theremin.video_features</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">theremin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">theremin.display</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/theremin/display.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-theremin.display">
+<span id="theremin-display"></span><h1>theremin.display<a class="headerlink" href="#module-theremin.display" title="Link to this heading"></a></h1>
+<p>Display utilities for theremin visualization.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.display.display_sound_features_on_image">
+<span class="sig-prename descclassname"><span class="pre">theremin.display.</span></span><span class="sig-name descname"><span class="pre">display_sound_features_on_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sound_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">font</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(0,</span> <span class="pre">255,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thickness</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">float_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.2f'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_increment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(150,</span> <span class="pre">150,</span> <span class="pre">150,</span> <span class="pre">128)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/display.html#display_sound_features_on_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.display.display_sound_features_on_image" title="Link to this definition"></a></dt>
+<dd><p>Display sound features on the image with a semi-transparent background.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> – The image to draw on</p></li>
+<li><p><strong>sound_features</strong> – Dictionary of sound features</p></li>
+<li><p><strong>font</strong> – Font type to use</p></li>
+<li><p><strong>font_scale</strong> – Size of the font</p></li>
+<li><p><strong>color</strong> – Text color in BGR format</p></li>
+<li><p><strong>thickness</strong> – Line thickness of text</p></li>
+<li><p><strong>float_format</strong> – Format string for float values</p></li>
+<li><p><strong>x_pos</strong> – Starting x position for text</p></li>
+<li><p><strong>y_pos</strong> – Starting y position for text</p></li>
+<li><p><strong>y_increment</strong> – Vertical space between lines</p></li>
+<li><p><strong>bg_color</strong> – Background color (BGR + alpha) where alpha is 0-255</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.display.draw_hand_landmarks">
+<span class="sig-prename descclassname"><span class="pre">theremin.display.</span></span><span class="sig-name descname"><span class="pre">draw_hand_landmarks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hand_detection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mp_hands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mp_draw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/display.html#draw_hand_landmarks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.display.draw_hand_landmarks" title="Link to this definition"></a></dt>
+<dd><p>Draw hand landmarks on the image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> – The image to draw on</p></li>
+<li><p><strong>hand_detection</strong> – MediaPipe hand detection results</p></li>
+<li><p><strong>mp_hands</strong> – MediaPipe hands module</p></li>
+<li><p><strong>mp_draw</strong> – MediaPipe drawing utilities</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The image with landmarks drawn</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>img</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.display.draw_on_screen">
+<span class="sig-prename descclassname"><span class="pre">theremin.display.</span></span><span class="sig-name descname"><span class="pre">draw_on_screen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recognizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hand_detection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sound_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_landmarks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_sound_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">display_sound_features_on_image&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_frequencies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/display.html#draw_on_screen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.display.draw_on_screen" title="Link to this definition"></a></dt>
+<dd><p>Draw hand landmarks, wrist lines, and sound features on the image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recognizer</strong> – HandGestureRecognizer instance</p></li>
+<li><p><strong>img</strong> – The input image</p></li>
+<li><p><strong>hand_detection</strong> – Hand detection results</p></li>
+<li><p><strong>sound_features</strong> – Sound parameter values to display</p></li>
+<li><p><strong>draw_landmarks</strong> – Whether to draw hand landmarks</p></li>
+<li><p><strong>draw_sound_features</strong> – Function to draw sound features (or None to skip)</p></li>
+<li><p><strong>draw_frequencies</strong> – Iterable of frequencies to display as scale points on screen</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The image with visualizations added</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>img</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.display.draw_wrist_lines">
+<span class="sig-prename descclassname"><span class="pre">theremin.display.</span></span><span class="sig-name descname"><span class="pre">draw_wrist_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hand_detection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mp_hands</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/display.html#draw_wrist_lines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.display.draw_wrist_lines" title="Link to this definition"></a></dt>
+<dd><p>Draws vertical and horizontal lines from the edges of the image to the wrist position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> – The input image.</p></li>
+<li><p><strong>hand_detection</strong> – The hand detection results.</p></li>
+<li><p><strong>mp_hands</strong> – MediaPipe hands module</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The image with lines drawn.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>img</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dag_audio_features.html" class="btn btn-neutral float-left" title="theremin.dag_audio_features" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.html" class="btn btn-neutral float-right" title="theremin.examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

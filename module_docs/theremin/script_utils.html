@@ -1,0 +1,276 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>theremin.script_utils &mdash; theremin 0.0.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="theremin.util" href="util.html" />
+    <link rel="prev" title="theremin.pipelines" href="pipelines.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            theremin
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../theremin.html">theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio.html">theremin.audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio_features.html">theremin.audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="control_events.html">theremin.control_events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dag_audio_features.html">theremin.dag_audio_features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="display.html">theremin.display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">theremin.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/keyboard_synth.html">theremin.examples.keyboard_synth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/multimodal.html">theremin.examples.multimodal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/video_theremin.html">theremin.examples.video_theremin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework.html">theremin.framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework/base.html">theremin.framework.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework/storage.html">theremin.framework.storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framework/testing.html">theremin.framework.testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">theremin.main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines.html">theremin.pipelines</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">theremin.script_utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.script_utils.CameraReadError"><code class="docutils literal notranslate"><span class="pre">CameraReadError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.script_utils.KeyboardBreakSignal"><code class="docutils literal notranslate"><span class="pre">KeyboardBreakSignal</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.script_utils.keyboard_feature_vector"><code class="docutils literal notranslate"><span class="pre">keyboard_feature_vector()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.script_utils.list_components"><code class="docutils literal notranslate"><span class="pre">list_components()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.script_utils.print_json_if_possible"><code class="docutils literal notranslate"><span class="pre">print_json_if_possible()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.script_utils.print_plus_newline"><code class="docutils literal notranslate"><span class="pre">print_plus_newline()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.script_utils.read_camera"><code class="docutils literal notranslate"><span class="pre">read_camera()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.script_utils.read_keyboard"><code class="docutils literal notranslate"><span class="pre">read_keyboard()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.script_utils.run_theremin"><code class="docutils literal notranslate"><span class="pre">run_theremin()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.script_utils.theremin_cli"><code class="docutils literal notranslate"><span class="pre">theremin_cli()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">theremin.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="video_features.html">theremin.video_features</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">theremin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">theremin.script_utils</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/theremin/script_utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-theremin.script_utils">
+<span id="theremin-script-utils"></span><h1>theremin.script_utils<a class="headerlink" href="#module-theremin.script_utils" title="Link to this heading"></a></h1>
+<p>Utility functions for running the theremin scripts.</p>
+<p>This module focuses on fast CLI startup by deferring all heavy imports (cv2, mediapipe,
+pyo, theremin.audio, etc.) until they are actually needed (lazy import pattern).
+Only lightweight stdlib / small packages are imported at module import time so
+<cite>theremin -h</cite> remains responsive.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="theremin.script_utils.CameraReadError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">theremin.script_utils.</span></span><span class="sig-name descname"><span class="pre">CameraReadError</span></span><a class="headerlink" href="#theremin.script_utils.CameraReadError" title="Link to this definition"></a></dt>
+<dd><p>Raised when a frame cannot be read from the camera.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="theremin.script_utils.KeyboardBreakSignal">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">theremin.script_utils.</span></span><span class="sig-name descname"><span class="pre">KeyboardBreakSignal</span></span><a class="headerlink" href="#theremin.script_utils.KeyboardBreakSignal" title="Link to this definition"></a></dt>
+<dd><p>Raised internally to break the main loop when a designated key is pressed.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.script_utils.keyboard_feature_vector">
+<span class="sig-prename descclassname"><span class="pre">theremin.script_utils.</span></span><span class="sig-name descname"><span class="pre">keyboard_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#theremin.script_utils.keyboard_feature_vector" title="Link to this definition"></a></dt>
+<dd><p>Convert a raw key code into a small feature dict; raise if it’s a break key.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.script_utils.list_components">
+<span class="sig-prename descclassname"><span class="pre">theremin.script_utils.</span></span><span class="sig-name descname"><span class="pre">list_components</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">components_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_describer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'i2.signatures.Sig'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#theremin.script_utils.list_components" title="Link to this definition"></a></dt>
+<dd><p>If the user passed the literal string ‘list’, print available component names.</p>
+<p>Returns True if listing was performed so caller can early-return.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.script_utils.print_json_if_possible">
+<span class="sig-prename descclassname"><span class="pre">theremin.script_utils.</span></span><span class="sig-name descname"><span class="pre">print_json_if_possible</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#theremin.script_utils.print_json_if_possible" title="Link to this definition"></a></dt>
+<dd><p>Print object as JSON if serializable; fall back to raw <cite>repr</cite>; add blank line.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.script_utils.print_plus_newline">
+<span class="sig-prename descclassname"><span class="pre">theremin.script_utils.</span></span><span class="sig-name descname"><span class="pre">print_plus_newline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#theremin.script_utils.print_plus_newline" title="Link to this definition"></a></dt>
+<dd><p>Print value plus an extra blank line (simple pretty printing helper).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.script_utils.read_camera">
+<span class="sig-prename descclassname"><span class="pre">theremin.script_utils.</span></span><span class="sig-name descname"><span class="pre">read_camera</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cap</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#theremin.script_utils.read_camera" title="Link to this definition"></a></dt>
+<dd><p>Read and horizontally flip a camera frame; raise on failure.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.script_utils.read_keyboard">
+<span class="sig-prename descclassname"><span class="pre">theremin.script_utils.</span></span><span class="sig-name descname"><span class="pre">read_keyboard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wait_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#theremin.script_utils.read_keyboard" title="Link to this definition"></a></dt>
+<dd><p>Return last key code (or -1) using cv2.waitKey, importing cv2 lazily.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.script_utils.run_theremin">
+<span class="sig-prename descclassname"><span class="pre">theremin.script_utils.</span></span><span class="sig-name descname"><span class="pre">run_theremin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'many_video_features'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">synth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_video_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_knobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_to_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'theremin_recording.wav'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Hand</span> <span class="pre">Gesture</span> <span class="pre">Recognition</span> <span class="pre">with</span> <span class="pre">Theremin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_on_screen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_keep_new_freqs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_trans_override</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'__USE_DEFAULT__'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#theremin.script_utils.run_theremin" title="Link to this definition"></a></dt>
+<dd><p>Run the realtime theremin loop.</p>
+<p>Lazy-loads heavy dependencies (cv2, mediapipe, pyo, pipelines) only if actually
+executing the loop (i.e. not when just requesting CLI help). Handles:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Resolving named registry entries (video features, knobs/pipelines, synth)</p></li>
+<li><p>Video capture + hand feature extraction</p></li>
+<li><p>Mapping features to audio parameters (knobs)</p></li>
+<li><p>Optional logging &amp; drawing</p></li>
+<li><p>Synth control &amp; (optionally) recording, filtering unchanged freqs</p></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.script_utils.theremin_cli">
+<span class="sig-prename descclassname"><span class="pre">theremin.script_utils.</span></span><span class="sig-name descname"><span class="pre">theremin_cli</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'theremin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'many_video_features'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'theremin_knobs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">synth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'theremin_synth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_video_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_knobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_to_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'theremin_recording.wav'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_recording</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Theremin</span> <span class="pre">with</span> <span class="pre">Hand</span> <span class="pre">Tracking'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#theremin.script_utils.theremin_cli" title="Link to this definition"></a></dt>
+<dd><p>Run the theremin: map video/keyboard input to synthesized audio.</p>
+<p>Architecture Overview:</p>
+<dl>
+<dt>Input: Video/Keyboard</dt><dd><div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>v</p>
+</dd>
+</dl>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>v</p>
+</div></blockquote>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>v</p>
+</div></blockquote>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>v</p>
+</div></blockquote>
+<blockquote>
+<div><blockquote>
+<div><div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>v</p>
+</div></blockquote>
+<p>[Audio Output + Recording]</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Note: –pipeline combines steps 2-4 in pre-configured packages</dt><dd><p>(e.g. “theremin”, “two_voice”, “simple_sine”)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pipeline</strong> – Pre-configured pipeline name or ‘list’ to show available</p></li>
+<li><p><strong>video_features</strong> – Feature extraction function or ‘list’ to show available</p></li>
+<li><p><strong>knobs</strong> – Audio parameter mapping function or ‘list’ to show available</p></li>
+<li><p><strong>synth</strong> – Synthesizer function or ‘list’ to show available</p></li>
+<li><p><strong>log_video_features</strong> – Enable logging of extracted video features</p></li>
+<li><p><strong>log_knobs</strong> – Enable logging of audio parameters</p></li>
+<li><p><strong>record_to_file</strong> – Filename for audio recording (default: theremin_recording.wav)</p></li>
+<li><p><strong>no_recording</strong> – Disable audio recording</p></li>
+<li><p><strong>window_name</strong> – Title for the video display window</p></li>
+<li><p><strong>scale</strong> – Musical scale for frequency snapping or ‘list’ to show available scales</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pipelines.html" class="btn btn-neutral float-left" title="theremin.pipelines" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="util.html" class="btn btn-neutral float-right" title="theremin.util" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
