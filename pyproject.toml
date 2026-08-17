@@ -242,7 +242,20 @@ sdist = true
 wheel = true
 
 [tool.wads.ci.publish]
-enabled = true
+# Disabled because this repo has NO PyPI credentials reachable at run time, and
+# a publish job that cannot authenticate fails the whole workflow on the default
+# branch — which would re-redden a repo that has just had its first green run.
+#
+# Why none are reachable: `thorwhalen` is a GitHub *User* account, not an org, so
+# there is no org-secret fallback (that is what covers the i2mint repos, whose
+# PYPI_PASSWORD is an org secret at visibility=all). This repo also has no
+# repository-level secrets of its own -- `gh api repos/thorwhalen/theremin/
+# actions/secrets` returns total_count 0. Sibling repos like hum and loopyng do
+# have repo-level PYPI_PASSWORD, which is why publishing works there.
+#
+# To re-enable: add PYPI_PASSWORD (and PYPI_USERNAME) as repository secrets, then
+# flip this to true. Nothing else here needs to change.
+enabled = false
 skip_ci_marker = "[skip ci]"
 publish_marker = "[publish]"
 
