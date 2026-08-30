@@ -40,6 +40,14 @@ dependencies = [
     "opencv-python",
     "hum",
     "mediapipe",
+    # Transitional. theremin imports argh at module scope (main.py,
+    # script_utils.py) and must declare it rather than receiving it
+    # transitively through cw, which declares argh without importing it.
+    # This line dies when the CLI migrates to `cw.dispatch`
+    # (theremin is the fleet's heaviest @argh.arg user: 10 decorators in
+    # script_utils.py, five of them using nargs='?' const='list').
+    # See https://github.com/thorwhalen/theremin/issues/9
+    "argh",
 ]
 
 [project.urls]
