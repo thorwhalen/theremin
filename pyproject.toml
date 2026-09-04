@@ -258,8 +258,14 @@ wheel = true
 # actions/secrets` returns total_count 0. Sibling repos like hum and loopyng do
 # have repo-level PYPI_PASSWORD, which is why publishing works there.
 #
-# To re-enable: add PYPI_PASSWORD (and PYPI_USERNAME) as repository secrets, then
-# flip this to true. Nothing else here needs to change.
+# To re-enable: add ONE repository secret, PYPI_PASSWORD, holding a PyPI API token,
+# then flip this to true. Nothing else here needs to change.
+#
+# PYPI_USERNAME is NOT needed and would not even be forwarded: the reusable
+# workflow declares `PYPI_PASSWORD` (and `TEST_PYPI_PASSWORD`) as its only publish
+# secrets, `.github/workflows/ci.yml` passes that one name through, and
+# `wads/actions/pypi-publish-uv` runs `uv publish` with `UV_PUBLISH_TOKEN` alone --
+# there is no username input anywhere in the chain.
 enabled = false
 skip_ci_marker = "[skip ci]"
 publish_marker = "[publish]"
