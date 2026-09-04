@@ -1,5 +1,35 @@
 # Theremin Project Changelog
 
+## 2026-09-04 - CLI migrated from argh to cw
+
+### Overview
+The command line moved off `argh` (LGPL-3.0-or-later) onto [`cw`](https://github.com/i2mint/cw)
+(MIT, no runtime dependencies). **The CLI surface is unchanged** -- `--help`, `usage:`, every
+flag spelling, every `nargs`/`const`/default and every parsed value are byte-identical to the
+argh-era ones, checked against a 36-vector corpus.
+
+### What changed
+- `theremin/main.py`: `argh.dispatch_command(theremin_cli)` -> `raise SystemExit(cw.dispatch(theremin_cli, config=THEREMIN_CLI_CONFIG))`.
+  The `raise` is load-bearing: `cw.dispatch` *returns* the exit code where argh raised
+  `SystemExit` itself, so without it a usage error would start exiting 0.
+- `theremin/script_utils.py`: the ten `@argh.arg` decorators became one
+  `THEREMIN_CLI_CONFIG` mapping. This is not cosmetic -- cw reads `config` (and `func._cw`)
+  and **ignores** an `@argh.arg` decorator, so simply deleting them would have silently
+  dropped the `nargs='?' const='list'` pairs that make a bare `--pipeline` list the pipelines.
+- `pyproject.toml`: `argh` removed from `dependencies`; `cw` pinned to `>=0.1.1,<0.2`.
+
+### Why it matters beyond the licence
+`theremin` 0.0.7 on PyPI imports `argh` at module scope but never declared it -- it arrived
+transitively through `cw`. `cw` has since dropped `argh`, so `pip install theremin` is broken
+on PyPI today. This removes the import at the source; closing it for users additionally needs
+a release, which this repo cannot cut (see issue #11).
+
+### Guards added
+- `theremin/tests/test_cli_grammar.py` pins flags, `nargs`, `const`, defaults, option order,
+  the five bare-flag "list" sentinels, and exit code 2 on usage errors.
+- `theremin/tests/test_import_safety.py` now blocks `argh` alongside `pyo`/`cv2`/`mediapipe`,
+  so the entry path importing it again fails locally rather than in a user's terminal.
+
 ## 2025-07-01 - Systematic Pipeline Parameter Mismatch Diagnosis and Repair
 
 ### Overview
