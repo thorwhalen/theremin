@@ -23,11 +23,19 @@ from pathlib import Path
 
 import pytest
 
-# Optional/system-dependent imports that must never be needed at module-import
-# time by anything pytest collects. `pyo` is an opt-in extra (`theremin[audio]`);
-# `cv2`/`mediapipe` are hard dependencies but need system libraries (e.g. libGL)
-# that a headless CI runner does not necessarily have.
-BLOCKED_AT_IMPORT = ('pyo', 'cv2', 'mediapipe')
+# Imports that must never be needed at module-import time by anything pytest
+# collects. `pyo` is an opt-in extra (`theremin[audio]`); `cv2`/`mediapipe` are hard
+# dependencies but need system libraries (e.g. libGL) that a headless CI runner does
+# not necessarily have.
+#
+# `argh` is here for a different reason: it is not a dependency at all any more, and
+# must not become one again by accident. theremin 0.0.7 on PyPI imports argh at
+# module scope in main.py and script_utils.py while declaring only
+# dol/i2/cw/meshed/opencv-python/hum/mediapipe -- it reached an install solely as a
+# transitive dependency of `cw`, and `cw` has since dropped it, which is what broke
+# `pip install theremin`. The CLI now uses `cw.dispatch` + `THEREMIN_CLI_CONFIG`, so
+# blocking argh here is what keeps that fix from silently regressing.
+BLOCKED_AT_IMPORT = ('pyo', 'cv2', 'mediapipe', 'argh')
 
 # The modules that must stay importable for the CLI entry point to work at all.
 # Checked unconditionally, on every Python version, independently of pyproject

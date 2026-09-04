@@ -9,7 +9,6 @@ Only lightweight stdlib / small packages are imported at module import time so
 # Only light imports at module import time
 import logging
 import time
-import argh
 from typing import Union, Dict, Optional, Any
 from collections.abc import Callable
 from functools import partial
@@ -375,53 +374,91 @@ def list_components(param_value, components_dict, description, component_describ
     return False
 
 
-@argh.arg(
-    '--pipeline',
-    '-p',
-    nargs='?',
-    const='list',
-    help='Audio pipeline name (use without argument to list available pipelines)',
-)
-@argh.arg(
-    '--synth',
-    '-s',
-    nargs='?',
-    const='list',
-    help='Synthesizer function name (use without argument to list available synths)',
-)
-@argh.arg(
-    '--knobs',
-    '-k',
-    nargs='?',
-    const='list',
-    help='Audio knobs function name (use without argument to list available knobs)',
-)
-@argh.arg(
-    '--video-features',
-    '-v',
-    nargs='?',
-    const='list',
-    help='Video features function name (use without argument to list available video features)',
-)
-@argh.arg('--log-video-features', help='Log hand features', default=False)
-@argh.arg('--log-knobs', help='Log audio features', default=False)
-@argh.arg(
-    '-r',
-    '--record-to-file',
-    help='Filename to save recording',
-    default=DFLT_RECORDING_FILEPATH,
-)
-@argh.arg('-n', '--no-recording', help='Disable recording', default=False)
-@argh.arg(
-    '-w', '--window-name', help='Window title', default='Theremin with Hand Tracking'
-)
-@argh.arg(
-    '--scale',
-    nargs='?',
-    const='list',
-    help='Scale for snapping. Use flag without value to list scales; use none/null/off to disable. Default uses audio.DFLT_SCALE.',
-    default=None,
-)
+#: The command-line particulars of :func:`theremin_cli`, in cw's ``config`` form:
+#: ``{parameter_name: add_argument_kwargs}``. This is a *single-command* CLI, so there
+#: is no command name to key the mapping under -- ``cw.mk_parser``/``cw.dispatch`` read
+#: a config for one callable as parameter names directly.
+#:
+#: It replaces ten ``@argh.arg`` decorators verbatim. Keeping this metadata is not
+#: cosmetic: cw reads ``config`` (and ``func._cw``) and **ignores** an ``argh.arg``
+#: decorator entirely, so dropping any of it would silently change the grammar -- the
+#: ``nargs='?' const='list'`` pairs below are what make a bare ``--pipeline`` mean
+#: "list the pipelines" rather than "missing value".
+#:
+#: Two argh merge rules are relied upon here and reproduced by cw
+#: (``cw.grammar.ArgSpec.update``), which is why the ``--help`` is unchanged:
+#:
+#: * ``flags`` **append** onto the inferred spellings rather than replacing them. Only
+#:   ``synth`` actually needs its short flag declared -- ``synth`` and ``scale`` share a
+#:   first character, so argh's own rule suppresses the inferred ``-s`` for both -- and
+#:   because the declared flag is appended, that option renders long-first
+#:   (``--synth [SYNTH], -s [SYNTH]``) while the rest render short-first.
+#: * Any entry here switches type-annotation inference off for the *whole* function,
+#:   exactly as ``@argh.arg`` did (argh's ``can_use_hints = not declared_args``), so the
+#:   argument types keep coming from the default values alone.
+THEREMIN_CLI_CONFIG = {
+    'pipeline': {
+        'flags': ['--pipeline', '-p'],
+        'nargs': '?',
+        'const': 'list',
+        'help': 'Audio pipeline name (use without argument to list available pipelines)',
+    },
+    'synth': {
+        'flags': ['--synth', '-s'],
+        'nargs': '?',
+        'const': 'list',
+        'help': 'Synthesizer function name (use without argument to list available synths)',
+    },
+    'knobs': {
+        'flags': ['--knobs', '-k'],
+        'nargs': '?',
+        'const': 'list',
+        'help': 'Audio knobs function name (use without argument to list available knobs)',
+    },
+    'video_features': {
+        'flags': ['--video-features', '-v'],
+        'nargs': '?',
+        'const': 'list',
+        'help': 'Video features function name (use without argument to list available video features)',
+    },
+    'log_video_features': {
+        'flags': ['--log-video-features'],
+        'help': 'Log hand features',
+        'default': False,
+    },
+    'log_knobs': {
+        'flags': ['--log-knobs'],
+        'help': 'Log audio features',
+        'default': False,
+    },
+    'record_to_file': {
+        'flags': ['-r', '--record-to-file'],
+        'help': 'Filename to save recording',
+        'default': DFLT_RECORDING_FILEPATH,
+    },
+    'no_recording': {
+        'flags': ['-n', '--no-recording'],
+        'help': 'Disable recording',
+        'default': False,
+    },
+    'window_name': {
+        'flags': ['-w', '--window-name'],
+        'help': 'Window title',
+        'default': 'Theremin with Hand Tracking',
+    },
+    'scale': {
+        'flags': ['--scale'],
+        'nargs': '?',
+        'const': 'list',
+        'help': (
+            'Scale for snapping. Use flag without value to list scales; use '
+            'none/null/off to disable. Default uses audio.DFLT_SCALE.'
+        ),
+        'default': None,
+    },
+}
+
+
 def theremin_cli(
     pipeline: str | None = 'theremin',
     video_features: str | None = 'many_video_features',

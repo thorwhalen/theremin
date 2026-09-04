@@ -35,19 +35,16 @@ classifiers = [
 dependencies = [
     "dol",
     "i2",
-    "cw",
+    # The CLI is built with `cw.dispatch` (theremin/main.py), and
+    # `theremin.script_utils.run_theremin` uses `cw.resolve_to_function`. The bounds
+    # are the fleet-wide pin for the argh -> cw migration: `config=`'s merge ladder
+    # (which is what keeps `theremin --help` byte-identical to the argh-era one) is a
+    # 0.1 API, and cw makes no compatibility promise across a 0.x minor.
+    "cw>=0.1.1,<0.2",
     "meshed",
     "opencv-python",
     "hum",
     "mediapipe",
-    # Transitional. theremin imports argh at module scope (main.py,
-    # script_utils.py) and must declare it rather than receiving it
-    # transitively through cw, which declares argh without importing it.
-    # This line dies when the CLI migrates to `cw.dispatch`
-    # (theremin is the fleet's heaviest @argh.arg user: 10 decorators in
-    # script_utils.py, five of them using nargs='?' const='list').
-    # See https://github.com/thorwhalen/theremin/issues/9
-    "argh",
 ]
 
 [project.urls]
