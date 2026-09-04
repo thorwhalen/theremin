@@ -63,7 +63,10 @@
 <li class="toctree-l1"><a class="reference internal" href="framework/base.html">theremin.framework.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="framework/storage.html">theremin.framework.storage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="framework/testing.html">theremin.framework.testing</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">theremin.main</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">theremin.main</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#theremin.main.dispatched_theremin_cli"><code class="docutils literal notranslate"><span class="pre">dispatched_theremin_cli()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="pipelines.html">theremin.pipelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="script_utils.html">theremin.script_utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="util.html">theremin.util</a></li>
@@ -101,15 +104,27 @@
 parameters to be controlled via command-line arguments.</p>
 <p class="rubric">Examples</p>
 <p># Run with default settings (theremin_knobs + theremin_synth)
-python theremin_cli.py</p>
+theremin</p>
+<p># List what is available for any of –pipeline/–synth/–knobs/–video-features/–scale
+# by passing the flag with no value
+theremin –synth</p>
 <p># Run with two-hand knobs and two-voice synth
-python theremin_cli.py –audio-features two_hand_freq_and_volume_knobs –synth-func two_voice_synth_func</p>
-<p># Enable logging of hand features
-python theremin_cli.py –log-hand-features</p>
-<p># Save recording to custom file
-python theremin_cli.py –save-recording my_performance.wav</p>
+theremin –knobs two_hand_freq_and_volume_knobs –synth two_voice_synth_func</p>
+<p># Enable logging of extracted video features
+theremin –log-video-features</p>
+<p># Save recording to a custom file
+theremin –record-to-file my_performance.wav</p>
 <p># Run with chorused sine synth
-python theremin_cli.py –synth-func chorused_sine_synth –window-name “Chorused Sine Theremin”</p>
+theremin –synth chorused_sine_synth –window-name “Chorused Sine Theremin”</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="theremin.main.dispatched_theremin_cli">
+<span class="sig-prename descclassname"><span class="pre">theremin.main.</span></span><span class="sig-name descname"><span class="pre">dispatched_theremin_cli</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/theremin/main.html#dispatched_theremin_cli"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#theremin.main.dispatched_theremin_cli" title="Link to this definition"></a></dt>
+<dd><p>Run the theremin CLI, exiting with the code the command line produced.</p>
+<p><code class="docutils literal notranslate"><span class="pre">cw.dispatch</span></code> <em>returns</em> the exit code where <code class="docutils literal notranslate"><span class="pre">argh.dispatch_command</span></code> raised
+<code class="docutils literal notranslate"><span class="pre">SystemExit</span></code> itself, so the <code class="docutils literal notranslate"><span class="pre">raise</span></code> here is what keeps a usage error exiting 2
+instead of 0.</p>
+</dd></dl>
+
 </section>
 
 
