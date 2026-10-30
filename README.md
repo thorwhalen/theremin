@@ -20,7 +20,7 @@ first (`brew install portaudio portmidi` / `apt install portaudio19-dev
 libportmidi-dev`).
 
 > **Note:** This Python package is semi-dormant. Its browser-based successor is
-> [thoremin](https://github.com/thorwhalen/thoremin) -- a client-side hand
+> [thoremin](https://apps.thorwhalen.com/thoremin/) -- a client-side hand
 > theremin (webcam gestures to live audio, all in the browser) that carries this
 > project's vision forward.
 
