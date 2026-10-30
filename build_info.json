@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "built_at": "2026-10-30T06:55:15Z",
+  "package": {
+    "name": "theremin",
+    "version": "0.0.7",
+    "display_name": "theremin",
+    "source": "pyproject.toml"
+  },
+  "git": {
+    "available": true,
+    "commit": "e005ad40e1ebd45339fe8e48439a71419053f269",
+    "short_commit": "e005ad4",
+    "branch": "main",
+    "tags": [],
+    "dirty": false,
+    "remote_url": "https://github.com/thorwhalen/theremin",
+    "commit_url": "https://github.com/thorwhalen/theremin/commit/e005ad40e1ebd45339fe8e48439a71419053f269",
+    "error": null
+  },
+  "ci": {
+    "provider": "github",
+    "repository": "thorwhalen/theremin",
+    "sha": "e005ad40e1ebd45339fe8e48439a71419053f269",
+    "sha_in_history": true,
+    "ref": "refs/heads/main",
+    "ref_name": "main",
+    "run_id": "41016678802",
+    "run_url": "https://github.com/thorwhalen/theremin/actions/runs/41016678802",
+    "server_url": "https://github.com"
+  },
+  "tools": {
+    "epythet": "0.2.22",
+    "sphinx": "9.1.1",
+    "docutils": "0.22.4",
+    "python": "3.12.15"
+  },
+  "config": {
+    "theme": "auto",
+    "html_theme": "furo",
+    "accent": "#0e6a27",
+    "mode": "auto",
+    "api_generator": "autosummary",
+    "ignore": [
+      "tests/",
+      "scrap/",
+      "examples/"
+    ],
+    "agent_outputs": true,
+    "aggregates": [
+      "md"
+    ],
+    "ai_artifacts": true,
+    "provenance": true,
+    "docs_dir": "docsrc"
+  },
+  "site": {
+    "modules_documented": 11,
+    "objects_documented": 83
+  },
+  "pypi": {
+    "checked": true,
+    "latest": "0.0.7",
+    "relation": "same",
+    "error": null
+  },
+  "reproduce": "git clone https://github.com/thorwhalen/theremin && cd theremin\ngit checkout e005ad40e1ebd45339fe8e48439a71419053f269\npip install \"epythet==0.2.22\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "warnings": [],
+  "alignment": {
+    "aligned": true,
+    "notes": []
+  }
+}

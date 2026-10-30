@@ -1,0 +1,23 @@
+﻿theremin
+========
+
+.. automodule:: theremin
+
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   audio
+   audio_features
+   control_events
+   dag_audio_features
+   display
+   framework
+   main
+   pipelines
+   script_utils
+   util
+   video_features

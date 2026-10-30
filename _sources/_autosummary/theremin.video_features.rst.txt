@@ -1,0 +1,21 @@
+theremin.video\_features
+========================
+
+.. automodule:: theremin.video_features
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      calculate_angle
+      calculate_euclidean_distance
+      many_single_hand_features
+      many_video_features
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      HandGestureRecognizer
+   

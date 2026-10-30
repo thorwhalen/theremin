@@ -1,4 +1,0 @@
-theremin.audio
-==============
-.. automodule:: theremin.audio
-   :members:

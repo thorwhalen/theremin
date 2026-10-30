@@ -1,0 +1,22 @@
+# theremin
+
+> A video-to-sound theremin
+
+
+## Pages in this subsection
+
+- [theremin](theremin.html.md): The objective of this project is to make “instruments” that work like a theremin,
+- [theremin.control_events](theremin.control_events.html.md): Pure helpers for recorded synth control events (record-to-render data hygiene).
+- [theremin.display](theremin.display.html.md): Display utilities for theremin visualization.
+- [theremin.framework](theremin.framework.html.md): Theremin framework core - meshed.slabs based architecture.
+- [theremin.framework.base](theremin.framework.base.html.md): Base abstractions for theremin framework.
+- [theremin.framework.storage](theremin.framework.storage.html.md): Storage abstractions using dol for calibration and presets.
+- [theremin.framework.testing](theremin.framework.testing.html.md): Testing utilities for pipeline validation.
+- [theremin.main](theremin.main.html.md): Command-line interface for the theremin application.
+- [theremin.script_utils](theremin.script_utils.html.md): Utility functions for running the theremin scripts.
+- [theremin.util](theremin.util.html.md): Utils for theremin.
+- [theremin.video_features](theremin.video_features.html.md): Hand gesture recognition and feature extraction for theremin.
+
+## Optional
+
+- [Top-level llms.txt](../llms.txt): Complete documentation index.

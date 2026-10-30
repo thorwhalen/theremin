@@ -1,0 +1,29 @@
+theremin.util
+=============
+
+.. automodule:: theremin.util
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      annotate_with
+      current_time_string_with_milliseconds
+      ensure_plain_types
+      format_dict_values
+      format_float
+      format_label_xyz
+      format_milliseconds_time
+      json_lines
+      obfuscate_args
+      return_none
+      to_builtin_number
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AllZerosDict
+      HandLandmarkIndex
+   

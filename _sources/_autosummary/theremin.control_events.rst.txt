@@ -1,0 +1,16 @@
+theremin.control\_events
+========================
+
+.. automodule:: theremin.control_events
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      looks_like_live_signal
+      plain_control_value
+      render_recording
+      renderable_events
+      synth_dials
+   

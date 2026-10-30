@@ -1,0 +1,16 @@
+theremin.framework.base
+=======================
+
+.. automodule:: theremin.framework.base
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      FeatureExtractor
+      FeatureMapper
+      Pipeline
+      SensorReader
+      Synthesizer
+   

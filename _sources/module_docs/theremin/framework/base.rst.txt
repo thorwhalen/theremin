@@ -1,4 +1,0 @@
-theremin.framework.base
-=======================
-.. automodule:: theremin.framework.base
-   :members:

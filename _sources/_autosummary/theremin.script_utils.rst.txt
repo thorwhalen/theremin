@@ -1,0 +1,26 @@
+theremin.script\_utils
+======================
+
+.. automodule:: theremin.script_utils
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      keyboard_feature_vector
+      list_components
+      print_json_if_possible
+      print_plus_newline
+      read_camera
+      read_keyboard
+      run_theremin
+      theremin_cli
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      CameraReadError
+      KeyboardBreakSignal
+   

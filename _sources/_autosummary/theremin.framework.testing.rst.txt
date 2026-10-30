@@ -1,0 +1,13 @@
+theremin.framework.testing
+==========================
+
+.. automodule:: theremin.framework.testing
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AudioVerifier
+      StreamPlayer
+   

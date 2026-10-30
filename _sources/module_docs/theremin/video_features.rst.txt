@@ -1,4 +1,0 @@
-theremin.video_features
-=======================
-.. automodule:: theremin.video_features
-   :members:

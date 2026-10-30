@@ -1,0 +1,12 @@
+theremin.main
+=============
+
+.. automodule:: theremin.main
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      dispatched_theremin_cli
+   

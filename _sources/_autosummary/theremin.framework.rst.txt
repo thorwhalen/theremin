@@ -1,0 +1,29 @@
+theremin.framework
+==================
+
+.. automodule:: theremin.framework
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      SensorReader
+      FeatureExtractor
+      FeatureMapper
+      Synthesizer
+      Pipeline
+      CalibrationStore
+      PresetStore
+      StreamPlayer
+      AudioVerifier
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   base
+   storage
+   testing

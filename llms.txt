@@ -1,0 +1,29 @@
+# theremin
+
+> A video-to-sound theremin
+
+
+## Pages
+
+- [theremin](index.html.md): A video-to-sound theremin.
+- [API reference](api.html.md): | &#96;theremin&#96;   | The objective of this project is to make "instruments" that work like a theremin, t...
+- [theremin](_autosummary/theremin.html.md): The objective of this project is to make “instruments” that work like a theremin,
+- [theremin.control_events](_autosummary/theremin.control_events.html.md): Pure helpers for recorded synth control events (record-to-render data hygiene).
+- [theremin.display](_autosummary/theremin.display.html.md): Display utilities for theremin visualization.
+- [theremin.framework](_autosummary/theremin.framework.html.md): Theremin framework core - meshed.slabs based architecture.
+- [theremin.framework.base](_autosummary/theremin.framework.base.html.md): Base abstractions for theremin framework.
+- [theremin.framework.storage](_autosummary/theremin.framework.storage.html.md): Storage abstractions using dol for calibration and presets.
+- [theremin.framework.testing](_autosummary/theremin.framework.testing.html.md): Testing utilities for pipeline validation.
+- [theremin.main](_autosummary/theremin.main.html.md): Command-line interface for the theremin application.
+- [theremin.script_utils](_autosummary/theremin.script_utils.html.md): Utility functions for running the theremin scripts.
+- [theremin.util](_autosummary/theremin.util.html.md): Utils for theremin.
+- [theremin.video_features](_autosummary/theremin.video_features.html.md): Hand gesture recognition and feature extraction for theremin.
+- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-10-30 06:55 UTC&#42;&#42; from commit &lt;a href="https://github.com/tho...
+
+## Optional
+
+- [theremin.md](theremin.md): Complete documentation in a single file.
+
+## Build
+
+- [build_info.json](build_info.json): build provenance (commit, version, tool versions, whether the docs match the package)

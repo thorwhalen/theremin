@@ -1,0 +1,15 @@
+theremin.display
+================
+
+.. automodule:: theremin.display
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      display_sound_features_on_image
+      draw_hand_landmarks
+      draw_on_screen
+      draw_wrist_lines
+   
