@@ -34,11 +34,11 @@ from typing import Any
 from theremin.util import ensure_plain_types
 
 # Attributes that define a pyo.SigTo-like control signal's plain-data form.
-SIGTO_ATTRS = ('value', 'time', 'mul', 'add')
+SIGTO_ATTRS = ("value", "time", "mul", "add")
 
 # Where a run's audio recording lands when the caller asked for one without
 # naming a file.
-DFLT_RECORDING_FILEPATH = 'theremin_recording.wav'
+DFLT_RECORDING_FILEPATH = "theremin_recording.wav"
 
 ControlEvent = tuple[float, dict[str, Any]]
 
@@ -60,7 +60,7 @@ def looks_like_live_signal(obj: Any) -> bool:
     """
     if isinstance(obj, Mapping):
         return False
-    return hasattr(obj, 'value') and hasattr(obj, 'time')
+    return hasattr(obj, "value") and hasattr(obj, "time")
 
 
 def plain_control_value(value: Any) -> Any:
@@ -112,13 +112,13 @@ def synth_dials(synth: Any) -> frozenset[str] | None:
     >>> synth_dials(object()) is None
     True
     """
-    for attr in ('dials', '_dials', '_default_dials'):
+    for attr in ("dials", "_dials", "_default_dials"):
         dials = getattr(synth, attr, None)
         if dials:
             if isinstance(dials, str):
                 dials = dials.split()
             return frozenset(dials)
-    wrapped = getattr(synth, '_synth_func', None)
+    wrapped = getattr(synth, "_synth_func", None)
     if wrapped is not None:
         return synth_dials(wrapped)
     return None

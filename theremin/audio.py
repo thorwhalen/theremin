@@ -31,7 +31,7 @@ def lr_version(func=None, *, params_to_double=None):
         Decorated function with l_ and r_ versions of the specified parameters
     """
     if params_to_double is None:
-        params_to_double = ['freq', 'volume']
+        params_to_double = ["freq", "volume"]
 
     def decorator(func):
         from functools import partial, wraps
@@ -40,11 +40,11 @@ def lr_version(func=None, *, params_to_double=None):
         def lr_wrapper(**kwargs):
             # Extract parameters for left and right channel
             l_params = {
-                param: kwargs.get(f'l_{param}', 440 if param == 'freq' else 0.0)
+                param: kwargs.get(f"l_{param}", 440 if param == "freq" else 0.0)
                 for param in params_to_double
             }
             r_params = {
-                param: kwargs.get(f'r_{param}', 440 if param == 'freq' else 0.0)
+                param: kwargs.get(f"r_{param}", 440 if param == "freq" else 0.0)
                 for param in params_to_double
             }
 
@@ -52,7 +52,7 @@ def lr_version(func=None, *, params_to_double=None):
             extra_kwargs = {
                 k: v
                 for k, v in kwargs.items()
-                if not any(k == f'l_{p}' or k == f'r_{p}' for p in params_to_double)
+                if not any(k == f"l_{p}" or k == f"r_{p}" for p in params_to_double)
             }
 
             # Create synth functions
@@ -60,21 +60,21 @@ def lr_version(func=None, *, params_to_double=None):
             r_synth = partial(func, **r_params, **extra_kwargs)
 
             # Get values needed for _two_voice_synth_func
-            l_freq = l_params.get('freq', 440)
-            l_volume = l_params.get('volume', 0.0)
-            r_freq = r_params.get('freq', 440)
-            r_volume = r_params.get('volume', 0.0)
+            l_freq = l_params.get("freq", 440)
+            l_volume = l_params.get("volume", 0.0)
+            r_freq = r_params.get("freq", 440)
+            r_volume = r_params.get("volume", 0.0)
 
             return _two_voice_synth_func(
                 l_freq, l_volume, r_freq, r_volume, l_synth=l_synth, r_synth=r_synth
             )
 
         # Add appropriate dials
-        dial_str = ' '.join([f'l_{p} r_{p}' for p in params_to_double])
-        if hasattr(func, '_default_dials'):
+        dial_str = " ".join([f"l_{p} r_{p}" for p in params_to_double])
+        if hasattr(func, "_default_dials"):
             for dial in func._default_dials.split():
                 if dial not in params_to_double:
-                    dial_str += f' {dial}'
+                    dial_str += f" {dial}"
 
         return add_default_dials(dial_str)(lr_wrapper)
 
@@ -91,7 +91,7 @@ def lr_version(func=None, *, params_to_double=None):
 DFLT_OSC = Sine
 
 
-@add_default_dials('freq volume')
+@add_default_dials("freq volume")
 def theremin_synth(
     freq=440,
     volume=0.5,
@@ -100,7 +100,7 @@ def theremin_synth(
     vibrato_rate=5,
     vibrato_depth=5,
     *,
-    waveform='sine',
+    waveform="sine",
 ):
     """
     Emulates a classic theremin sound.
@@ -119,9 +119,9 @@ def theremin_synth(
     """
     # Select waveform
     waveforms = {
-        'sine': Sine,
-        'triangle': lambda freq, mul: LFO(freq=freq, type=3, mul=mul),
-        'square': lambda freq, mul: LFO(freq=freq, type=1, mul=mul),
+        "sine": Sine,
+        "triangle": lambda freq, mul: LFO(freq=freq, type=3, mul=mul),
+        "square": lambda freq, mul: LFO(freq=freq, type=1, mul=mul),
     }
     wave_class = waveforms.get(waveform, Sine)
 
@@ -264,12 +264,12 @@ def resolve_scale_to_freq_trans(scale: str | None):
         return None
 
 
-@add_default_dials('freq volume vibrato_rate vibrato_depth reverb_mix ramp_time')
+@add_default_dials("freq volume vibrato_rate vibrato_depth reverb_mix ramp_time")
 def natural_sounding_synth(
     freq=440,
     volume=0.5,
     *,
-    instrument='violin',
+    instrument="violin",
     vibrato_rate=5,
     vibrato_depth=5,
     reverb_mix=0.3,
@@ -291,13 +291,13 @@ def natural_sounding_synth(
     - PyoObject: The resulting audio signal.
     """
     instrument_oscillators = {
-        'violin': lambda freq, mul: Blit(freq=freq, harms=10, mul=mul),
-        'organ': lambda freq, mul: SuperSaw(freq=freq, detune=0.1, bal=0.4, mul=mul),
-        'flute': lambda freq, mul: LFO(freq=freq, type=3, mul=mul * 0.5),
+        "violin": lambda freq, mul: Blit(freq=freq, harms=10, mul=mul),
+        "organ": lambda freq, mul: SuperSaw(freq=freq, detune=0.1, bal=0.4, mul=mul),
+        "flute": lambda freq, mul: LFO(freq=freq, type=3, mul=mul * 0.5),
     }
     print(f"{instrument=}")
     osc_factory = instrument_oscillators.get(
-        instrument, instrument_oscillators['violin']
+        instrument, instrument_oscillators["violin"]
     )
 
     # Vibrato modulation
@@ -330,7 +330,7 @@ def natural_sounding_synth(
 
 
 @add_default_dials(
-    'l_freq l_volume r_freq r_volume vibrato_rate vibrato_depth reverb_mix ramp_time'
+    "l_freq l_volume r_freq r_volume vibrato_rate vibrato_depth reverb_mix ramp_time"
 )
 def natural_sounding_synth_lr(
     l_freq=440,
@@ -338,7 +338,7 @@ def natural_sounding_synth_lr(
     r_freq=440,
     r_volume=0.0,
     *,
-    instrument='violin',
+    instrument="violin",
     vibrato_rate=5,
     vibrato_depth=5,
     reverb_mix=0.3,
@@ -347,7 +347,7 @@ def natural_sounding_synth_lr(
     extra_kwargs = {
         k: v
         for k, v in locals().items()
-        if k not in ['l_freq', 'l_volume', 'r_freq', 'r_volume']
+        if k not in ["l_freq", "l_volume", "r_freq", "r_volume"]
     }
     l_synth = partial(
         natural_sounding_synth, freq=l_freq, volume=l_volume, **extra_kwargs
@@ -360,7 +360,7 @@ def natural_sounding_synth_lr(
     )
 
 
-@add_default_settings('freq_src')
+@add_default_settings("freq_src")
 def phase_distortion_synth(freq=440, volume=0, distortion=0.5, *, freq_src=DFLT_OSC):
     """Phase distortion synthesizer."""
     phasor = Phasor(freq=freq)
@@ -369,7 +369,7 @@ def phase_distortion_synth(freq=440, volume=0, distortion=0.5, *, freq_src=DFLT_
 
 
 # @add_default_dials('carrier_freq_base fm_transpo index_amount beat_density reverb_mix noise_level env_attack env_release feedback pan_pos distortion')
-@add_default_dials('carrier_freq_base index_amount carrier_freq_base distortion')
+@add_default_dials("carrier_freq_base index_amount carrier_freq_base distortion")
 def rhythmic_fm_synth(
     carrier_freq_base=110,
     fm_transpo=1.0,
@@ -386,7 +386,7 @@ def rhythmic_fm_synth(
     env_table = ExpTable([(0, 0), (50, 1), (8191, 0)], exp=12)
 
     beat = Beat(time=beat_density, taps=16, w1=80, w2=60, w3=50).play()
-    amp_env = TrigEnv(beat, table=env_table, dur=beat['dur'], mul=0.2)
+    amp_env = TrigEnv(beat, table=env_table, dur=beat["dur"], mul=0.2)
 
     car_freq = Sig(carrier_freq_base * fm_transpo)
     mod_freq = car_freq * 2
@@ -438,7 +438,7 @@ from theremin.util import obfuscate_args
 
 # Create a simplified two-voice synth function that only exposes the necessary parameters
 two_voice_synth_func = obfuscate_args(
-    _two_voice_synth_func, keep_args=['l_freq', 'l_volume', 'r_freq', 'r_volume']
+    _two_voice_synth_func, keep_args=["l_freq", "l_volume", "r_freq", "r_volume"]
 )
 
 
@@ -546,8 +546,9 @@ class RangeMapper:
         """
         # Normalize ranges to floats to ensure consistent float outputs
         self.value_min, self.value_max = float(value_range[0]), float(value_range[1])
-        self.target_min, self.target_max = float(target_range[0]), float(
-            target_range[1]
+        self.target_min, self.target_max = (
+            float(target_range[0]),
+            float(target_range[1]),
         )
 
         # Precompute frequently used values for performance
@@ -634,13 +635,13 @@ def two_hand_freq_and_volume_knobs(
     min_freq: float = DFLT_MIN_FREQ,
     max_freq: float = DFLT_MAX_FREQ,
     audio_features: list = (
-        'l_freq',
-        'l_volume',
-        'r_freq',
-        'r_volume',
-        'vibrato_rate',
-        'vibrato_depth',
-        'reverb_mix',
+        "l_freq",
+        "l_volume",
+        "r_freq",
+        "r_volume",
+        "vibrato_rate",
+        "vibrato_depth",
+        "reverb_mix",
     ),
 ) -> dict[str, float]:
     """
@@ -658,58 +659,58 @@ def two_hand_freq_and_volume_knobs(
 
     # Set default silence
     mid_freq = (min_freq + max_freq) / 2
-    knobs['l_freq'] = mid_freq
-    knobs['l_volume'] = 0.0
-    knobs['r_freq'] = mid_freq
-    knobs['r_volume'] = 0.0
+    knobs["l_freq"] = mid_freq
+    knobs["l_volume"] = 0.0
+    knobs["r_freq"] = mid_freq
+    knobs["r_volume"] = 0.0
 
     if video_features:
         # get range mappers
-        freq_mapper = range_mapper('wrist_position_x', 'freq')
+        freq_mapper = range_mapper("wrist_position_x", "freq")
         volume_mapper = range_mapper(
-            'wrist_position_y', 'volume', ingress=lambda x: 1 - x
+            "wrist_position_y", "volume", ingress=lambda x: 1 - x
         )
-        openess_vibrato_rate_mapper = range_mapper('r_openness', 'vibrato_rate')
+        openess_vibrato_rate_mapper = range_mapper("r_openness", "vibrato_rate")
         tid_vibrato_depth_mapper = range_mapper(
-            'r_thumb_index_distance', 'vibrato_depth'
+            "r_thumb_index_distance", "vibrato_depth"
         )
 
-        if 'l_wrist_position' in video_features:
-            wrist = video_features['l_wrist_position']
-            knobs['l_freq'] = freq_mapper(wrist[0])
-            knobs['l_volume'] = volume_mapper(wrist[1])
-        if 'r_wrist_position' in video_features:
-            wrist = video_features['r_wrist_position']
-            knobs['r_freq'] = freq_mapper(wrist[0])
-            knobs['r_volume'] = volume_mapper(wrist[1])
+        if "l_wrist_position" in video_features:
+            wrist = video_features["l_wrist_position"]
+            knobs["l_freq"] = freq_mapper(wrist[0])
+            knobs["l_volume"] = volume_mapper(wrist[1])
+        if "r_wrist_position" in video_features:
+            wrist = video_features["r_wrist_position"]
+            knobs["r_freq"] = freq_mapper(wrist[0])
+            knobs["r_volume"] = volume_mapper(wrist[1])
 
-        if 'r_openess' in video_features:
-            knobs['vibrato_rate'] = np.clip(
-                video_features['r_openness'] * audio_feature_ranges['vibrato_rate'][1],
-                audio_feature_ranges['vibrato_rate'][0],
-                audio_feature_ranges['vibrato_rate'][1],
+        if "r_openess" in video_features:
+            knobs["vibrato_rate"] = np.clip(
+                video_features["r_openness"] * audio_feature_ranges["vibrato_rate"][1],
+                audio_feature_ranges["vibrato_rate"][0],
+                audio_feature_ranges["vibrato_rate"][1],
             )
 
-        if 'r_openness' in video_features and 'vibrato_rate' in audio_features:
-            knobs['vibrato_rate'] = openess_vibrato_rate_mapper(
-                video_features['r_openness']
+        if "r_openness" in video_features and "vibrato_rate" in audio_features:
+            knobs["vibrato_rate"] = openess_vibrato_rate_mapper(
+                video_features["r_openness"]
             )
-        if 'r_thumb_index_distance' in video_features:
-            knobs['vibrato_depth'] = tid_vibrato_depth_mapper(
-                video_features['r_thumb_index_distance']
+        if "r_thumb_index_distance" in video_features:
+            knobs["vibrato_depth"] = tid_vibrato_depth_mapper(
+                video_features["r_thumb_index_distance"]
             )
 
     # No frequency transformation needed here; this knobs set doesn't expose l_/r_ freq
 
     # Filter to include only parameters the synth function can use
     synth_params = {
-        'l_freq',
-        'l_volume',
-        'r_freq',
-        'r_volume',
-        'vibrato_rate',
-        'vibrato_depth',
-        'reverb_mix',
+        "l_freq",
+        "l_volume",
+        "r_freq",
+        "r_volume",
+        "vibrato_rate",
+        "vibrato_depth",
+        "reverb_mix",
     }
     return {k: float(v) for k, v in knobs.items() if k in synth_params}
 
@@ -739,31 +740,31 @@ def two_voice_knobs(
 
     # Set default silence
     mid_freq = (min_freq + max_freq) / 2
-    knobs['l_freq'] = mid_freq
-    knobs['l_volume'] = 0.0
-    knobs['r_freq'] = mid_freq
-    knobs['r_volume'] = 0.0
+    knobs["l_freq"] = mid_freq
+    knobs["l_volume"] = 0.0
+    knobs["r_freq"] = mid_freq
+    knobs["r_volume"] = 0.0
 
     if video_features:
         # get range mappers
-        freq_mapper = range_mapper('wrist_position_x', 'freq')
+        freq_mapper = range_mapper("wrist_position_x", "freq")
         volume_mapper = range_mapper(
-            'wrist_position_y', 'volume', ingress=lambda x: 1 - x
+            "wrist_position_y", "volume", ingress=lambda x: 1 - x
         )
 
-        if 'l_wrist_position' in video_features:
-            wrist = video_features['l_wrist_position']
-            knobs['l_freq'] = freq_mapper(wrist[0])
-            knobs['l_volume'] = volume_mapper(wrist[1])
-        if 'r_wrist_position' in video_features:
-            wrist = video_features['r_wrist_position']
-            knobs['r_freq'] = freq_mapper(wrist[0])
-            knobs['r_volume'] = volume_mapper(wrist[1])
+        if "l_wrist_position" in video_features:
+            wrist = video_features["l_wrist_position"]
+            knobs["l_freq"] = freq_mapper(wrist[0])
+            knobs["l_volume"] = volume_mapper(wrist[1])
+        if "r_wrist_position" in video_features:
+            wrist = video_features["r_wrist_position"]
+            knobs["r_freq"] = freq_mapper(wrist[0])
+            knobs["r_volume"] = volume_mapper(wrist[1])
 
     # No frequency transformation needed here; this knobs set doesn't expose l_/r_ freq
 
     # Only return parameters that two_voice_synth_func can handle
-    synth_params = {'l_freq', 'l_volume', 'r_freq', 'r_volume'}
+    synth_params = {"l_freq", "l_volume", "r_freq", "r_volume"}
     return {k: float(v) for k, v in knobs.items() if k in synth_params}
 
 
@@ -788,31 +789,31 @@ def simple_two_hands_knobs(
         Dict[str, float]: Dictionary with 'freq', 'volume' keys.
     """
     knobs = {
-        'freq': (min_freq + max_freq) / 2,  # Default middle frequency
-        'volume': 0.0,  # Default silence
+        "freq": (min_freq + max_freq) / 2,  # Default middle frequency
+        "volume": 0.0,  # Default silence
     }
 
     if video_features:
         # get range mappers
-        freq_mapper = range_mapper('wrist_position_x', 'freq')
+        freq_mapper = range_mapper("wrist_position_x", "freq")
         volume_mapper = range_mapper(
-            'wrist_position_y', 'volume', ingress=lambda x: 1 - x
+            "wrist_position_y", "volume", ingress=lambda x: 1 - x
         )
 
         # Use left hand for main frequency and volume (fallback to right if no left)
         primary_hand = None
-        if 'l_wrist_position' in video_features:
-            primary_hand = video_features['l_wrist_position']
-        elif 'r_wrist_position' in video_features:
-            primary_hand = video_features['r_wrist_position']
+        if "l_wrist_position" in video_features:
+            primary_hand = video_features["l_wrist_position"]
+        elif "r_wrist_position" in video_features:
+            primary_hand = video_features["r_wrist_position"]
 
         if primary_hand:
-            knobs['freq'] = freq_mapper(primary_hand[0])
-            knobs['volume'] = volume_mapper(primary_hand[1])
+            knobs["freq"] = freq_mapper(primary_hand[0])
+            knobs["volume"] = volume_mapper(primary_hand[1])
 
     # Apply frequency transformation if provided
     if freq_trans:
-        knobs['freq'] = freq_trans(knobs['freq'])
+        knobs["freq"] = freq_trans(knobs["freq"])
 
     return {k: float(v) for k, v in knobs.items()}
 
@@ -838,37 +839,37 @@ def ringmod_two_hands_knobs(
         Dict[str, float]: Dictionary with 'freq', 'volume', 'mod_freq_ratio' keys.
     """
     knobs = {
-        'freq': (min_freq + max_freq) / 2,  # Default middle frequency
-        'volume': 0.0,  # Default silence
-        'mod_freq_ratio': 1.5,  # Default modulation ratio
+        "freq": (min_freq + max_freq) / 2,  # Default middle frequency
+        "volume": 0.0,  # Default silence
+        "mod_freq_ratio": 1.5,  # Default modulation ratio
     }
 
     if video_features:
         # get range mappers
-        freq_mapper = range_mapper('wrist_position_x', 'freq')
+        freq_mapper = range_mapper("wrist_position_x", "freq")
         volume_mapper = range_mapper(
-            'wrist_position_y', 'volume', ingress=lambda x: 1 - x
+            "wrist_position_y", "volume", ingress=lambda x: 1 - x
         )
 
         # Use left hand for main frequency and volume (fallback to right if no left)
         primary_hand = None
-        if 'l_wrist_position' in video_features:
-            primary_hand = video_features['l_wrist_position']
-        elif 'r_wrist_position' in video_features:
-            primary_hand = video_features['r_wrist_position']
+        if "l_wrist_position" in video_features:
+            primary_hand = video_features["l_wrist_position"]
+        elif "r_wrist_position" in video_features:
+            primary_hand = video_features["r_wrist_position"]
 
         if primary_hand:
-            knobs['freq'] = freq_mapper(primary_hand[0])
-            knobs['volume'] = volume_mapper(primary_hand[1])
+            knobs["freq"] = freq_mapper(primary_hand[0])
+            knobs["volume"] = volume_mapper(primary_hand[1])
 
         # Use right hand openness for modulation ratio (if available)
-        if 'r_openness' in video_features:
+        if "r_openness" in video_features:
             # Map openness (0-1) to modulation ratio range (0.5-5.0)
-            knobs['mod_freq_ratio'] = 0.5 + video_features['r_openness'] * 4.5
+            knobs["mod_freq_ratio"] = 0.5 + video_features["r_openness"] * 4.5
 
     # Apply frequency transformation if provided
     if freq_trans:
-        knobs['freq'] = freq_trans(knobs['freq'])
+        knobs["freq"] = freq_trans(knobs["freq"])
 
     return {k: float(v) for k, v in knobs.items()}
 
@@ -894,46 +895,46 @@ def supersaw_two_hands_knobs(
         Dict[str, float]: Dictionary with 'freq', 'volume', 'detune', 'n_voices' keys.
     """
     knobs = {
-        'freq': (min_freq + max_freq) / 2,  # Default middle frequency
-        'volume': 0.0,  # Default silence
-        'detune': 0.01,  # Default detune amount
-        'n_voices': 7,  # Default number of voices
+        "freq": (min_freq + max_freq) / 2,  # Default middle frequency
+        "volume": 0.0,  # Default silence
+        "detune": 0.01,  # Default detune amount
+        "n_voices": 7,  # Default number of voices
     }
 
     if video_features:
         # get range mappers
-        freq_mapper = range_mapper('wrist_position_x', 'freq')
+        freq_mapper = range_mapper("wrist_position_x", "freq")
         volume_mapper = range_mapper(
-            'wrist_position_y', 'volume', ingress=lambda x: 1 - x
+            "wrist_position_y", "volume", ingress=lambda x: 1 - x
         )
 
         # Use left hand for main frequency and volume (fallback to right if no left)
         primary_hand = None
-        if 'l_wrist_position' in video_features:
-            primary_hand = video_features['l_wrist_position']
-        elif 'r_wrist_position' in video_features:
-            primary_hand = video_features['r_wrist_position']
+        if "l_wrist_position" in video_features:
+            primary_hand = video_features["l_wrist_position"]
+        elif "r_wrist_position" in video_features:
+            primary_hand = video_features["r_wrist_position"]
 
         if primary_hand:
-            knobs['freq'] = freq_mapper(primary_hand[0])
-            knobs['volume'] = volume_mapper(primary_hand[1])
+            knobs["freq"] = freq_mapper(primary_hand[0])
+            knobs["volume"] = volume_mapper(primary_hand[1])
 
         # Use right hand openness for detune amount (if available)
-        if 'r_openness' in video_features:
+        if "r_openness" in video_features:
             # Map openness (0-1) to detune range (0.001-0.1)
-            knobs['detune'] = 0.001 + video_features['r_openness'] * 0.099
+            knobs["detune"] = 0.001 + video_features["r_openness"] * 0.099
 
         # Use right thumb-index distance for number of voices (if available)
-        if 'r_thumb_index_distance' in video_features:
+        if "r_thumb_index_distance" in video_features:
             # Map distance to n_voices range (3-15)
             normalized_distance = np.clip(
-                video_features['r_thumb_index_distance'], 0, 1
+                video_features["r_thumb_index_distance"], 0, 1
             )
-            knobs['n_voices'] = int(3 + normalized_distance * 12)
+            knobs["n_voices"] = int(3 + normalized_distance * 12)
 
     # Apply frequency transformation if provided
     if freq_trans:
-        knobs['freq'] = freq_trans(knobs['freq'])
+        knobs["freq"] = freq_trans(knobs["freq"])
 
     return {k: float(v) for k, v in knobs.items()}
 
@@ -952,45 +953,45 @@ def rhythmic_fm_synth_knobs(
         Dict[str, float]: Audio knob values for rhythmic_fm_synth.
     """
     knobs = {
-        'carrier_freq_base': 220.0,
-        'fm_transpo': 1.0,
-        'index_amount': 5.0,
-        'beat_density': 0.1125,
-        'reverb_mix': 0.3,
-        'noise_level': 0.1,
-        'env_attack': 0.01,
-        'env_release': 0.5,
-        'feedback': 0.1,
-        'pan_pos': 0.5,
-        'distortion': 0.0,
+        "carrier_freq_base": 220.0,
+        "fm_transpo": 1.0,
+        "index_amount": 5.0,
+        "beat_density": 0.1125,
+        "reverb_mix": 0.3,
+        "noise_level": 0.1,
+        "env_attack": 0.01,
+        "env_release": 0.5,
+        "feedback": 0.1,
+        "pan_pos": 0.5,
+        "distortion": 0.0,
     }
 
     if not video_features:
         return knobs
 
     # Map right wrist X to carrier frequency base
-    if 'r_wrist_position' in video_features:
-        x = video_features['r_wrist_position'][0]
-        knobs['carrier_freq_base'] = 220 + x * (880 - 220)  # Range 220–880 Hz
+    if "r_wrist_position" in video_features:
+        x = video_features["r_wrist_position"][0]
+        knobs["carrier_freq_base"] = 220 + x * (880 - 220)  # Range 220–880 Hz
 
     # Map left wrist Y to index amount
-    if 'l_wrist_position' in video_features:
-        y = video_features['l_wrist_position'][1]
-        knobs['index_amount'] = 10 * (1 - y)  # Inverse: higher hand = more index
+    if "l_wrist_position" in video_features:
+        y = video_features["l_wrist_position"][1]
+        knobs["index_amount"] = 10 * (1 - y)  # Inverse: higher hand = more index
 
     # Right openness controls feedback
-    if 'r_openness' in video_features:
-        knobs['feedback'] = np.clip(video_features['r_openness'], 0.0, 1.0)
+    if "r_openness" in video_features:
+        knobs["feedback"] = np.clip(video_features["r_openness"], 0.0, 1.0)
 
     # Thumb-index distance controls distortion
-    if 'r_thumb_index_distance' in video_features:
-        dist = min(video_features['r_thumb_index_distance'], 0.2) / 0.2
-        knobs['distortion'] = dist
+    if "r_thumb_index_distance" in video_features:
+        dist = min(video_features["r_thumb_index_distance"], 0.2) / 0.2
+        knobs["distortion"] = dist
 
     # Left openness for reverb mix
-    if 'l_openness' in video_features:
-        openness = np.clip(video_features['l_openness'], 0.0, 1.0)
-        knobs['reverb_mix'] = float(openness)
+    if "l_openness" in video_features:
+        openness = np.clip(video_features["l_openness"], 0.0, 1.0)
+        knobs["reverb_mix"] = float(openness)
 
     return {k: float(v) for k, v in knobs.items()}
 
@@ -1032,39 +1033,39 @@ def theremin_knobs(
 
     if not video_features:
         return knobs
-    elif 'r_wrist_position' in video_features and 'l_wrist_position' in video_features:
+    elif "r_wrist_position" in video_features and "l_wrist_position" in video_features:
         # Both hands detected - classic theremin control
-        knobs['freq'] = float(
-            min_freq + video_features['r_wrist_position'][X] * (max_freq - min_freq)
+        knobs["freq"] = float(
+            min_freq + video_features["r_wrist_position"][X] * (max_freq - min_freq)
         )
-        knobs['volume'] = float(
-            np.clip(1 - video_features['l_wrist_position'][Y], 0, 1)
+        knobs["volume"] = float(
+            np.clip(1 - video_features["l_wrist_position"][Y], 0, 1)
         )
-    elif 'r_wrist_position' in video_features:
+    elif "r_wrist_position" in video_features:
         # Only right hand detected - use X for frequency, Y for volume
-        knobs['freq'] = float(
-            min_freq + video_features['r_wrist_position'][X] * (max_freq - min_freq)
+        knobs["freq"] = float(
+            min_freq + video_features["r_wrist_position"][X] * (max_freq - min_freq)
         )
-        knobs['volume'] = float(
-            np.clip(1 - video_features['r_wrist_position'][Y], 0, 1)
+        knobs["volume"] = float(
+            np.clip(1 - video_features["r_wrist_position"][Y], 0, 1)
         )
-    elif 'l_wrist_position' in video_features:
+    elif "l_wrist_position" in video_features:
         # Only left hand detected - use X for frequency, Y for volume
-        knobs['freq'] = float(
-            min_freq + video_features['l_wrist_position'][X] * (max_freq - min_freq)
+        knobs["freq"] = float(
+            min_freq + video_features["l_wrist_position"][X] * (max_freq - min_freq)
         )
-        knobs['volume'] = float(
-            np.clip(1 - video_features['l_wrist_position'][Y], 0, 1)
+        knobs["volume"] = float(
+            np.clip(1 - video_features["l_wrist_position"][Y], 0, 1)
         )
     else:
         # No hands detected - silent
         mid_freq = (min_freq + max_freq) / 2
         silent = 0.0
-        knobs['freq'] = mid_freq
-        knobs['volume'] = silent
+        knobs["freq"] = mid_freq
+        knobs["volume"] = silent
 
     if freq_trans:
-        knobs['freq'] = freq_trans(knobs['freq'])
+        knobs["freq"] = freq_trans(knobs["freq"])
 
     # Ensure plain Python floats (avoid numpy types for pyo compatibility)
     return {k: float(v) for k, v in knobs.items()}
@@ -1074,7 +1075,7 @@ MOD_FREQ = 0.4
 MOD_MUL = 0.1
 
 
-@add_default_settings('freq_src')
+@add_default_settings("freq_src")
 def intro_high_sines(
     base_freq=4000, mod_freq=MOD_FREQ, mod_mul=MOD_MUL, *, freq_src=DFLT_OSC
 ):
@@ -1121,34 +1122,34 @@ def high_sines_theremin_knobs(
     knobs = {}
 
     # Default values (middle of ranges)
-    knobs['base_freq'] = (base_freq_range[0] + base_freq_range[1]) / 2
-    knobs['mod_freq'] = (mod_freq_range[0] + mod_freq_range[1]) / 2
-    knobs['mod_mul'] = (mod_mul_range[0] + mod_mul_range[1]) / 2
+    knobs["base_freq"] = (base_freq_range[0] + base_freq_range[1]) / 2
+    knobs["mod_freq"] = (mod_freq_range[0] + mod_freq_range[1]) / 2
+    knobs["mod_mul"] = (mod_mul_range[0] + mod_mul_range[1]) / 2
 
     # If no hands detected, return default values
     if not video_features:
         return knobs
 
     # Right hand controls base_freq (X-axis) and mod_freq (Y-axis)
-    if 'r_wrist_position' in video_features:
-        r_x, r_y = video_features['r_wrist_position'][0:2]
+    if "r_wrist_position" in video_features:
+        r_x, r_y = video_features["r_wrist_position"][0:2]
 
         # X position controls base frequency
-        knobs['base_freq'] = float(
+        knobs["base_freq"] = float(
             base_freq_range[0] + r_x * (base_freq_range[1] - base_freq_range[0])
         )
 
         # Y position controls modulation frequency (inverse mapping feels more intuitive)
-        knobs['mod_freq'] = float(
+        knobs["mod_freq"] = float(
             mod_freq_range[0] + (1 - r_y) * (mod_freq_range[1] - mod_freq_range[0])
         )
 
     # Left hand controls mod_mul (amplitude) with Y-axis
-    if 'l_wrist_position' in video_features:
-        y = video_features['l_wrist_position'][1]
+    if "l_wrist_position" in video_features:
+        y = video_features["l_wrist_position"][1]
 
         # Y position controls modulation amplitude (inverse mapping)
-        knobs['mod_mul'] = float(
+        knobs["mod_mul"] = float(
             mod_mul_range[0] + (1 - y) * (mod_mul_range[1] - mod_mul_range[0])
         )
 
@@ -1180,35 +1181,35 @@ def high_sines_pinch_theremin_knobs(
     knobs = {}
 
     # Default values (middle of ranges)
-    knobs['base_freq'] = (base_freq_range[0] + base_freq_range[1]) / 2
-    knobs['mod_freq'] = (mod_freq_range[0] + mod_freq_range[1]) / 2
-    knobs['mod_mul'] = (mod_mul_range[0] + mod_mul_range[1]) / 2
+    knobs["base_freq"] = (base_freq_range[0] + base_freq_range[1]) / 2
+    knobs["mod_freq"] = (mod_freq_range[0] + mod_freq_range[1]) / 2
+    knobs["mod_mul"] = (mod_mul_range[0] + mod_mul_range[1]) / 2
 
     # If no hands detected, return default values
     if not video_features:
         return knobs
 
     # Right hand controls base_freq with X position
-    if 'r_wrist_position' in video_features:
-        r_x = video_features['r_wrist_position'][0]
-        knobs['base_freq'] = float(
+    if "r_wrist_position" in video_features:
+        r_x = video_features["r_wrist_position"][0]
+        knobs["base_freq"] = float(
             base_freq_range[0] + r_x * (base_freq_range[1] - base_freq_range[0])
         )
 
     # Right hand pinch controls mod_freq (if available)
-    if 'r_thumb_index_distance' in video_features:
+    if "r_thumb_index_distance" in video_features:
         # Map thumb-index distance (typically 0-0.2) to modulation frequency
         # Normalize to 0-1 range assuming max distance of 0.2
-        pinch_distance = min(video_features['r_thumb_index_distance'], 0.2) / 0.2
-        knobs['mod_freq'] = float(
+        pinch_distance = min(video_features["r_thumb_index_distance"], 0.2) / 0.2
+        knobs["mod_freq"] = float(
             mod_freq_range[0] + pinch_distance * (mod_freq_range[1] - mod_freq_range[0])
         )
 
     # Left hand pinch controls mod_mul (if available)
-    if 'l_thumb_index_distance' in video_features:
+    if "l_thumb_index_distance" in video_features:
         # Normalize to 0-1 range assuming max distance of 0.2
-        pinch_distance = min(video_features['l_thumb_index_distance'], 0.2) / 0.2
-        knobs['mod_mul'] = float(
+        pinch_distance = min(video_features["l_thumb_index_distance"], 0.2) / 0.2
+        knobs["mod_mul"] = float(
             mod_mul_range[0] + pinch_distance * (mod_mul_range[1] - mod_mul_range[0])
         )
 
@@ -1240,34 +1241,34 @@ def high_sines_openness_theremin_knobs(
     knobs = {}
 
     # Default values (middle of ranges)
-    knobs['base_freq'] = (base_freq_range[0] + base_freq_range[1]) / 2
-    knobs['mod_freq'] = (mod_freq_range[0] + mod_freq_range[1]) / 2
-    knobs['mod_mul'] = (mod_mul_range[0] + mod_mul_range[1]) / 2
+    knobs["base_freq"] = (base_freq_range[0] + base_freq_range[1]) / 2
+    knobs["mod_freq"] = (mod_freq_range[0] + mod_freq_range[1]) / 2
+    knobs["mod_mul"] = (mod_mul_range[0] + mod_mul_range[1]) / 2
 
     # If no hands detected, return default values
     if not video_features:
         return knobs
 
     # Right hand controls base_freq with X position
-    if 'r_wrist_position' in video_features:
-        r_x = video_features['r_wrist_position'][0]
-        knobs['base_freq'] = float(
+    if "r_wrist_position" in video_features:
+        r_x = video_features["r_wrist_position"][0]
+        knobs["base_freq"] = float(
             base_freq_range[0] + r_x * (base_freq_range[1] - base_freq_range[0])
         )
 
     # Right hand openness controls mod_freq (if available)
-    if 'r_openness' in video_features:
+    if "r_openness" in video_features:
         # Normalize openness to 0-1 range (typically ranges from 0.05 to 0.3)
-        openness = np.clip((video_features['r_openness'] - 0.05) / 0.25, 0, 1)
-        knobs['mod_freq'] = float(
+        openness = np.clip((video_features["r_openness"] - 0.05) / 0.25, 0, 1)
+        knobs["mod_freq"] = float(
             mod_freq_range[0] + openness * (mod_freq_range[1] - mod_freq_range[0])
         )
 
     # Left hand openness controls mod_mul (if available)
-    if 'l_openness' in video_features:
+    if "l_openness" in video_features:
         # Normalize openness to 0-1 range
-        openness = np.clip((video_features['l_openness'] - 0.05) / 0.25, 0, 1)
-        knobs['mod_mul'] = float(
+        openness = np.clip((video_features["l_openness"] - 0.05) / 0.25, 0, 1)
+        knobs["mod_mul"] = float(
             mod_mul_range[0] + openness * (mod_mul_range[1] - mod_mul_range[0])
         )
 
@@ -1290,25 +1291,25 @@ def filter_unchanged_frequencies(_audio_features, previous_data):
     Returns:
         Modified _audio_features with unchanged frequencies removed, and the updated previous_data
     """
-    if 'freq' in _audio_features:
-        freq = _audio_features['freq']
+    if "freq" in _audio_features:
+        freq = _audio_features["freq"]
         previous_data.last_raw_freqs.append(freq)
         if freq == previous_data.last_freq:
-            del _audio_features['freq']
+            del _audio_features["freq"]
         else:
             previous_data.last_freq = freq
 
-    if 'l_freq' in _audio_features:
-        l_freq = _audio_features['l_freq']
+    if "l_freq" in _audio_features:
+        l_freq = _audio_features["l_freq"]
         if l_freq == previous_data.last_l_freq:
-            del _audio_features['l_freq']
+            del _audio_features["l_freq"]
         else:
             previous_data.last_l_freq = l_freq
 
-    if 'r_freq' in _audio_features:
-        r_freq = _audio_features['r_freq']
+    if "r_freq" in _audio_features:
+        r_freq = _audio_features["r_freq"]
         if r_freq == previous_data.last_r_freq:
-            del _audio_features['r_freq']
+            del _audio_features["r_freq"]
         else:
             previous_data.last_r_freq = r_freq
 
@@ -1462,34 +1463,34 @@ def two_voice_knobs(
 
     # Set default silence
     mid_freq = (min_freq + max_freq) / 2
-    knobs['l_freq'] = mid_freq
-    knobs['l_volume'] = 0.0
-    knobs['r_freq'] = mid_freq
-    knobs['r_volume'] = 0.0
+    knobs["l_freq"] = mid_freq
+    knobs["l_volume"] = 0.0
+    knobs["r_freq"] = mid_freq
+    knobs["r_volume"] = 0.0
 
     if video_features:
         # get range mappers
-        freq_mapper = range_mapper('wrist_position_x', 'freq')
+        freq_mapper = range_mapper("wrist_position_x", "freq")
         volume_mapper = range_mapper(
-            'wrist_position_y', 'volume', ingress=lambda x: 1 - x
+            "wrist_position_y", "volume", ingress=lambda x: 1 - x
         )
 
-        if 'l_wrist_position' in video_features:
-            wrist = video_features['l_wrist_position']
-            knobs['l_freq'] = freq_mapper(wrist[0])
-            knobs['l_volume'] = volume_mapper(wrist[1])
-        if 'r_wrist_position' in video_features:
-            wrist = video_features['r_wrist_position']
-            knobs['r_freq'] = freq_mapper(wrist[0])
-            knobs['r_volume'] = volume_mapper(wrist[1])
+        if "l_wrist_position" in video_features:
+            wrist = video_features["l_wrist_position"]
+            knobs["l_freq"] = freq_mapper(wrist[0])
+            knobs["l_volume"] = volume_mapper(wrist[1])
+        if "r_wrist_position" in video_features:
+            wrist = video_features["r_wrist_position"]
+            knobs["r_freq"] = freq_mapper(wrist[0])
+            knobs["r_volume"] = volume_mapper(wrist[1])
 
     # Apply frequency transformation if provided
     if freq_trans:
-        knobs['l_freq'] = freq_trans(knobs['l_freq'])
-        knobs['r_freq'] = freq_trans(knobs['r_freq'])
+        knobs["l_freq"] = freq_trans(knobs["l_freq"])
+        knobs["r_freq"] = freq_trans(knobs["r_freq"])
 
     # Only return parameters that two_voice_synth_func can handle
-    synth_params = {'l_freq', 'l_volume', 'r_freq', 'r_volume'}
+    synth_params = {"l_freq", "l_volume", "r_freq", "r_volume"}
     return {k: float(v) for k, v in knobs.items() if k in synth_params}
 
 
@@ -1514,31 +1515,31 @@ def simple_two_hands_knobs(
         Dict[str, float]: Dictionary with 'freq', 'volume' keys.
     """
     knobs = {
-        'freq': (min_freq + max_freq) / 2,  # Default middle frequency
-        'volume': 0.0,  # Default silence
+        "freq": (min_freq + max_freq) / 2,  # Default middle frequency
+        "volume": 0.0,  # Default silence
     }
 
     if video_features:
         # get range mappers
-        freq_mapper = range_mapper('wrist_position_x', 'freq')
+        freq_mapper = range_mapper("wrist_position_x", "freq")
         volume_mapper = range_mapper(
-            'wrist_position_y', 'volume', ingress=lambda x: 1 - x
+            "wrist_position_y", "volume", ingress=lambda x: 1 - x
         )
 
         # Use left hand for main frequency and volume (fallback to right if no left)
         primary_hand = None
-        if 'l_wrist_position' in video_features:
-            primary_hand = video_features['l_wrist_position']
-        elif 'r_wrist_position' in video_features:
-            primary_hand = video_features['r_wrist_position']
+        if "l_wrist_position" in video_features:
+            primary_hand = video_features["l_wrist_position"]
+        elif "r_wrist_position" in video_features:
+            primary_hand = video_features["r_wrist_position"]
 
         if primary_hand:
-            knobs['freq'] = freq_mapper(primary_hand[0])
-            knobs['volume'] = volume_mapper(primary_hand[1])
+            knobs["freq"] = freq_mapper(primary_hand[0])
+            knobs["volume"] = volume_mapper(primary_hand[1])
 
     # Apply frequency transformation if provided
     if freq_trans:
-        knobs['freq'] = freq_trans(knobs['freq'])
+        knobs["freq"] = freq_trans(knobs["freq"])
 
     return {k: float(v) for k, v in knobs.items()}
 
@@ -1564,37 +1565,37 @@ def ringmod_two_hands_knobs(
         Dict[str, float]: Dictionary with 'freq', 'volume', 'mod_freq_ratio' keys.
     """
     knobs = {
-        'freq': (min_freq + max_freq) / 2,  # Default middle frequency
-        'volume': 0.0,  # Default silence
-        'mod_freq_ratio': 1.5,  # Default modulation ratio
+        "freq": (min_freq + max_freq) / 2,  # Default middle frequency
+        "volume": 0.0,  # Default silence
+        "mod_freq_ratio": 1.5,  # Default modulation ratio
     }
 
     if video_features:
         # get range mappers
-        freq_mapper = range_mapper('wrist_position_x', 'freq')
+        freq_mapper = range_mapper("wrist_position_x", "freq")
         volume_mapper = range_mapper(
-            'wrist_position_y', 'volume', ingress=lambda x: 1 - x
+            "wrist_position_y", "volume", ingress=lambda x: 1 - x
         )
 
         # Use left hand for main frequency and volume (fallback to right if no left)
         primary_hand = None
-        if 'l_wrist_position' in video_features:
-            primary_hand = video_features['l_wrist_position']
-        elif 'r_wrist_position' in video_features:
-            primary_hand = video_features['r_wrist_position']
+        if "l_wrist_position" in video_features:
+            primary_hand = video_features["l_wrist_position"]
+        elif "r_wrist_position" in video_features:
+            primary_hand = video_features["r_wrist_position"]
 
         if primary_hand:
-            knobs['freq'] = freq_mapper(primary_hand[0])
-            knobs['volume'] = volume_mapper(primary_hand[1])
+            knobs["freq"] = freq_mapper(primary_hand[0])
+            knobs["volume"] = volume_mapper(primary_hand[1])
 
         # Use right hand openness for modulation ratio (if available)
-        if 'r_openness' in video_features:
+        if "r_openness" in video_features:
             # Map openness (0-1) to modulation ratio range (0.5-5.0)
-            knobs['mod_freq_ratio'] = 0.5 + video_features['r_openness'] * 4.5
+            knobs["mod_freq_ratio"] = 0.5 + video_features["r_openness"] * 4.5
 
     # Apply frequency transformation if provided
     if freq_trans:
-        knobs['freq'] = freq_trans(knobs['freq'])
+        knobs["freq"] = freq_trans(knobs["freq"])
 
     return {k: float(v) for k, v in knobs.items()}
 
@@ -1620,46 +1621,46 @@ def supersaw_two_hands_knobs(
         Dict[str, float]: Dictionary with 'freq', 'volume', 'detune', 'n_voices' keys.
     """
     knobs = {
-        'freq': (min_freq + max_freq) / 2,  # Default middle frequency
-        'volume': 0.0,  # Default silence
-        'detune': 0.01,  # Default detune amount
-        'n_voices': 7,  # Default number of voices
+        "freq": (min_freq + max_freq) / 2,  # Default middle frequency
+        "volume": 0.0,  # Default silence
+        "detune": 0.01,  # Default detune amount
+        "n_voices": 7,  # Default number of voices
     }
 
     if video_features:
         # get range mappers
-        freq_mapper = range_mapper('wrist_position_x', 'freq')
+        freq_mapper = range_mapper("wrist_position_x", "freq")
         volume_mapper = range_mapper(
-            'wrist_position_y', 'volume', ingress=lambda x: 1 - x
+            "wrist_position_y", "volume", ingress=lambda x: 1 - x
         )
 
         # Use left hand for main frequency and volume (fallback to right if no left)
         primary_hand = None
-        if 'l_wrist_position' in video_features:
-            primary_hand = video_features['l_wrist_position']
-        elif 'r_wrist_position' in video_features:
-            primary_hand = video_features['r_wrist_position']
+        if "l_wrist_position" in video_features:
+            primary_hand = video_features["l_wrist_position"]
+        elif "r_wrist_position" in video_features:
+            primary_hand = video_features["r_wrist_position"]
 
         if primary_hand:
-            knobs['freq'] = freq_mapper(primary_hand[0])
-            knobs['volume'] = volume_mapper(primary_hand[1])
+            knobs["freq"] = freq_mapper(primary_hand[0])
+            knobs["volume"] = volume_mapper(primary_hand[1])
 
         # Use right hand openness for detune amount (if available)
-        if 'r_openness' in video_features:
+        if "r_openness" in video_features:
             # Map openness (0-1) to detune range (0.001-0.1)
-            knobs['detune'] = 0.001 + video_features['r_openness'] * 0.099
+            knobs["detune"] = 0.001 + video_features["r_openness"] * 0.099
 
         # Use right thumb-index distance for number of voices (if available)
-        if 'r_thumb_index_distance' in video_features:
+        if "r_thumb_index_distance" in video_features:
             # Map distance to n_voices range (3-15)
             normalized_distance = np.clip(
-                video_features['r_thumb_index_distance'], 0, 1
+                video_features["r_thumb_index_distance"], 0, 1
             )
-            knobs['n_voices'] = int(3 + normalized_distance * 12)
+            knobs["n_voices"] = int(3 + normalized_distance * 12)
 
     # Apply frequency transformation if provided
     if freq_trans:
-        knobs['freq'] = freq_trans(knobs['freq'])
+        knobs["freq"] = freq_trans(knobs["freq"])
 
     return {k: float(v) for k, v in knobs.items()}
 
@@ -1678,45 +1679,45 @@ def rhythmic_fm_synth_knobs(
         Dict[str, float]: Audio knob values for rhythmic_fm_synth.
     """
     knobs = {
-        'carrier_freq_base': 220.0,
-        'fm_transpo': 1.0,
-        'index_amount': 5.0,
-        'beat_density': 0.1125,
-        'reverb_mix': 0.3,
-        'noise_level': 0.1,
-        'env_attack': 0.01,
-        'env_release': 0.5,
-        'feedback': 0.1,
-        'pan_pos': 0.5,
-        'distortion': 0.0,
+        "carrier_freq_base": 220.0,
+        "fm_transpo": 1.0,
+        "index_amount": 5.0,
+        "beat_density": 0.1125,
+        "reverb_mix": 0.3,
+        "noise_level": 0.1,
+        "env_attack": 0.01,
+        "env_release": 0.5,
+        "feedback": 0.1,
+        "pan_pos": 0.5,
+        "distortion": 0.0,
     }
 
     if not video_features:
         return knobs
 
     # Map right wrist X to carrier frequency base
-    if 'r_wrist_position' in video_features:
-        x = video_features['r_wrist_position'][0]
-        knobs['carrier_freq_base'] = 220 + x * (880 - 220)  # Range 220–880 Hz
+    if "r_wrist_position" in video_features:
+        x = video_features["r_wrist_position"][0]
+        knobs["carrier_freq_base"] = 220 + x * (880 - 220)  # Range 220–880 Hz
 
     # Map left wrist Y to index amount
-    if 'l_wrist_position' in video_features:
-        y = video_features['l_wrist_position'][1]
-        knobs['index_amount'] = 10 * (1 - y)  # Inverse: higher hand = more index
+    if "l_wrist_position" in video_features:
+        y = video_features["l_wrist_position"][1]
+        knobs["index_amount"] = 10 * (1 - y)  # Inverse: higher hand = more index
 
     # Right openness controls feedback
-    if 'r_openness' in video_features:
-        knobs['feedback'] = np.clip(video_features['r_openness'], 0.0, 1.0)
+    if "r_openness" in video_features:
+        knobs["feedback"] = np.clip(video_features["r_openness"], 0.0, 1.0)
 
     # Thumb-index distance controls distortion
-    if 'r_thumb_index_distance' in video_features:
-        dist = min(video_features['r_thumb_index_distance'], 0.2) / 0.2
-        knobs['distortion'] = dist
+    if "r_thumb_index_distance" in video_features:
+        dist = min(video_features["r_thumb_index_distance"], 0.2) / 0.2
+        knobs["distortion"] = dist
 
     # Left openness for reverb mix
-    if 'l_openness' in video_features:
-        openness = np.clip(video_features['l_openness'], 0.0, 1.0)
-        knobs['reverb_mix'] = float(openness)
+    if "l_openness" in video_features:
+        openness = np.clip(video_features["l_openness"], 0.0, 1.0)
+        knobs["reverb_mix"] = float(openness)
 
     return {k: float(v) for k, v in knobs.items()}
 
@@ -1758,39 +1759,39 @@ def theremin_knobs(
 
     if not video_features:
         return knobs
-    elif 'r_wrist_position' in video_features and 'l_wrist_position' in video_features:
+    elif "r_wrist_position" in video_features and "l_wrist_position" in video_features:
         # Both hands detected - classic theremin control
-        knobs['freq'] = float(
-            min_freq + video_features['r_wrist_position'][X] * (max_freq - min_freq)
+        knobs["freq"] = float(
+            min_freq + video_features["r_wrist_position"][X] * (max_freq - min_freq)
         )
-        knobs['volume'] = float(
-            np.clip(1 - video_features['l_wrist_position'][Y], 0, 1)
+        knobs["volume"] = float(
+            np.clip(1 - video_features["l_wrist_position"][Y], 0, 1)
         )
-    elif 'r_wrist_position' in video_features:
+    elif "r_wrist_position" in video_features:
         # Only right hand detected - use X for frequency, Y for volume
-        knobs['freq'] = float(
-            min_freq + video_features['r_wrist_position'][X] * (max_freq - min_freq)
+        knobs["freq"] = float(
+            min_freq + video_features["r_wrist_position"][X] * (max_freq - min_freq)
         )
-        knobs['volume'] = float(
-            np.clip(1 - video_features['r_wrist_position'][Y], 0, 1)
+        knobs["volume"] = float(
+            np.clip(1 - video_features["r_wrist_position"][Y], 0, 1)
         )
-    elif 'l_wrist_position' in video_features:
+    elif "l_wrist_position" in video_features:
         # Only left hand detected - use X for frequency, Y for volume
-        knobs['freq'] = float(
-            min_freq + video_features['l_wrist_position'][X] * (max_freq - min_freq)
+        knobs["freq"] = float(
+            min_freq + video_features["l_wrist_position"][X] * (max_freq - min_freq)
         )
-        knobs['volume'] = float(
-            np.clip(1 - video_features['l_wrist_position'][Y], 0, 1)
+        knobs["volume"] = float(
+            np.clip(1 - video_features["l_wrist_position"][Y], 0, 1)
         )
     else:
         # No hands detected - silent
         mid_freq = (min_freq + max_freq) / 2
         silent = 0.0
-        knobs['freq'] = mid_freq
-        knobs['volume'] = silent
+        knobs["freq"] = mid_freq
+        knobs["volume"] = silent
 
     if freq_trans:
-        knobs['freq'] = freq_trans(knobs['freq'])
+        knobs["freq"] = freq_trans(knobs["freq"])
 
     # Ensure plain Python floats (avoid numpy types for pyo compatibility)
     return {k: float(v) for k, v in knobs.items()}
@@ -1800,7 +1801,7 @@ MOD_FREQ = 0.4
 MOD_MUL = 0.1
 
 
-@add_default_settings('freq_src')
+@add_default_settings("freq_src")
 def intro_high_sines(
     base_freq=4000, mod_freq=MOD_FREQ, mod_mul=MOD_MUL, *, freq_src=DFLT_OSC
 ):
@@ -1847,34 +1848,34 @@ def high_sines_theremin_knobs(
     knobs = {}
 
     # Default values (middle of ranges)
-    knobs['base_freq'] = (base_freq_range[0] + base_freq_range[1]) / 2
-    knobs['mod_freq'] = (mod_freq_range[0] + mod_freq_range[1]) / 2
-    knobs['mod_mul'] = (mod_mul_range[0] + mod_mul_range[1]) / 2
+    knobs["base_freq"] = (base_freq_range[0] + base_freq_range[1]) / 2
+    knobs["mod_freq"] = (mod_freq_range[0] + mod_freq_range[1]) / 2
+    knobs["mod_mul"] = (mod_mul_range[0] + mod_mul_range[1]) / 2
 
     # If no hands detected, return default values
     if not video_features:
         return knobs
 
     # Right hand controls base_freq (X-axis) and mod_freq (Y-axis)
-    if 'r_wrist_position' in video_features:
-        r_x, r_y = video_features['r_wrist_position'][0:2]
+    if "r_wrist_position" in video_features:
+        r_x, r_y = video_features["r_wrist_position"][0:2]
 
         # X position controls base frequency
-        knobs['base_freq'] = float(
+        knobs["base_freq"] = float(
             base_freq_range[0] + r_x * (base_freq_range[1] - base_freq_range[0])
         )
 
         # Y position controls modulation frequency (inverse mapping feels more intuitive)
-        knobs['mod_freq'] = float(
+        knobs["mod_freq"] = float(
             mod_freq_range[0] + (1 - r_y) * (mod_freq_range[1] - mod_freq_range[0])
         )
 
     # Left hand controls mod_mul (amplitude) with Y-axis
-    if 'l_wrist_position' in video_features:
-        y = video_features['l_wrist_position'][1]
+    if "l_wrist_position" in video_features:
+        y = video_features["l_wrist_position"][1]
 
         # Y position controls modulation amplitude (inverse mapping)
-        knobs['mod_mul'] = float(
+        knobs["mod_mul"] = float(
             mod_mul_range[0] + (1 - y) * (mod_mul_range[1] - mod_mul_range[0])
         )
 
@@ -1906,35 +1907,35 @@ def high_sines_pinch_theremin_knobs(
     knobs = {}
 
     # Default values (middle of ranges)
-    knobs['base_freq'] = (base_freq_range[0] + base_freq_range[1]) / 2
-    knobs['mod_freq'] = (mod_freq_range[0] + mod_freq_range[1]) / 2
-    knobs['mod_mul'] = (mod_mul_range[0] + mod_mul_range[1]) / 2
+    knobs["base_freq"] = (base_freq_range[0] + base_freq_range[1]) / 2
+    knobs["mod_freq"] = (mod_freq_range[0] + mod_freq_range[1]) / 2
+    knobs["mod_mul"] = (mod_mul_range[0] + mod_mul_range[1]) / 2
 
     # If no hands detected, return default values
     if not video_features:
         return knobs
 
     # Right hand controls base_freq with X position
-    if 'r_wrist_position' in video_features:
-        r_x = video_features['r_wrist_position'][0]
-        knobs['base_freq'] = float(
+    if "r_wrist_position" in video_features:
+        r_x = video_features["r_wrist_position"][0]
+        knobs["base_freq"] = float(
             base_freq_range[0] + r_x * (base_freq_range[1] - base_freq_range[0])
         )
 
     # Right hand pinch controls mod_freq (if available)
-    if 'r_thumb_index_distance' in video_features:
+    if "r_thumb_index_distance" in video_features:
         # Map thumb-index distance (typically 0-0.2) to modulation frequency
         # Normalize to 0-1 range assuming max distance of 0.2
-        pinch_distance = min(video_features['r_thumb_index_distance'], 0.2) / 0.2
-        knobs['mod_freq'] = float(
+        pinch_distance = min(video_features["r_thumb_index_distance"], 0.2) / 0.2
+        knobs["mod_freq"] = float(
             mod_freq_range[0] + pinch_distance * (mod_freq_range[1] - mod_freq_range[0])
         )
 
     # Left hand pinch controls mod_mul (if available)
-    if 'l_thumb_index_distance' in video_features:
+    if "l_thumb_index_distance" in video_features:
         # Normalize to 0-1 range assuming max distance of 0.2
-        pinch_distance = min(video_features['l_thumb_index_distance'], 0.2) / 0.2
-        knobs['mod_mul'] = float(
+        pinch_distance = min(video_features["l_thumb_index_distance"], 0.2) / 0.2
+        knobs["mod_mul"] = float(
             mod_mul_range[0] + pinch_distance * (mod_mul_range[1] - mod_mul_range[0])
         )
 
@@ -1966,34 +1967,34 @@ def high_sines_openness_theremin_knobs(
     knobs = {}
 
     # Default values (middle of ranges)
-    knobs['base_freq'] = (base_freq_range[0] + base_freq_range[1]) / 2
-    knobs['mod_freq'] = (mod_freq_range[0] + mod_freq_range[1]) / 2
-    knobs['mod_mul'] = (mod_mul_range[0] + mod_mul_range[1]) / 2
+    knobs["base_freq"] = (base_freq_range[0] + base_freq_range[1]) / 2
+    knobs["mod_freq"] = (mod_freq_range[0] + mod_freq_range[1]) / 2
+    knobs["mod_mul"] = (mod_mul_range[0] + mod_mul_range[1]) / 2
 
     # If no hands detected, return default values
     if not video_features:
         return knobs
 
     # Right hand controls base_freq with X position
-    if 'r_wrist_position' in video_features:
-        r_x = video_features['r_wrist_position'][0]
-        knobs['base_freq'] = float(
+    if "r_wrist_position" in video_features:
+        r_x = video_features["r_wrist_position"][0]
+        knobs["base_freq"] = float(
             base_freq_range[0] + r_x * (base_freq_range[1] - base_freq_range[0])
         )
 
     # Right hand openness controls mod_freq (if available)
-    if 'r_openness' in video_features:
+    if "r_openness" in video_features:
         # Normalize openness to 0-1 range (typically ranges from 0.05 to 0.3)
-        openness = np.clip((video_features['r_openness'] - 0.05) / 0.25, 0, 1)
-        knobs['mod_freq'] = float(
+        openness = np.clip((video_features["r_openness"] - 0.05) / 0.25, 0, 1)
+        knobs["mod_freq"] = float(
             mod_freq_range[0] + openness * (mod_freq_range[1] - mod_freq_range[0])
         )
 
     # Left hand openness controls mod_mul (if available)
-    if 'l_openness' in video_features:
+    if "l_openness" in video_features:
         # Normalize openness to 0-1 range
-        openness = np.clip((video_features['l_openness'] - 0.05) / 0.25, 0, 1)
-        knobs['mod_mul'] = float(
+        openness = np.clip((video_features["l_openness"] - 0.05) / 0.25, 0, 1)
+        knobs["mod_mul"] = float(
             mod_mul_range[0] + openness * (mod_mul_range[1] - mod_mul_range[0])
         )
 

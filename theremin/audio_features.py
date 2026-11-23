@@ -102,7 +102,7 @@ def extract_nested_value(data: dict, path: str) -> Any:
         extract_nested_value({'r_wrist_position': [0.5, 0.3]}, 'r_wrist_position.0') -> 0.5
         extract_nested_value({'r_wrist_position': [0.5, 0.3]}, 'r_wrist_position.1') -> 0.3
     """
-    parts = path.split('.')
+    parts = path.split(".")
     value = data
 
     for part in parts:
@@ -160,17 +160,17 @@ wrist_y_to_volume = range_transformer(
 
 # Hand openness transformers
 openness_to_vibrato_rate = range_transformer(
-    input_range=(0, 1), output_range=audio_feature_ranges['vibrato_rate']
+    input_range=(0, 1), output_range=audio_feature_ranges["vibrato_rate"]
 )
 
 openness_to_vibrato_depth = range_transformer(
-    input_range=(0, 1), output_range=audio_feature_ranges['vibrato_depth']
+    input_range=(0, 1), output_range=audio_feature_ranges["vibrato_depth"]
 )
 
 # Distance-based transformers
 distance_to_reverb = range_transformer(
-    input_range=video_feature_ranges['thumb_index_distance'],
-    output_range=audio_feature_ranges['reverb_mix'],
+    input_range=video_feature_ranges["thumb_index_distance"],
+    output_range=audio_feature_ranges["reverb_mix"],
 )
 
 
@@ -303,8 +303,8 @@ class FallbackAudioFeatureBuilder(AudioFeatureBuilder):
 
         # If we have both hands, we're done
         if (
-            'r_wrist_position' in video_features
-            and 'l_wrist_position' in video_features
+            "r_wrist_position" in video_features
+            and "l_wrist_position" in video_features
         ):
             return audio_features
 

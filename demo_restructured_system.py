@@ -33,12 +33,12 @@ def demo_audio_feature_builders():
 
     # Sample video features (what we get from hand detection)
     video_features = {
-        'r_wrist_position': [0.7, 0.3],  # Right hand: far right, low
-        'l_wrist_position': [0.3, 0.8],  # Left hand: left side, high
-        'r_openness': 0.6,  # Right hand partially open
-        'l_openness': 0.4,  # Left hand less open
-        'r_thumb_index_distance': 0.1,  # Right hand pinching
-        'l_thumb_index_distance': 0.3,  # Left hand more open
+        "r_wrist_position": [0.7, 0.3],  # Right hand: far right, low
+        "l_wrist_position": [0.3, 0.8],  # Left hand: left side, high
+        "r_openness": 0.6,  # Right hand partially open
+        "l_openness": 0.4,  # Left hand less open
+        "r_thumb_index_distance": 0.1,  # Right hand pinching
+        "l_thumb_index_distance": 0.3,  # Left hand more open
     }
 
     print(f"Input video features: {video_features}\n")
@@ -146,11 +146,11 @@ def demo_custom_pipeline():
 
     # Test the pipeline
     test_features = {
-        'r_wrist_position': [0.6, 0.4],
-        'l_wrist_position': [0.3, 0.7],
-        'r_openness': 0.8,
-        'l_openness': 0.6,
-        'r_thumb_index_distance': 0.2,
+        "r_wrist_position": [0.6, 0.4],
+        "l_wrist_position": [0.3, 0.7],
+        "r_openness": 0.8,
+        "l_openness": 0.6,
+        "r_thumb_index_distance": 0.2,
     }
 
     if not issues:
@@ -164,9 +164,9 @@ def demo_dag_comparison():
     print("=" * 50)
 
     test_features = {
-        'r_wrist_position': [0.5, 0.6],
-        'l_wrist_position': [0.4, 0.3],
-        'r_openness': 0.7,
+        "r_wrist_position": [0.5, 0.6],
+        "l_wrist_position": [0.4, 0.3],
+        "r_openness": 0.7,
     }
 
     # AudioFeatureBuilder approach

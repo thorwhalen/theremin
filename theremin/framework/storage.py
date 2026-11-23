@@ -19,7 +19,7 @@ class CalibrationStore:
         >>> calibration = store['camera_0']
     """
 
-    def __init__(self, base_path: str = './data/calibration'):
+    def __init__(self, base_path: str = "./data/calibration"):
         """
         Initialize calibration store.
 
@@ -33,6 +33,7 @@ class CalibrationStore:
         # Try to import dol
         try:
             from dol import Store
+
             self._Store = Store
             self._dol_available = True
         except ImportError:
@@ -49,14 +50,14 @@ class CalibrationStore:
         if not file_path.exists():
             raise KeyError(f"No calibration data for {sensor_name}")
 
-        with open(file_path, 'r') as f:
+        with open(file_path, "r") as f:
             return json.load(f)
 
     def __setitem__(self, sensor_name: str, calibration_data: Dict):
         """Set calibration data for sensor."""
         file_path = self._id_of_key(sensor_name)
 
-        with open(file_path, 'w') as f:
+        with open(file_path, "w") as f:
             json.dump(calibration_data, f, indent=2)
 
     def __contains__(self, sensor_name: str) -> bool:
@@ -66,8 +67,8 @@ class CalibrationStore:
     def keys(self):
         """Get all sensor names with calibration."""
         return [
-            f.stem.replace('calibration_', '')
-            for f in self.base_path.glob('calibration_*.json')
+            f.stem.replace("calibration_", "")
+            for f in self.base_path.glob("calibration_*.json")
         ]
 
 
@@ -85,7 +86,7 @@ class PresetStore:
         >>> preset = store['my_theremin']
     """
 
-    def __init__(self, base_path: str = './data/presets'):
+    def __init__(self, base_path: str = "./data/presets"):
         """
         Initialize preset store.
 
@@ -106,17 +107,17 @@ class PresetStore:
         if not file_path.exists():
             raise KeyError(f"No preset named {preset_name}")
 
-        with open(file_path, 'r') as f:
+        with open(file_path, "r") as f:
             return json.load(f)
 
     def __setitem__(self, preset_name: str, preset_data: Dict):
         """Set preset configuration."""
         # Add metadata
-        preset_data['_created'] = time.time()
+        preset_data["_created"] = time.time()
 
         file_path = self._id_of_key(preset_name)
 
-        with open(file_path, 'w') as f:
+        with open(file_path, "w") as f:
             json.dump(preset_data, f, indent=2)
 
     def __contains__(self, preset_name: str) -> bool:
@@ -125,4 +126,4 @@ class PresetStore:
 
     def keys(self):
         """Get all preset names."""
-        return [f.stem for f in self.base_path.glob('*.json')]
+        return [f.stem for f in self.base_path.glob("*.json")]

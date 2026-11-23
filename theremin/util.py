@@ -11,8 +11,8 @@ try:  # optional numpy import for isinstance checks
 except Exception:  # pragma: no cover - numpy may not be present in some envs
     _np = None
 
-pkg_name = 'theremin'
-data_files = files(pkg_name) / 'data'
+pkg_name = "theremin"
+data_files = files(pkg_name) / "data"
 
 
 # --------------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ def format_dict_values(input_dict, max_digits=8):
 
 def format_milliseconds_time(timestamp):
     """Format milliseconds as a string."""
-    formatted_time = time.strftime('%H:%M:%S', time.localtime(timestamp))
+    formatted_time = time.strftime("%H:%M:%S", time.localtime(timestamp))
     milliseconds = int((timestamp % 1) * 1000)
     return f"{formatted_time}.{milliseconds:03d}"
 
@@ -195,7 +195,7 @@ def annotate_with(annotation_type):
             # Get the frame of the caller
             frame = inspect.currentframe().f_back
             # Access the correct scope's `__annotations__`
-            annotations = frame.f_globals.setdefault('__annotations__', {})
+            annotations = frame.f_globals.setdefault("__annotations__", {})
 
             # Store the annotation
             annotations[func.__name__] = annotation_type

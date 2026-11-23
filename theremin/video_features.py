@@ -10,7 +10,7 @@ from types import MappingProxyType
 from theremin.util import data_files
 
 # Path to the gesture recognizer model
-gesture_recognizer_path = str(data_files / 'gesture_recognizer.task')
+gesture_recognizer_path = str(data_files / "gesture_recognizer.task")
 
 # -------------------------------------------------------------------------------
 # Hand Gesture Recognizer
@@ -337,17 +337,17 @@ def many_single_hand_features(
             palm_center, coords(RING_FINGER_TIP)
         )
         palm_to_pinky = calculate_euclidean_distance(palm_center, coords(PINKY_TIP))
-        out['openness'] = (
+        out["openness"] = (
             palm_to_index + palm_to_middle + palm_to_ring + palm_to_pinky
         ) / 4
 
     if "index_finger_extension_angle1" in requested_features:
-        out['index_finger_extension_angle1'] = calculate_angle(
+        out["index_finger_extension_angle1"] = calculate_angle(
             coords(WRIST), coords(INDEX_FINGER_MCP), coords(INDEX_FINGER_PIP)
         )
 
     if "index_finger_extension_angle2" in requested_features:
-        out['index_finger_extension_angle2'] = calculate_angle(
+        out["index_finger_extension_angle2"] = calculate_angle(
             coords(INDEX_FINGER_MCP), coords(INDEX_FINGER_PIP), coords(INDEX_FINGER_DIP)
         )
 
@@ -359,9 +359,9 @@ def many_single_hand_features(
             coords(THUMB_TIP), coords(INDEX_FINGER_TIP)
         )
         if "thumb_index_distance" in requested_features:
-            out['thumb_index_distance'] = thumb_index_dist
+            out["thumb_index_distance"] = thumb_index_dist
         if "is_pinching" in requested_features:
-            out['is_pinching'] = thumb_index_dist < 0.1  # Adjustable threshold
+            out["is_pinching"] = thumb_index_dist < 0.1  # Adjustable threshold
 
     return out
 

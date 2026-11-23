@@ -59,10 +59,10 @@ class KeyboardBreakSignal(Exception):
 def _ensure_cv2():
     """Dynamically import and cache OpenCV (`cv2`) the first time it is needed."""
     global cv2
-    if 'cv2' not in globals():  # pragma: no cover - trivial
+    if "cv2" not in globals():  # pragma: no cover - trivial
         import cv2  # type: ignore
 
-        globals()['cv2'] = cv2
+        globals()["cv2"] = cv2
     return cv2
 
 
@@ -75,12 +75,12 @@ def read_keyboard(wait_time: int = 5) -> int:
 def keyboard_feature_vector(key_code: int) -> dict[str, Any]:
     """Convert a raw key code into a small feature dict; raise if it's a break key."""
     keyboard_fv = {
-        'key_code': key_code,
-        'key_pressed': key_code > 0,
-        'is_escape': key_code == ESCAPE_KEY_ASCII,
-        'timestamp': time.time(),
+        "key_code": key_code,
+        "key_pressed": key_code > 0,
+        "is_escape": key_code == ESCAPE_KEY_ASCII,
+        "timestamp": time.time(),
     }
-    if keyboard_fv['key_code'] in BREAK_KEYS:
+    if keyboard_fv["key_code"] in BREAK_KEYS:
         raise KeyboardBreakSignal(f"Break key pressed: {key_code}")
     return keyboard_fv
 
@@ -197,7 +197,7 @@ def run_theremin(
     log_video_features: Callable | None = None,
     log_knobs: Callable | None = None,
     record_to_file: str | bool = DFLT_RECORDING_FILEPATH,
-    window_name: str = 'Hand Gesture Recognition with Theremin',
+    window_name: str = "Hand Gesture Recognition with Theremin",
     draw_on_screen: Callable | None = None,
     only_keep_new_freqs: bool = True,
     freq_trans_override: str | Callable | None = "__USE_DEFAULT__",
@@ -264,7 +264,7 @@ def run_theremin(
         try:
             from inspect import signature
 
-            if 'freq_trans' in signature(knobs).parameters:
+            if "freq_trans" in signature(knobs).parameters:
                 base_knobs = knobs
 
                 def _knobs_with_override(vf):
@@ -365,7 +365,7 @@ def list_components(param_value, components_dict, description, component_describ
 
     Returns True if listing was performed so caller can early-return.
     """
-    if isinstance(param_value, str) and param_value == 'list':
+    if isinstance(param_value, str) and param_value == "list":
         print(f"Available {description}:")
         for name in sorted(components_dict.keys()):
             func = components_dict[name]
@@ -397,78 +397,78 @@ def list_components(param_value, components_dict, description, component_describ
 #:   exactly as ``@argh.arg`` did (argh's ``can_use_hints = not declared_args``), so the
 #:   argument types keep coming from the default values alone.
 THEREMIN_CLI_CONFIG = {
-    'pipeline': {
-        'flags': ['--pipeline', '-p'],
-        'nargs': '?',
-        'const': 'list',
-        'help': 'Audio pipeline name (use without argument to list available pipelines)',
+    "pipeline": {
+        "flags": ["--pipeline", "-p"],
+        "nargs": "?",
+        "const": "list",
+        "help": "Audio pipeline name (use without argument to list available pipelines)",
     },
-    'synth': {
-        'flags': ['--synth', '-s'],
-        'nargs': '?',
-        'const': 'list',
-        'help': 'Synthesizer function name (use without argument to list available synths)',
+    "synth": {
+        "flags": ["--synth", "-s"],
+        "nargs": "?",
+        "const": "list",
+        "help": "Synthesizer function name (use without argument to list available synths)",
     },
-    'knobs': {
-        'flags': ['--knobs', '-k'],
-        'nargs': '?',
-        'const': 'list',
-        'help': 'Audio knobs function name (use without argument to list available knobs)',
+    "knobs": {
+        "flags": ["--knobs", "-k"],
+        "nargs": "?",
+        "const": "list",
+        "help": "Audio knobs function name (use without argument to list available knobs)",
     },
-    'video_features': {
-        'flags': ['--video-features', '-v'],
-        'nargs': '?',
-        'const': 'list',
-        'help': 'Video features function name (use without argument to list available video features)',
+    "video_features": {
+        "flags": ["--video-features", "-v"],
+        "nargs": "?",
+        "const": "list",
+        "help": "Video features function name (use without argument to list available video features)",
     },
-    'log_video_features': {
-        'flags': ['--log-video-features'],
-        'help': 'Log hand features',
-        'default': False,
+    "log_video_features": {
+        "flags": ["--log-video-features"],
+        "help": "Log hand features",
+        "default": False,
     },
-    'log_knobs': {
-        'flags': ['--log-knobs'],
-        'help': 'Log audio features',
-        'default': False,
+    "log_knobs": {
+        "flags": ["--log-knobs"],
+        "help": "Log audio features",
+        "default": False,
     },
-    'record_to_file': {
-        'flags': ['-r', '--record-to-file'],
-        'help': 'Filename to save recording',
-        'default': DFLT_RECORDING_FILEPATH,
+    "record_to_file": {
+        "flags": ["-r", "--record-to-file"],
+        "help": "Filename to save recording",
+        "default": DFLT_RECORDING_FILEPATH,
     },
-    'no_recording': {
-        'flags': ['-n', '--no-recording'],
-        'help': 'Disable recording',
-        'default': False,
+    "no_recording": {
+        "flags": ["-n", "--no-recording"],
+        "help": "Disable recording",
+        "default": False,
     },
-    'window_name': {
-        'flags': ['-w', '--window-name'],
-        'help': 'Window title',
-        'default': 'Theremin with Hand Tracking',
+    "window_name": {
+        "flags": ["-w", "--window-name"],
+        "help": "Window title",
+        "default": "Theremin with Hand Tracking",
     },
-    'scale': {
-        'flags': ['--scale'],
-        'nargs': '?',
-        'const': 'list',
-        'help': (
-            'Scale for snapping. Use flag without value to list scales; use '
-            'none/null/off to disable. Default uses audio.DFLT_SCALE.'
+    "scale": {
+        "flags": ["--scale"],
+        "nargs": "?",
+        "const": "list",
+        "help": (
+            "Scale for snapping. Use flag without value to list scales; use "
+            "none/null/off to disable. Default uses audio.DFLT_SCALE."
         ),
-        'default': None,
+        "default": None,
     },
 }
 
 
 def theremin_cli(
-    pipeline: str | None = 'theremin',
-    video_features: str | None = 'many_video_features',
-    knobs: str | None = 'theremin_knobs',
-    synth: str | None = 'theremin_synth',
+    pipeline: str | None = "theremin",
+    video_features: str | None = "many_video_features",
+    knobs: str | None = "theremin_knobs",
+    synth: str | None = "theremin_synth",
     log_video_features: bool = False,
     log_knobs: bool = False,
     record_to_file: str = DFLT_RECORDING_FILEPATH,
     no_recording: bool = False,
-    window_name: str = 'Theremin with Hand Tracking',
+    window_name: str = "Theremin with Hand Tracking",
     scale: str | None = None,
 ):
     """Run the theremin: map video/keyboard input to synthesized audio.
@@ -530,19 +530,19 @@ def theremin_cli(
     from theremin.video_features import hand_feature_funcs
 
     # Handle listing of components
-    if list_components(pipeline, pipelines, 'pipelines'):
+    if list_components(pipeline, pipelines, "pipelines"):
         return
-    if list_components(synth, synths, 'synthesizer functions'):
+    if list_components(synth, synths, "synthesizer functions"):
         return
-    if list_components(knobs, knobs_dict, 'audio feature mapping functions'):
+    if list_components(knobs, knobs_dict, "audio feature mapping functions"):
         return
     if list_components(
-        video_features, hand_feature_funcs, 'hand feature extraction functions'
+        video_features, hand_feature_funcs, "hand feature extraction functions"
     ):
         return
 
     # Handle scale listing/help when flag provided without value
-    if scale == 'list':
+    if scale == "list":
         try:
             from tonal.notes import list_scales_string
 

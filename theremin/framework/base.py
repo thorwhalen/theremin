@@ -121,7 +121,7 @@ class Pipeline:
         self,
         functions: List[Callable],
         name: str = "theremin_pipeline",
-        validate: bool = True
+        validate: bool = True,
     ):
         """
         Initialize pipeline.
@@ -139,6 +139,7 @@ class Pipeline:
         # Try to import meshed
         try:
             from meshed import DAG
+
             self._DAG = DAG
             self._meshed_available = True
             self._dag = DAG(functions)
@@ -179,8 +180,4 @@ class Pipeline:
             Dictionary with validation results
         """
         # This would use meshed's introspection capabilities
-        return {
-            'valid': True,
-            'function_count': len(self.functions),
-            'name': self.name
-        }
+        return {"valid": True, "function_count": len(self.functions), "name": self.name}

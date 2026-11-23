@@ -112,12 +112,12 @@ class AudioPipeline:
     def _create_mock_video_features(self) -> dict[str, Any]:
         """Create mock video features for testing"""
         return {
-            'l_wrist_position': [0.5, 0.5],
-            'r_wrist_position': [0.5, 0.5],
-            'l_openness': 0.5,
-            'r_openness': 0.5,
-            'l_thumb_index_distance': 0.1,
-            'r_thumb_index_distance': 0.1,
+            "l_wrist_position": [0.5, 0.5],
+            "r_wrist_position": [0.5, 0.5],
+            "l_openness": 0.5,
+            "r_openness": 0.5,
+            "l_thumb_index_distance": 0.1,
+            "r_thumb_index_distance": 0.1,
         }
 
     def __call__(self, video_features: dict) -> Any:
@@ -247,10 +247,10 @@ def list_pipeline_capabilities() -> dict[str, dict[str, Any]]:
                 audio_params = []
 
         capabilities[name] = {
-            'synth_function': pipeline.synth.__name__,
-            'synth_parameters': synth_sig.names,
-            'audio_parameters': audio_params,
-            'validation_issues': pipeline.validate(),
+            "synth_function": pipeline.synth.__name__,
+            "synth_parameters": synth_sig.names,
+            "audio_parameters": audio_params,
+            "validation_issues": pipeline.validate(),
         }
 
     return capabilities
@@ -263,7 +263,7 @@ def list_pipeline_capabilities() -> dict[str, dict[str, Any]]:
 
 def pipeline_to_knobs_and_synth(pipeline: AudioPipeline) -> dict[str, Callable]:
     """Convert new pipeline to old format for backward compatibility"""
-    return {'knobs': pipeline.audio_features, 'synth': pipeline.synth}
+    return {"knobs": pipeline.audio_features, "synth": pipeline.synth}
 
 
 def create_legacy_pipelines() -> dict[str, dict[str, Callable]]:
@@ -303,16 +303,16 @@ def test_pipeline_with_video_features(
         }
 
         return {
-            'success': True,
-            'audio_features': audio_features,
-            'synth_params': filtered_features,
-            'issues': pipeline.validate(),
+            "success": True,
+            "audio_features": audio_features,
+            "synth_params": filtered_features,
+            "issues": pipeline.validate(),
         }
     except Exception as e:
         return {
-            'success': False,
-            'error': str(e),
-            'audio_features': None,
-            'synth_params': None,
-            'issues': pipeline.validate(),
+            "success": False,
+            "error": str(e),
+            "audio_features": None,
+            "synth_params": None,
+            "issues": pipeline.validate(),
         }

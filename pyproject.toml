@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "theremin"
-version = "0.0.7"
+version = "0.0.8"
 description = "A video-to-sound theremin"
 readme = "README.md"
 requires-python = ">=3.10"

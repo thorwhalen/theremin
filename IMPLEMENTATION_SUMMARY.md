@@ -141,14 +141,18 @@ Functions automatically connect based on parameter names:
 ```python
 from meshed import DAG
 
+
 def extract_features(video_frame) -> dict:
-    return {'hand_x': 0.5, 'hand_y': 0.3}
+    return {"hand_x": 0.5, "hand_y": 0.3}
+
 
 def map_to_params(hand_x, hand_y) -> dict:
-    return {'frequency': 200 + hand_x * 1800, 'amplitude': 1 - hand_y}
+    return {"frequency": 200 + hand_x * 1800, "amplitude": 1 - hand_y}
+
 
 def synthesize(frequency, amplitude):
     return generate_audio(frequency, amplitude)
+
 
 # Auto-wire!
 pipeline = DAG([extract_features, map_to_params, synthesize])
@@ -180,7 +184,7 @@ Example:
 from theremin.framework import StreamPlayer, AudioVerifier
 
 # Test without camera!
-player = StreamPlayer('recorded_features.json')
+player = StreamPlayer("recorded_features.json")
 verifier = AudioVerifier()
 
 for features in player:

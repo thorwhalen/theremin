@@ -36,14 +36,14 @@ class StreamPlayer:
         if not self.feature_file.exists():
             raise FileNotFoundError(f"Feature file not found: {self.feature_file}")
 
-        with open(self.feature_file, 'r') as f:
+        with open(self.feature_file, "r") as f:
             data = json.load(f)
 
             # Handle different JSON formats
             if isinstance(data, list):
                 self.features = data
-            elif isinstance(data, dict) and 'features' in data:
-                self.features = data['features']
+            elif isinstance(data, dict) and "features" in data:
+                self.features = data["features"]
             else:
                 raise ValueError(f"Unknown feature file format: {self.feature_file}")
 
@@ -82,7 +82,7 @@ class AudioVerifier:
         audio: np.ndarray,
         sample_rate: int,
         expected_freq: float,
-        tolerance: float = 10.0
+        tolerance: float = 10.0,
     ) -> bool:
         """
         Check if expected frequency is present in audio.
@@ -98,7 +98,7 @@ class AudioVerifier:
         """
         # Compute FFT
         fft = np.fft.rfft(audio)
-        freqs = np.fft.rfftfreq(len(audio), 1/sample_rate)
+        freqs = np.fft.rfftfreq(len(audio), 1 / sample_rate)
 
         # Find peak frequency
         peak_idx = np.argmax(np.abs(fft))
@@ -123,9 +123,7 @@ class AudioVerifier:
 
     @staticmethod
     def verify_amplitude_range(
-        audio: np.ndarray,
-        min_amp: float = 0.0,
-        max_amp: float = 1.0
+        audio: np.ndarray, min_amp: float = 0.0, max_amp: float = 1.0
     ) -> bool:
         """
         Verify audio amplitude is within expected range.
@@ -152,7 +150,7 @@ class AudioVerifier:
         Returns:
             RMS amplitude
         """
-        return float(np.sqrt(np.mean(audio ** 2)))
+        return float(np.sqrt(np.mean(audio**2)))
 
     @staticmethod
     def has_no_nan_or_inf(audio: np.ndarray) -> bool:

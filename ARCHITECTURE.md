@@ -77,9 +77,9 @@ from theremin.audio_features import FeatureMapping, range_transformer
 # Map right wrist X position to frequency
 freq_mapping = FeatureMapping(
     audio_param="freq",
-    video_feature="r_wrist_position.0", 
+    video_feature="r_wrist_position.0",
     transform=range_transformer((0, 1), (220, 1760)),
-    default=440.0
+    default=440.0,
 )
 ```
 
@@ -93,10 +93,12 @@ from theremin.audio_features import AudioFeatureBuilder, create_theremin_builder
 builder = create_theremin_builder()
 
 # Or create custom builder
-builder = AudioFeatureBuilder([
-    FeatureMapping("freq", "r_wrist_position.0", freq_transform),
-    FeatureMapping("volume", "l_wrist_position.1", volume_transform),
-])
+builder = AudioFeatureBuilder(
+    [
+        FeatureMapping("freq", "r_wrist_position.0", freq_transform),
+        FeatureMapping("volume", "l_wrist_position.1", volume_transform),
+    ]
+)
 
 # Extract features
 video_features = {"r_wrist_position": [0.5, 0.3], "l_wrist_position": [0.2, 0.7]}
@@ -113,9 +115,7 @@ from theremin.audio import sine_synth
 
 # Create custom pipeline
 pipeline = AudioPipeline(
-    name="my_custom",
-    audio_features=create_theremin_builder(),
-    synth=sine_synth
+    name="my_custom", audio_features=create_theremin_builder(), synth=sine_synth
 )
 
 # Validate pipeline
@@ -137,8 +137,8 @@ theremin_pipeline = ALL_PIPELINES["theremin"]
 
 ```python
 from theremin.audio_features import (
-    create_theremin_builder,      # Basic theremin (freq, volume)
-    create_two_hand_builder,      # Independent L/R control
+    create_theremin_builder,  # Basic theremin (freq, volume)
+    create_two_hand_builder,  # Independent L/R control
     create_enhanced_theremin_builder,  # With vibrato, attack, release
     create_fallback_theremin_builder,  # Single-hand fallback
 )
@@ -159,23 +159,16 @@ two_voice = create_two_hand_builder()
 from theremin.audio_features import range_transformer
 
 # Basic range mapping
-freq_transform = range_transformer(
-    input_range=(0, 1),
-    output_range=(220, 1760)
-)
+freq_transform = range_transformer(input_range=(0, 1), output_range=(220, 1760))
 
 # With pre-processing (invert Y axis)
 volume_transform = range_transformer(
-    input_range=(0, 1),
-    output_range=(0, 1),
-    pre_transform=lambda y: 1 - y
+    input_range=(0, 1), output_range=(0, 1), pre_transform=lambda y: 1 - y
 )
 
 # With post-processing (quantize to scale)
 musical_freq = range_transformer(
-    input_range=(0, 1), 
-    output_range=(220, 1760),
-    post_transform=snap_to_c_major
+    input_range=(0, 1), output_range=(220, 1760), post_transform=snap_to_c_major
 )
 ```
 
@@ -198,7 +191,7 @@ For complex interdependent transformations, you can use the DAG approach:
 from theremin.dag_audio_features import (
     theremin_dag_knobs,
     enhanced_theremin_dag_knobs,
-    two_voice_dag_knobs
+    two_voice_dag_knobs,
 )
 
 # Use like any other audio features function
@@ -235,7 +228,7 @@ for name, issues in results.items():
     if issues:
         print(f"{name}: {issues}")
 
-# Get only working pipelines  
+# Get only working pipelines
 working = get_working_pipelines()
 print(f"Working pipelines: {list(working.keys())}")
 ```
@@ -250,18 +243,21 @@ The new system is backward compatible. To migrate:
 ```python
 def my_knobs(video_features):
     knobs = {}
-    if 'r_wrist_position' in video_features:
-        x = video_features['r_wrist_position'][0]
-        knobs['freq'] = 220 + x * (1760 - 220)
+    if "r_wrist_position" in video_features:
+        x = video_features["r_wrist_position"][0]
+        knobs["freq"] = 220 + x * (1760 - 220)
     return knobs
 ```
 
 **New:**
 ```python
-my_builder = AudioFeatureBuilder([
-    FeatureMapping("freq", "r_wrist_position.0", 
-                   range_transformer((0, 1), (220, 1760)))
-])
+my_builder = AudioFeatureBuilder(
+    [
+        FeatureMapping(
+            "freq", "r_wrist_position.0", range_transformer((0, 1), (220, 1760))
+        )
+    ]
+)
 ```
 
 ### 2. Use AudioPipeline instead of pipeline dicts
@@ -297,21 +293,31 @@ if not issues:
 ## Example: Creating a New Pipeline
 
 ```python
-from theremin.audio_features import AudioFeatureBuilder, FeatureMapping, range_transformer
+from theremin.audio_features import (
+    AudioFeatureBuilder,
+    FeatureMapping,
+    range_transformer,
+)
 from theremin.pipelines import AudioPipeline
 from theremin.audio import fm_synth
 
 # Create custom audio feature builder
-fm_builder = AudioFeatureBuilder([
-    FeatureMapping("freq", "r_wrist_position.0", 
-                   range_transformer((0, 1), (220, 1760))),
-    FeatureMapping("volume", "l_wrist_position.1",
-                   range_transformer((0, 1), (0, 1), pre_transform=lambda y: 1-y)),
-    FeatureMapping("mod_index", "r_openness",
-                   range_transformer((0, 1), (0, 10))),
-    FeatureMapping("carrier_ratio", "l_openness", 
-                   range_transformer((0, 1), (0.5, 2.0))),
-])
+fm_builder = AudioFeatureBuilder(
+    [
+        FeatureMapping(
+            "freq", "r_wrist_position.0", range_transformer((0, 1), (220, 1760))
+        ),
+        FeatureMapping(
+            "volume",
+            "l_wrist_position.1",
+            range_transformer((0, 1), (0, 1), pre_transform=lambda y: 1 - y),
+        ),
+        FeatureMapping("mod_index", "r_openness", range_transformer((0, 1), (0, 10))),
+        FeatureMapping(
+            "carrier_ratio", "l_openness", range_transformer((0, 1), (0.5, 2.0))
+        ),
+    ]
+)
 
 # Create pipeline
 fm_pipeline = AudioPipeline("fm_theremin", fm_builder, fm_synth)
@@ -320,15 +326,15 @@ fm_pipeline = AudioPipeline("fm_theremin", fm_builder, fm_synth)
 issues = fm_pipeline.validate()
 if not issues:
     print("FM pipeline ready to use!")
-    
+
     # Test with sample data
     video_features = {
         "r_wrist_position": [0.6, 0.4],
-        "l_wrist_position": [0.3, 0.8], 
+        "l_wrist_position": [0.3, 0.8],
         "r_openness": 0.7,
-        "l_openness": 0.5
+        "l_openness": 0.5,
     }
-    
+
     result = fm_pipeline(video_features)
 ```
 
