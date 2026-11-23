@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-30T06:55:15Z",
+  "built_at": "2026-11-23T04:57:59Z",
   "package": {
     "name": "theremin",
     "version": "0.0.7",
@@ -9,31 +9,31 @@
   },
   "git": {
     "available": true,
-    "commit": "e005ad40e1ebd45339fe8e48439a71419053f269",
-    "short_commit": "e005ad4",
+    "commit": "770ccf13d883ba0d701894b275073665563779c4",
+    "short_commit": "770ccf1",
     "branch": "main",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/thorwhalen/theremin",
-    "commit_url": "https://github.com/thorwhalen/theremin/commit/e005ad40e1ebd45339fe8e48439a71419053f269",
+    "commit_url": "https://github.com/thorwhalen/theremin/commit/770ccf13d883ba0d701894b275073665563779c4",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "thorwhalen/theremin",
-    "sha": "e005ad40e1ebd45339fe8e48439a71419053f269",
+    "sha": "770ccf13d883ba0d701894b275073665563779c4",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "41016678802",
-    "run_url": "https://github.com/thorwhalen/theremin/actions/runs/41016678802",
+    "run_id": "45114659838",
+    "run_url": "https://github.com/thorwhalen/theremin/actions/runs/45114659838",
     "server_url": "https://github.com"
   },
   "tools": {
-    "epythet": "0.2.22",
+    "epythet": "0.2.23",
     "sphinx": "9.1.1",
     "docutils": "0.22.4",
-    "python": "3.12.15"
+    "python": "3.12.16"
   },
   "config": {
     "theme": "auto",
@@ -60,14 +60,16 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.0.7",
-    "relation": "same",
+    "latest": "0.0.8",
+    "relation": "behind",
     "error": null
   },
-  "reproduce": "git clone https://github.com/thorwhalen/theremin && cd theremin\ngit checkout e005ad40e1ebd45339fe8e48439a71419053f269\npip install \"epythet==0.2.22\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/thorwhalen/theremin && cd theremin\ngit checkout 770ccf13d883ba0d701894b275073665563779c4\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
-    "aligned": true,
-    "notes": []
+    "aligned": false,
+    "notes": [
+      "The documented version (0.0.7) is behind the latest release on PyPI (0.0.8): `pip install theremin` gives newer code than these docs describe."
+    ]
   }
 }
